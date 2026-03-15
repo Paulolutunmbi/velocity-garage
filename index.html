@@ -1,12 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-</head>
-<body>
-  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velocity Garage</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-gray-900 text-white p-6 text-center text-3xl font-bold">
+      Velocity Garage
+    </header>
+
+    <main class="p-6 max-w-6xl mx-auto">
+      <!-- Search -->
+      <div class="mb-6">
+        <input
+          type="text"
+          id="search"
+          placeholder="Search cars..."
+          class="w-full p-3 rounded shadow border focus:outline-none focus:ring focus:ring-blue-400"
+        />
+      </div>
+
+      <!-- Notification -->
+      <div
+        id="notification"
+        class="fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded shadow-lg opacity-0 transition"
+      ></div>
+
+      <!-- Cars container -->
+      <div
+        id="cars-container"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      ></div>
+    </main>
+
+    <script src="js/cars.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>

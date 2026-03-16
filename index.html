@@ -1,125 +1,187 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Velocity Garage</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  </head>
-  <body class="bg-gray-100">
-    <header class="bg-gray-900 text-white p-6 text-center text-3xl font-bold">
-      Velocity Garage
-    </header>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <main class="p-6 max-w-6xl mx-auto">
-      <!-- Search -->
-      <div class="mb-6">
-        <input
-          type="text"
-          id="search"
-          placeholder="Search cars..."
-          class="w-full p-3 rounded shadow border focus:outline-none focus:ring focus:ring-blue-400"
-        />
-      </div>
+<title>Velocity Garage</title>
 
-      <!-- Notification -->
-      <div
-        id="notification"
-        class="fixed top-0 left-1/2 -translate-x-1/2 -translate-y-full bg-white text-gray-800 px-6 py-3 rounded shadow-lg flex items-center gap-2 transition-all duration-500 z-50"
-      ></div>
+<script src="https://cdn.tailwindcss.com"></script>
 
-      <!-- Compare Bar -->
-      <div
-        id="compare-bar"
-        class="fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 hidden z-40"
-      ></div>
+</head>
 
-      <!-- Cars container -->
-      <div
-        id="cars-container"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      ></div>
-      <!-- Car Details Modal -->
-      <div
-        id="modal"
-        class="fixed inset-0 hidden z-50 flex items-center justify-center"
-      >
-        <div
-          class="bg-white rounded-lg shadow-lg max-w-3xl w-full relative p-6 transform transition-transform scale-95 opacity-0"
-        >
-          <!-- Close Button -->
-          <button
-            id="modal-close"
-            class="absolute top-4 right-4 text-red-600 text-3xl font-bold px-3 py-1 rounded hover:bg-red-100 transition"
-          >
-            &times;
-          </button>
+<body class="bg-gray-50 text-gray-900">
 
-          <!-- Modal Content -->
-          <div class="relative w-full md:w-1/2 h-64 overflow-hidden rounded">
-  <img id="modal-image-1" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0" />
-  <img id="modal-image-2" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0" />
-  <img id="modal-image-3" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0" />
+<!-- NAVBAR -->
+
+<nav class="bg-black text-white p-4 shadow-md">
+<div class="max-w-7xl mx-auto flex justify-between items-center">
+
+<h1 class="text-2xl font-bold">
+Velocity Garage
+</h1>
+
+<div class="flex gap-4 items-center">
+
+<input
+id="search"
+type="text"
+placeholder="Search cars..."
+class="px-3 py-1 rounded text-black"
+/>
+
+<button
+id="scroll-recommendation"
+class="bg-purple-600 px-4 py-2 rounded hover:bg-purple-700">
+Find Your Perfect Car
+</button>
+
 </div>
 
-            <div class="flex-1 space-y-2">
-              <h2 id="modal-name" class="text-2xl font-bold"></h2>
-              <p><strong>Brand:</strong> <span id="modal-brand"></span></p>
-              <p><strong>Maker:</strong> <span id="modal-maker"></span></p>
-              <p><strong>Country:</strong> <span id="modal-country"></span></p>
-              <p><strong>Horsepower:</strong> <span id="modal-hp"></span> ⚡</p>
-              <p><strong>Speed:</strong> <span id="modal-speed"></span> 🏎️</p>
-              <p>
-                <strong>Price:</strong>
-                <span id="modal-price" class="text-blue-600 font-bold"></span>
-              </p>
-              <p id="modal-desc" class="text-gray-700"></p>
+</div>
+</nav>
 
-              <!-- Buttons inside modal -->
-              <div class="flex gap-3 mt-4">
-                <button
-                  id="modal-compare"
-                  class="bg-gray-200 px-3 py-1 rounded hover:scale-110 transition flex items-center gap-1"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M13 12h7v1.5a.5.5 0 0 1-1 0V13h-5v3.5a2.5 2.5 0 0 0 5 0V15a.5.5 0 0 1 1 0v1.5a3.5 3.5 0 0 1-7 0V12zm-9 0h7v4.5a3.5 3.5 0 0 1-7 0V15a.5.5 0 0 1 1 0v1.5a2.5 2.5 0 0 0 5 0V13H5v.5a.5.5 0 0 1-1 0V12zm9-2V3.5a.5.5 0 0 0-1 0V10H4a1 1 0 0 0-1 1v1h18v-1a1 1 0 0 0-1-1h-8z"
-                    />
-                  </svg>
-                  Add to Compare
-                </button>
 
-                <button
-                  id="modal-fav"
-                  class="bg-gray-200 px-3 py-1 rounded hover:scale-110 transition flex items-center gap-1"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill="currentColor"
-                      d="M7.99 0L.98 9.38L7 8.96L2.04 16L15 6l-7.01.47L15 0z"
-                    />
-                  </svg>
-                  Add to Favorites
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
 
-    <script src="js/cars.js"></script>
-    <script src="js/app.js"></script>
-  </body>
+<!-- MAIN -->
+
+<main class="max-w-7xl mx-auto p-6">
+
+<h2 class="text-3xl font-bold mb-6">
+Supercar Collection
+</h2>
+
+<!-- CAR GRID -->
+
+<div
+id="cars-container"
+class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+</div>
+
+</main>
+
+
+
+<!-- RECOMMENDATION SECTION -->
+
+<section
+id="recommendation-section"
+class="max-w-4xl mx-auto p-6 mt-20">
+
+<h2 class="text-3xl font-bold mb-2">
+Find Your Perfect Car
+</h2>
+
+<p class="text-gray-600 mb-6">
+Choose your preferences and we'll suggest the best supercar for you.
+</p>
+
+<div class="grid gap-4">
+
+<select id="ai-budget" class="p-2 border rounded">
+<option value="">Select Budget</option>
+<option value="500k">Under $500k</option>
+<option value="1m">Under $1M</option>
+<option value="3m">$1M+</option>
+</select>
+
+<select id="ai-priority" class="p-2 border rounded">
+<option value="">Priority</option>
+<option value="speed">Top Speed</option>
+<option value="power">Horsepower</option>
+<option value="balanced">Balanced</option>
+</select>
+
+<select id="ai-region" class="p-2 border rounded">
+<option value="">Region</option>
+<option value="europe">Europe</option>
+<option value="usa">USA</option>
+</select>
+
+<button
+id="ai-run"
+class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+Find My Car
+</button>
+
+</div>
+
+<div id="ai-result" class="mt-6"></div>
+
+</section>
+
+
+
+<!-- MODAL -->
+
+<div
+id="modal"
+class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
+
+<div class="bg-white max-w-3xl w-full rounded-xl shadow-lg relative p-6">
+
+<button
+id="modal-close"
+class="absolute top-4 right-4 text-red-600 text-3xl font-bold">
+×
+</button>
+
+<h2
+id="modal-name"
+class="text-2xl font-bold mb-4">
+</h2>
+
+<div id="modal-carousel" class="relative h-64 mb-4 overflow-hidden rounded">
+</div>
+
+<p id="modal-desc" class="text-gray-700 mb-4"></p>
+
+<div class="flex gap-4">
+
+<button
+id="modal-compare"
+class="bg-blue-500 text-white px-4 py-2 rounded">
+Add to Compare
+</button>
+
+<button
+id="modal-fav"
+class="bg-yellow-400 px-4 py-2 rounded">
+Add to Favorite
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+
+<!-- COMPARE BAR -->
+
+<div
+id="compare-bar"
+class="hidden fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg z-50">
+</div>
+
+
+
+<!-- NOTIFICATION -->
+
+<div
+id="notification"
+class="fixed top-6 right-6 hidden bg-black text-white px-4 py-2 rounded shadow-lg">
+</div>
+
+
+
+<!-- SCRIPTS -->
+
+<script src="js/cars.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/compare.js"></script>
+<script src="js/recommend.js"></script>
+<script src="js/app.js"></script>
+
+</body>
 </html>

@@ -56,13 +56,11 @@
           </button>
 
           <!-- Modal Content -->
-          <div class="flex flex-col md:flex-row gap-6">
-            <img
-              id="modal-image"
-              src=""
-              alt="Car Image"
-              class="w-full md:w-1/2 h-64 object-cover rounded"
-            />
+          <div class="relative w-full md:w-1/2 h-64 overflow-hidden rounded">
+  <img id="modal-image-1" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0" />
+  <img id="modal-image-2" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0" />
+  <img id="modal-image-3" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0" />
+</div>
 
             <div class="flex-1 space-y-2">
               <h2 id="modal-name" class="text-2xl font-bold"></h2>

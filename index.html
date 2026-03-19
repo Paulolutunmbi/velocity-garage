@@ -7,19 +7,24 @@
 <title>Velocity Garage</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
 <body class="bg-gray-50 text-gray-900">
 
+<!-- COMPARE BAR (TOP FIXED) -->
+
+<div
+id="compare-bar"
+class="hidden fixed top-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg z-50">
+</div>
+
+
 <!-- NAVBAR -->
 
-<nav class="bg-black text-white p-4 shadow-md">
+<nav class="bg-black text-white p-4 shadow-md mt-16">
 <div class="max-w-7xl mx-auto flex justify-between items-center">
 
-<h1 class="text-2xl font-bold">
-Velocity Garage
-</h1>
+<h1 class="text-2xl font-bold">Velocity Garage</h1>
 
 <div class="flex gap-4 items-center">
 
@@ -35,12 +40,14 @@ id="scroll-recommendation"
 class="bg-purple-600 px-4 py-2 rounded hover:bg-purple-700">
 Find Your Perfect Car
 </button>
-
+<a href="favorites.html"
+class="bg-yellow-500 px-4 py-2 rounded hover:bg-yellow-600">
+Favorites
+</a>
 </div>
 
 </div>
 </nav>
-
 
 
 <!-- MAIN -->
@@ -51,8 +58,6 @@ Find Your Perfect Car
 Supercar Collection
 </h2>
 
-<!-- CAR GRID -->
-
 <div
 id="cars-container"
 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -62,11 +67,11 @@ class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
 
 
-<!-- RECOMMENDATION SECTION -->
+<!-- RECOMMENDATION -->
 
 <section
 id="recommendation-section"
-class="max-w-4xl mx-auto p-6 mt-20">
+class="max-w-4xl mx-auto p-6 mt-20 scroll-mt-24">
 
 <h2 class="text-3xl font-bold mb-2">
 Find Your Perfect Car
@@ -112,7 +117,7 @@ Find My Car
 
 
 
-<!-- MODAL -->
+<!-- CAR MODAL -->
 
 <div
 id="modal"
@@ -126,26 +131,31 @@ class="absolute top-4 right-4 text-red-600 text-3xl font-bold">
 ×
 </button>
 
-<h2
-id="modal-name"
-class="text-2xl font-bold mb-4">
-</h2>
+<h2 id="modal-name" class="text-2xl font-bold mb-4"></h2>
 
-<div id="modal-carousel" class="relative h-64 mb-4 overflow-hidden rounded">
+<div id="modal-carousel" class="relative h-64 mb-4 overflow-hidden rounded"></div>
+
+<div class="grid grid-cols-2 gap-4 text-sm mb-4">
+
+<p><strong>Brand:</strong> <span id="modal-brand"></span></p>
+<p><strong>Maker:</strong> <span id="modal-maker"></span></p>
+<p><strong>Country:</strong> <span id="modal-country"></span></p>
+<p><strong>Horsepower:</strong> <span id="modal-hp"></span></p>
+<p><strong>Top Speed:</strong> <span id="modal-speed"></span></p>
+<p><strong>Price:</strong> <span id="modal-price"></span></p>
+
 </div>
 
 <p id="modal-desc" class="text-gray-700 mb-4"></p>
 
 <div class="flex gap-4">
 
-<button
-id="modal-compare"
+<button id="modal-compare"
 class="bg-blue-500 text-white px-4 py-2 rounded">
 Add to Compare
 </button>
 
-<button
-id="modal-fav"
+<button id="modal-fav"
 class="bg-yellow-400 px-4 py-2 rounded">
 Add to Favorite
 </button>
@@ -157,11 +167,34 @@ Add to Favorite
 
 
 
-<!-- COMPARE BAR -->
+<!-- COMPARE MODAL -->
 
 <div
-id="compare-bar"
-class="hidden fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg z-50">
+id="compare-modal"
+class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
+
+<div class="bg-white max-w-5xl w-full rounded-xl shadow-lg relative p-6">
+
+<button
+id="compare-close"
+class="absolute top-4 right-4 text-red-600 text-3xl font-bold">
+×
+</button>
+
+<h2 class="text-2xl font-bold mb-4">Car Comparison</h2>
+
+<div class="overflow-x-auto">
+<table class="w-full border text-center">
+<thead>
+<tr id="compare-head">
+<th class="border p-2">Spec</th>
+</tr>
+</thead>
+<tbody id="compare-body"></tbody>
+</table>
+</div>
+
+</div>
 </div>
 
 
@@ -170,15 +203,17 @@ class="hidden fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg 
 
 <div
 id="notification"
-class="fixed top-6 right-6 hidden bg-black text-white px-4 py-2 rounded shadow-lg">
+class="fixed top-20 right-6 hidden bg-black text-white px-4 py-2 rounded shadow-lg">
 </div>
 
-
-
-<!-- SCRIPTS -->
+<button
+id="back-to-top"
+class="hidden fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded-full shadow-lg hover:bg-gray-800">
+↑
+</button>
 
 <script src="js/cars.js"></script>
-<script src="js/favorites.js"></script>
+<script src="js/favourites.js"></script>
 <script src="js/compare.js"></script>
 <script src="js/recommend.js"></script>
 <script src="js/app.js"></script>

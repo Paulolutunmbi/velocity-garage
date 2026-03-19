@@ -58,6 +58,29 @@ Favorites
 Supercar Collection
 </h2>
 
+<!-- FILTER + SORT BAR -->
+
+<div class="flex flex-wrap gap-4 mb-6 items-center">
+
+  <select id="filter-brand" class="p-2 border rounded">
+  <option value="">All Brands</option>
+</select>
+
+  <select id="sort-by" class="p-2 border rounded">
+    <option value="">Sort By</option>
+    <option value="price-low">Price: Low → High</option>
+    <option value="price-high">Price: High → Low</option>
+    <option value="speed">Top Speed</option>
+    <option value="hp">Horsepower</option>
+  </select>
+  <select id="filter-region" class="p-2 border rounded">
+  <option value="">All Regions</option>
+  <option value="Italy">Italy</option>
+  <option value="Germany">Germany</option>
+  <option value="USA">USA</option>
+</select>
+</div>
+
 <div
 id="cars-container"
 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -213,7 +236,7 @@ class="hidden fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded-full 
 </button>
 
 <script src="js/cars.js"></script>
-<script src="js/favourites.js"></script>
+<script src="js/favorites.js"></script>
 <script src="js/compare.js"></script>
 <script src="js/recommend.js"></script>
 <script src="js/app.js"></script>

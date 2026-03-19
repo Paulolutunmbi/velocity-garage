@@ -13,7 +13,6 @@ const compareHead = document.getElementById("compare-head");
 const compareBody = document.getElementById("compare-body");
 
 let currentModalCarId = null;
-let carouselInterval = null;
 
 
 
@@ -112,6 +111,8 @@ function openCompareModal() {
 
 function updateCompareBar(){
 
+  if (!compareBar) return;
+
   if(compareCars.length === 0){
     compareBar.classList.add("hidden");
     compareBar.innerHTML="";
@@ -128,10 +129,10 @@ function updateCompareBar(){
       ${compareCars.map(c=>`<strong class="ml-3">${c.name}</strong>`).join("")}
     </div>
 
-    <button id="open-compare"
-    class="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
-    Open Comparison Table
-    </button>
+    <a href="compare.html"
+class="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
+Compare Now
+</a>
 
   </div>
   `;
@@ -206,6 +207,7 @@ function renderCars(list){
 
 
 
+if (container) {
 container.addEventListener("click",(e)=>{
 
   const button = e.target.closest("button[data-action]");
@@ -229,6 +231,7 @@ container.addEventListener("click",(e)=>{
   }
 
 });
+}
 
 
 
@@ -243,15 +246,22 @@ function openModal(id){
   document.getElementById("modal-desc").textContent = car.description;
 
   document.getElementById("modal-brand").textContent = car.brand;
-  document.getElementById("modal-maker").textContent = car.maker;
+  const makerEl = document.getElementById("modal-maker");
+  if (makerEl) makerEl.textContent = car.maker;
   document.getElementById("modal-country").textContent = car.country;
   document.getElementById("modal-hp").textContent = car.hp;
   document.getElementById("modal-speed").textContent = car.speed;
   document.getElementById("modal-price").textContent = car.price;
 
   const modalCarousel = document.getElementById("modal-carousel");
-  modalCarousel.innerHTML =
-  `<img src="${car.image}" class="w-full h-full object-cover">`;
+  const modalImage = document.getElementById("modal-image");
+
+  if (modalCarousel) {
+    modalCarousel.innerHTML =
+    `<img src="${car.image}" class="w-full h-full object-cover">`;
+  } else if (modalImage) {
+    modalImage.src = car.image;
+  }
 
   updateModalButtons();
 
@@ -261,15 +271,19 @@ function openModal(id){
 
 
 
-modalClose.addEventListener("click",()=>{
-  modal.classList.add("hidden");
-});
-
-modal.addEventListener("click", (event) => {
-  if (event.target === modal) {
+if (modalClose && modal) {
+  modalClose.addEventListener("click",()=>{
     modal.classList.add("hidden");
-  }
-});
+  });
+}
+
+if (modal) {
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+}
 
 if (modalCompareBtn) {
   modalCompareBtn.addEventListener("click", () => {
@@ -317,67 +331,131 @@ document.addEventListener("keydown", (event) => {
 
 function rerenderVisibleCars(){
 
-  const value = document
-  .getElementById("search")
-  .value
-  .trim()
-  .toLowerCase();
+  const searchValue = document
+    .getElementById("search")
+    .value
+    .trim()
+    .toLowerCase();
 
-  const words = value.split(" ").filter(Boolean);
+  const selectedBrand = document.getElementById("filter-brand").value;
+  const sortBy = document.getElementById("sort-by").value;
+  const region = document.getElementById("filter-region").value;
 
-  const filtered = cars.filter(car => {
-
-    if(words.length === 0) return true;
+  let filtered = cars.filter(car => {
 
     const text = `${car.name} ${car.brand}`.toLowerCase();
 
-    return words.every(word => text.includes(word));
+    // SEARCH
+    const matchesSearch = searchValue === "" || text.includes(searchValue);
+
+    // FILTER
+    const matchesBrand = selectedBrand === "" || car.brand === selectedBrand;
+    const matchesRegion = region === "" || car.country.includes(region);
+    return matchesSearch && matchesBrand && matchesRegion;
 
   });
 
-  renderCars(filtered);
+  // SORTING
+  if(sortBy === "price-low"){
+    filtered.sort((a,b) =>
+      parseInt(a.price.replace(/[^0-9]/g,"")) -
+      parseInt(b.price.replace(/[^0-9]/g,""))
+    );
+  }
 
+  if(sortBy === "price-high"){
+    filtered.sort((a,b) =>
+      parseInt(b.price.replace(/[^0-9]/g,"")) -
+      parseInt(a.price.replace(/[^0-9]/g,""))
+    );
+  }
+
+  if(sortBy === "speed"){
+    filtered.sort((a,b) =>
+      parseInt(b.speed) - parseInt(a.speed)
+    );
+  }
+
+  if(sortBy === "hp"){
+    filtered.sort((a,b) =>
+      parseInt(b.hp) - parseInt(a.hp)
+    );
+  }
+
+  renderCars(filtered);
+}
+
+function populateBrandFilter(){
+
+  const brandSelect = document.getElementById("filter-brand");
+
+  const brands = [...new Set(cars.map(car => car.brand))];
+
+  brands.sort();
+
+  brands.forEach(brand => {
+
+    const option = document.createElement("option");
+    option.value = brand;
+    option.textContent = brand;
+
+    brandSelect.appendChild(option);
+
+  });
+
+}
+
+const searchInput = document.getElementById("search");
+if (searchInput) {
+  searchInput.addEventListener("input", rerenderVisibleCars);
 }
 
 
 
-document
-.getElementById("search")
-.addEventListener("input",rerenderVisibleCars);
+const aiRunBtn = document.getElementById("ai-run");
+if (aiRunBtn) {
+  aiRunBtn.addEventListener("click", recommendCar);
+}
 
-
-
-document
-.getElementById("ai-run")
-.addEventListener("click",recommendCar);
-
-document
-  .getElementById("scroll-recommendation")
-  .addEventListener("click", () => {
-
-    document
-      .getElementById("recommendation-section")
-      .scrollIntoView({ behavior: "smooth" });
-
-});
+const scrollRecommendationBtn = document.getElementById("scroll-recommendation");
+if (scrollRecommendationBtn) {
+  scrollRecommendationBtn.addEventListener("click", () => {
+    const recommendationSection = document.getElementById("recommendation-section");
+    if (recommendationSection) {
+      recommendationSection.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+}
 const backToTopBtn = document.getElementById("back-to-top");
+document
+.getElementById("filter-brand")
+.addEventListener("change", rerenderVisibleCars);
 
-window.addEventListener("scroll", () => {
+document
+.getElementById("sort-by")
+.addEventListener("change", rerenderVisibleCars);
+document
+.getElementById("filter-region")
+.addEventListener("change", rerenderVisibleCars);
+if (backToTopBtn) {
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.classList.remove("hidden");
+    } else {
+      backToTopBtn.classList.add("hidden");
+    }
+  });
 
-  if (window.scrollY > 300) {
-    backToTopBtn.classList.remove("hidden");
-  } else {
-    backToTopBtn.classList.add("hidden");
-  }
-
-});
-
-backToTopBtn.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
 loadCompareCars();
-renderCars(cars);
-updateCompareBar();
+populateBrandFilter();
 if(document.getElementById("favorites-container")){
   renderFavorites();
 }
+if (container) {
+  renderCars(cars);
+}
+updateCompareBar();

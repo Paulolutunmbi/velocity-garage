@@ -521,3 +521,6 @@ const cars = [
     image: "assets/images/bmwm1.jpg",
   },
 ];
+function getCarById(id){
+  return cars.find(car => car.id === id);
+}

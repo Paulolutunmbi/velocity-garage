@@ -1,66 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Compare Cars</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-
+<title>Compare | Velocity Garage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>
-tailwind.config = { darkMode: 'class' }
+tailwind.config = {
+  darkMode: "class"
+};
 </script>
-
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: "Plus Jakarta Sans", sans-serif; }
+  .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+</style>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+<body class="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_10%,rgba(255,91,46,0.16),transparent_30%),radial-gradient(circle_at_85%_70%,rgba(59,130,246,0.13),transparent_32%)]"></div>
 
-<!-- NAV -->
-
-<nav class="bg-black text-white p-4">
-  <div class="max-w-7xl mx-auto flex justify-between">
-
-    <h1 class="text-xl font-bold">Compare Cars</h1>
-
-    <a href="index.html" class="bg-gray-700 px-4 py-2 rounded">
-      ← Back
-    </a>
-
+<header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80 sm:px-6">
+  <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
+    <a href="index.html" class="title-font text-3xl leading-none text-orange-500">Velocity Garage</a>
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Home</a>
+      <a href="favorites.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Favorites</a>
+      <button id="theme-toggle" class="rounded-full border border-slate-300 p-2 transition hover:border-orange-500 dark:border-slate-700" aria-label="Toggle theme">
+        <svg id="theme-icon" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"></svg>
+      </button>
+    </div>
   </div>
-</nav>
+</header>
 
-<!-- CONTENT -->
+<main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="title-font text-5xl leading-none">Comparison Deck</h1>
+    <div class="flex flex-wrap gap-2">
+      <button id="clear-compare" class="rounded-full border border-red-300/70 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-500 hover:text-white dark:text-red-300">Clear Compare</button>
+      <a href="index.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Add More Cars</a>
+    </div>
+  </div>
 
-<main class="max-w-7xl mx-auto p-6">
+  <div id="compare-empty" class="hidden rounded-2xl border border-dashed border-slate-400/50 bg-white/70 p-8 text-center text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
+    No cars selected for comparison. Add up to 3 cars from the home page.
+  </div>
 
-<h2 class="text-3xl font-bold mb-6">Comparison Table</h2>
+  <div id="compare-cards" class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"></div>
 
-<div id="compare-empty" class="text-gray-500">
-  No cars selected for comparison.
-</div>
-
-<div id="compare-table-wrapper" class="hidden overflow-x-auto">
-
-<table class="w-full border text-center">
-
-<thead>
-<tr id="compare-head">
-  <th class="border p-2">Spec</th>
-</tr>
-</thead>
-
-<tbody id="compare-body"></tbody>
-
-</table>
-
-</div>
-
+  <div id="compare-table-wrapper" class="hidden overflow-x-auto rounded-2xl border border-slate-200/80 bg-white/80 p-3 shadow-xl dark:border-slate-700 dark:bg-slate-900/70">
+    <table class="min-w-full text-left text-sm">
+      <thead>
+        <tr id="compare-head"></tr>
+      </thead>
+      <tbody id="compare-body"></tbody>
+    </table>
+  </div>
 </main>
 
-<script src="js/cars.js"></script>
-<script src="js/compare.js"></script>
-<script src="js/compare-page.js"></script>
+<div id="notification" class="pointer-events-none fixed right-4 top-20 z-50 hidden rounded-xl bg-slate-950/95 px-4 py-2 text-sm font-semibold text-white shadow-xl dark:bg-slate-100 dark:text-slate-900"></div>
 
+<script src="js/cars.js"></script>
+<script src="js/compare-page.js"></script>
 </body>
 </html>

@@ -1,109 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Favorites - Velocity Garage</title>
-
+<title>Favorites | Velocity Garage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: "class"
+};
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: "Plus Jakarta Sans", sans-serif; }
+  .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+</style>
 </head>
 
-<body class="bg-gray-50 text-gray-900">
+<body class="min-h-screen bg-slate-100 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_85%_10%,rgba(255,91,46,0.15),transparent_28%),radial-gradient(circle_at_10%_80%,rgba(59,130,246,0.14),transparent_30%)]"></div>
 
-<!-- NAVBAR -->
-<nav class="bg-black text-white p-4 shadow-md">
-<div class="max-w-7xl mx-auto flex justify-between items-center">
+<header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80 sm:px-6">
+  <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
+    <a href="index.html" class="title-font text-3xl leading-none text-orange-500">Velocity Garage</a>
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Home</a>
+      <a href="compare.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Compare</a>
+      <button id="theme-toggle" class="rounded-full border border-slate-300 p-2 transition hover:border-orange-500 dark:border-slate-700" aria-label="Toggle theme">
+        <svg id="theme-icon" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
-<h1 class="text-2xl font-bold cursor-pointer" onclick="goHome()">
-Velocity Garage
-</h1>
+<main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <h1 class="title-font text-5xl leading-none">Your Favorite Cars</h1>
+    <div id="compare-quick-info" class="rounded-full border border-blue-300/40 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300"></div>
+  </div>
 
-<button
-onclick="goHome()"
-class="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
-Back to Home
-</button>
+  <div id="favorites-empty" class="hidden rounded-2xl border border-dashed border-slate-400/50 bg-white/70 p-8 text-center text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
+    No favorites yet. Explore the fleet and add cars you love.
+    <div class="mt-4">
+      <a href="index.html" class="rounded-full bg-orange-500 px-4 py-2 font-semibold text-white transition hover:brightness-110">Browse Cars</a>
+    </div>
+  </div>
 
-</div>
-</nav>
+  <div id="favorites-container" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"></div>
+</main>
 
-<!-- PAGE TITLE -->
-<section class="max-w-7xl mx-auto p-6">
-
-<h2 class="text-3xl font-bold mb-6">
-Your Favorite Cars
-</h2>
-
-<div
-id="favorites-container"
-class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-</div>
-
-<p
-id="favorites-empty"
-class="text-gray-500 text-center mt-10 hidden">
-You haven't added any favorite cars yet.
-</p>
-
-</section>
-
-<!-- CAR MODAL (same modal you already use) -->
-<div
-id="modal"
-class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">
-
-<div class="bg-white max-w-3xl w-full rounded-xl shadow-lg relative p-6">
-
-<button
-id="modal-close"
-class="absolute top-4 right-4 text-red-600 text-3xl font-bold">
-×
-</button>
-
-<h2 id="modal-name" class="text-2xl font-bold mb-4"></h2>
-
-<div id="modal-carousel" class="relative h-64 mb-4 overflow-hidden rounded"></div>
-
-<div class="grid grid-cols-2 gap-4 text-sm mb-4">
-
-<p><strong>Brand:</strong> <span id="modal-brand"></span></p>
-<p><strong>Maker:</strong> <span id="modal-maker"></span></p>
-<p><strong>Country:</strong> <span id="modal-country"></span></p>
-<p><strong>Horsepower:</strong> <span id="modal-hp"></span></p>
-<p><strong>Top Speed:</strong> <span id="modal-speed"></span></p>
-<p><strong>Price:</strong> <span id="modal-price"></span></p>
-
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/65 p-4">
+  <div class="w-full max-w-3xl rounded-3xl border border-white/10 bg-slate-950 p-5 text-slate-100 shadow-2xl">
+    <div class="mb-4 flex items-start justify-between gap-4">
+      <h2 id="modal-name" class="title-font text-5xl leading-none"></h2>
+      <button id="modal-close" class="rounded-full border border-slate-700 p-2 text-slate-300 transition hover:border-orange-500 hover:text-white" aria-label="Close details">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="modal-carousel" class="mb-4 h-64 overflow-hidden rounded-2xl"></div>
+    <div class="mb-4 grid grid-cols-2 gap-3 text-sm text-slate-200 sm:grid-cols-3">
+      <p><span class="text-slate-400">Brand:</span> <span id="modal-brand"></span></p>
+      <p><span class="text-slate-400">Maker:</span> <span id="modal-maker"></span></p>
+      <p><span class="text-slate-400">Country:</span> <span id="modal-country"></span></p>
+      <p><span class="text-slate-400">Horsepower:</span> <span id="modal-hp"></span></p>
+      <p><span class="text-slate-400">Top Speed:</span> <span id="modal-speed"></span></p>
+      <p><span class="text-slate-400">Price:</span> <span id="modal-price"></span></p>
+    </div>
+    <p id="modal-desc" class="text-sm text-slate-300"></p>
+    <div class="mt-5 flex flex-wrap gap-3">
+      <button id="modal-compare" class="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"></button>
+      <button id="modal-fav" class="rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-black transition hover:bg-amber-300"></button>
+    </div>
+  </div>
 </div>
 
-<p id="modal-desc" class="text-gray-700 mb-4"></p>
-
-<div class="flex gap-4">
-
-<button id="modal-compare"
-class="bg-blue-500 text-white px-4 py-2 rounded">
-Add to Compare
-</button>
-
-<button id="modal-fav"
-class="bg-yellow-400 px-4 py-2 rounded">
-Remove from Favorites
-</button>
-
-</div>
-
-</div>
-</div>
+<div id="notification" class="pointer-events-none fixed right-4 top-20 z-50 hidden rounded-xl bg-slate-950/95 px-4 py-2 text-sm font-semibold text-white shadow-xl dark:bg-slate-100 dark:text-slate-900"></div>
 
 <script src="js/cars.js"></script>
-<script src="js/favorites.js"></script>
-<script src="js/compare.js"></script>
-<script src="js/app.js"></script>
-
-<script id="g4o9s8">
-function goHome(){
-  window.location.href = "index.html";
-}
-</script>
-
+<script src="js/favorites-page.js"></script>
 </body>
 </html>

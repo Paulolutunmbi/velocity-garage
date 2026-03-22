@@ -11,7 +11,11 @@ const cars = [
     hp: "770 hp",
     description:
       "A flagship V12 supercar famous for its aggressive, stealth-fighter styling and iconic scissor doors.",
-    image: "assets/images/aventador.jpg",
+    images: [
+      "https://preview.thenewsmarket.com/Previews/lamb/StillAssets/1920x1440/518305.jpg",
+      "https://www.kimballstock.com/pix/car/p/06/lam-01-rk0798-01p.jpg",
+      "https://preview.thenewsmarket.com/Previews/lamb/StillAssets/1920x1440/518294.jpg"
+    ],
   },
   {
     id: 2,
@@ -24,7 +28,11 @@ const cars = [
     hp: "661 hp",
     description:
       "An incredibly responsive mid-engine V8 supercar that delivers blistering track performance and daily usability.",
-    image: "assets/images/ferrari488.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0736-01p.jpg",
+      "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0722-01p.jpg",
+      "https://autodesignmagazine.com/wp-content/uploads/2016/01/2015091501_Ferrari-488GTB.jpg"
+    ],
   },
   {
     id: 3,
@@ -37,7 +45,11 @@ const cars = [
     hp: "710 hp",
     description:
       "A lightweight, aerodynamically advanced supercar offering mind-bending acceleration and a high-tech carbon fiber chassis.",
-    image: "assets/images/mclaren720s.jpg",
+    images: [
+      "https://hips.hearstapps.com/autoweek/assets/s3fs-public/7506-mclaren720s-07-studio.jpg",
+      "https://hips.hearstapps.com/autoweek/assets/s3fs-public/7508-mclaren720s-09-studio.jpg",
+      "https://hips.hearstapps.com/autoweek/assets/s3fs-public/7523-mclaren720s-24-studio.jpg"
+    ],
   },
   {
     id: 4,
@@ -50,7 +62,11 @@ const cars = [
     hp: "1500 hp",
     description:
       "An ultra-luxury hypercar powered by a quad-turbo W16 engine, renowned for its record-breaking top speeds.",
-    image: "assets/images/chiron.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/01/aut-02-rk0165-01p.jpg",
+      "https://picolio.auto123.com/auto123tv/images/xc/ri/BUgatti-Chiron_003.JPG?scaledown=980",
+      "https://privacy-proxy-server.usercentrics.eu/video/youtube/EX0AIOfKRBg-poster-image"
+    ],
   },
   {
     id: 5,
@@ -63,7 +79,11 @@ const cars = [
     hp: "640 hp",
     description:
       "The ultimate everyday supercar, combining all-wheel-drive traction with explosive twin-turbo flat-six power.",
-    image: "assets/images/911turbos.jpg",
+    images: [
+      "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/image_1290x726/dam/US-local/Press-Releases/2025/9-SEPTEMBER/New-911-Turbo-S/Images/Coupe/PCNA25_1117_fine.jpg/jcr:content/PCNA25_1117_fine.jpg",
+      "http://press.porsche.com/prod/presse_pag/PressResources.nsf/jumppage/modelle-911-911_turbo_s/$file/2020_911_turbo_s.jpg",
+      "https://cdn.dealeraccelerate.com/studio/1/28/3274/x/2019-porsche-911-turbo-s"
+    ],
   },
   {
     id: 6,
@@ -76,7 +96,11 @@ const cars = [
     hp: "602 hp",
     description:
       "A refined, naturally aspirated V10 supercar sharing its core DNA with the Lamborghini Huracán.",
-    image: "assets/images/r8v10.jpg",
+    images: [
+      "https://www.netcarshow.com/Audi-R8_V10_plus-2013-Front_Three-Quarter.dda750a0.jpg",
+      "https://www.netcarshow.com/Audi-R8_Coupe_V10_plus_selection_24h-2016-Rear.cc3a1530.jpg",
+      "https://www.netcarshow.com/Audi-R8_V10_plus-2013-Side_Profile.dda750a0.jpg"
+    ],
   },
   {
     id: 7,
@@ -89,7 +113,11 @@ const cars = [
     hp: "720 hp",
     description:
       "A track-focused monster featuring a flat-plane crank V8 and extreme aerodynamics derived from GT3 racing.",
-    image: "assets/images/amggt_black.jpg",
+    images: [
+      "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Front.395da237.jpg",
+      "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Rear_Three-Quarter.395da237.jpg",
+      "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Side_Profile.395da237.jpg"
+    ],
   },
   {
     id: 8,
@@ -102,7 +130,11 @@ const cars = [
     hp: "617 hp",
     description:
       "A heavily muscular grand tourer that crosses into supercar territory with its ferocious twin-turbo V8 and all-wheel drive.",
-    image: "assets/images/m8competition.jpg",
+    images: [
+      "https://www.netcarshow.com/BMW-M8_Competition_Coupe-2020-Front.0616f34d.jpg",
+      "https://mediacloud.carbuyer.co.uk/image/private/s--y-iJbnqW--/f_auto,t_content-image-full-mobile@1/v1579647100/carbuyer/2019/06/p90348780_highres.jpg",
+      "https://mediapool.bmwgroup.com/cache/P9/201905/P90348774/P90348774-the-all-new-bmw-m8-competition-coupe-06-2019-600px.jpg"
+    ],
   },
   {
     id: 9,
@@ -115,7 +147,11 @@ const cars = [
     hp: "715 hp",
     description:
       "A stunningly beautiful V12 grand tourer offering massive torque and classic British elegance.",
-    image: "assets/images/dbs.jpg",
+    images: [
+      "https://www.dimmitt.com/blogs/3093/wp-content/uploads/2018/07/aston-martin-DBS-Superleggera-tampa-dimmitt-front.jpg",
+      "https://c8.alamy.com/comp/T19AN6/2019-aston-martin-dbs-superleggera-rear-34-view-wales-uk-T19AN6.jpg",
+      "https://www.topgear.com/sites/default/files/images/news-article/carousel/2018/06/67314f1aeebb1417f399a92ac973c81d/dbs_superleggera_11.jpg"
+    ],
   },
   {
     id: 10,
@@ -128,7 +164,11 @@ const cars = [
     hp: "730 hp",
     description:
       "A rolling piece of art featuring active aerodynamics and a bespoke AMG-sourced twin-turbo V12.",
-    image: "assets/images/huayra.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1348-01p.jpg",
+      "https://www.pagani.com/app/uploads/2025/02/4-Huayra-R-Evo-Roadster_Rear.jpg",
+      "https://www.pagani.com/app/uploads/2025/02/2-Huayra-R-Evo-Roadster_Side.jpg"
+    ],
   },
   {
     id: 11,
@@ -141,7 +181,11 @@ const cars = [
     hp: "1600 hp",
     description:
       "A track-oriented megacar engineered to break the 300 mph barrier, featuring a revolutionary 9-speed 'Light Speed Transmission'.",
-    image: "assets/images/jesko.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/06/aut-55-rk0017-01p.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/koenigsegg-jesko-105-1551799593.jpg",
+      "https://mb.cision.com/Public/18511/2881595/8c16995c0fb16b3a_org.jpg"
+    ],
   },
   {
     id: 12,
@@ -154,7 +198,11 @@ const cars = [
     hp: "660 hp",
     description:
       "A Le Mans-winning race car for the road, built almost entirely of carbon fiber with a potent EcoBoost V6.",
-    image: "assets/images/fordgt.jpg",
+    images: [
+      "https://www.netcarshow.com/Ford-GT-2017-Front.973f35eb.jpg",
+      "https://www.automotiverhythms.com/wp-content/uploads/2022/02/2022-Ford-GT-Alan-Mann-Heritage-Edition_05.jpg",
+      "https://fordauthority.com/wp-content/uploads/2020/08/2021-Ford-GT-Studio-Series-Exterior-004-side-profile-gray-with-bronze-accents.jpg"
+    ],
   },
   {
     id: 13,
@@ -167,7 +215,11 @@ const cars = [
     hp: "670 hp",
     description:
       "An American supercar disruptor packing a high-revving, flat-plane crank naturally aspirated V8.",
-    image: "assets/images/corvettez06.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/07/vet-01-bk0056-01p.jpg",
+      "https://news.chevroletarabia.com/dld/content/dam/Media/images/US/Vehicles/Chevrolet/Cars/Corvette_Z06/2023/Product/Vehicle/2023-chevrolet-corvette-z06-203.jpg",
+      "https://www.corvetteblogger.com/images/content/uploads/2021/10/100421_9.jpg"
+    ],
   },
   {
     id: 14,
@@ -180,7 +232,11 @@ const cars = [
     hp: "600 hp",
     description:
       "The pinnacle of the 'Godzilla' lineage, featuring GT3 race-derived turbochargers and carbon fiber bodywork.",
-    image: "assets/images/gtrnismo.jpg",
+    images: [
+      "https://wieck-nissanao-production.s3.us-west-1.amazonaws.com/releaseInlineImages/a5c21ac282c8cec160193ee5f450fe8a911959cb",
+      "https://images.caricos.com/n/nissan/2020_nissan_gt-r_nismo/images/2560x1440/2020_nissan_gt-r_nismo_22_2560x1440.jpg",
+      "https://www.thespeedjournal.com/wp-content/uploads/2019/04/2020-nissan-gt-r-nismo-3.jpg"
+    ],
   },
   {
     id: 15,
@@ -193,7 +249,11 @@ const cars = [
     hp: "600 hp",
     description:
       "A highly advanced hybrid supercar utilizing three electric motors and a twin-turbo V6 for precise torque vectoring.",
-    image: "assets/images/nsx.jpg",
+    images: [
+      "https://wieck-honda-production.s3.us-west-1.amazonaws.com/releaseInlineImages/1bfea2109e3f1463bce8984cf31384d13fd121e9",
+      "https://hips.hearstapps.com/hmg-prod/images/2022-acura-nsx-type-s-5-1628792635.jpg?crop=1xw:0.84375xh;center,top&resize=1200:*",
+      "https://www.motorcarclassics.com/galleria_images/1075/1075_p24_l.jpg"
+    ],
   },
   {
     id: 16,
@@ -206,7 +266,11 @@ const cars = [
     hp: "552 hp",
     description:
       "A legendary, limited-production supercar famous for having one of the best-sounding V10 engines in automotive history.",
-    image: "assets/images/lfa.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1187-01p.jpg",
+      "https://s.yimg.com/ny/api/res/1.2/6g_s0xGGm6f5rEeIKWHI1A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTM2MA--/https://media.zenfs.com/en/car_and_driver_581/668ce12bcc8e6a0feb47de0487722766",
+      "https://d2j6dbq0eux0bg.cloudfront.net/images/69857544/3911373703.jpg"
+    ],
   },
   {
     id: 17,
@@ -219,7 +283,11 @@ const cars = [
     hp: "621 hp",
     description:
       "Maserati’s return to mid-engine supercars, powered by the innovative twin-spark 'Nettuno' V6 engine.",
-    image: "assets/images/mc20.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/07/aut-57-rk0002-01p.jpg",
+      "https://car-images.bauersecure.com/wp-images/4158/480x270/mc20_058.jpg",
+      "https://car-images.bauersecure.com/wp-images/4158/480x270/mc20_060.jpg"
+    ],
   },
   {
     id: 18,
@@ -232,7 +300,11 @@ const cars = [
     hp: "710 hp",
     description:
       "A tribute to Ferrari's most powerful V8 engine, wrapping staggering performance in beautiful, aerodynamic bodywork.",
-    image: "assets/images/f8tributo.jpg",
+    images: [
+      "https://hips.hearstapps.com/mtg-prod/65c7fe20def97800082b12ed/ferrari-f8-tributo-front-three-quarters.jpg",
+      "https://hips.hearstapps.com/mtg-prod/65c7fe2058b907000853e329/ferrari-f8-tributo-rear-three-quarters.jpg",
+      "https://www.netcarshow.com/Ferrari-F8_Tributo-2020-Side_Profile.b8f33097.jpg"
+    ],
   },
   {
     id: 19,
@@ -245,7 +317,11 @@ const cars = [
     hp: "631 hp",
     description:
       "A track-focused variant of the Huracán featuring the innovative 'ALA' active aerodynamics system.",
-    image: "assets/images/huracan.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/07/lam-01-rk0982-01p.jpg",
+      "https://www.netcarshow.com/Lamborghini-Huracan_Performante-2018-Rear.3ce24414.jpg",
+      "https://www.netcarshow.com/Lamborghini-Huracan_Performante-2018-Side_Profile.3ce24414.jpg"
+    ],
   },
   {
     id: 20,
@@ -258,7 +334,11 @@ const cars = [
     hp: "789 hp",
     description:
       "An unapologetic track car designed solely to set lap records, prioritizing downforce and weight reduction above all else.",
-    image: "assets/images/senna.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/04/aut-28-rk0245-01p.jpg",
+      "https://www.netcarshow.com/McLaren-Senna-2019-Rear_Three-Quarter.8f50278b.jpg",
+      "https://www.netcarshow.com/McLaren-Senna-2019-1280-c73de03d86e1d2456fd55056f2a8c96c5c.jpg"
+    ],
   },
   {
     id: 21,
@@ -271,7 +351,11 @@ const cars = [
     hp: "1200 hp",
     description:
       "The hypercar that defined an era, holding the production car top speed record for years with its massive W16 engine.",
-    image: "assets/images/veyron.jpg",
+    images: [
+      "https://www.shutterstock.com/image-photo/dorlisheim-france-septembre-13th-2025-600nw-2680197625.jpg",
+      "https://bugatti-newsroom.imgix.net/1aea0a52-c9e3-41d6-a718-38542fd55361/studio_004_1",
+      "https://mycarheaven.com/wp-content/smush-webp/2010/08/Bugatti-Veyron-16_4-Super-Sport-side-view.jpg.webp"
+    ],
   },
   {
     id: 22,
@@ -284,7 +368,11 @@ const cars = [
     hp: "887 hp",
     description:
       "A member of the 'Holy Trinity', this hybrid hypercar proved that electrification could push track performance to new limits.",
-    image: "assets/images/918spyder.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/07/por-04-bk0019-01p.jpg",
+      "https://www.kimballstock.com/pix/car/p/07/por-04-bk0021-01p.jpg",
+      "https://porschepictures.flowcenter.de/pmdb/thumbnail.cgi?id=271487&w=700&h=467&crop=0&public=1&cs=ddbf1637b82a79b3"
+    ],
   },
   {
     id: 23,
@@ -297,7 +385,11 @@ const cars = [
     hp: "950 hp",
     description:
       "Ferrari's ultimate expression of performance, combining a screaming V12 with a KERS hybrid system for instant response.",
-    image: "assets/images/laferrari.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/06/aut-50-rk0860-01p.jpg",
+      "https://www.kimballstock.com/pix/car/p/06/aut-50-rk0864-01p.jpg",
+      "https://www.netcarshow.com/Ferrari-LaFerrari-2014-Side_Profile.9e071781.jpg"
+    ],
   },
   {
     id: 24,
@@ -310,7 +402,11 @@ const cars = [
     hp: "903 hp",
     description:
       "A hybrid hypercar known for its aggressive power delivery and striking, aerodynamic shrink-wrapped design.",
-    image: "assets/images/p1.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/04/aut-28-rk0201-01p.jpg",
+      "https://www.kimballstock.com/pix/car/p/04/aut-28-rk0203-01p.jpg",
+      "https://www.netcarshow.com/McLaren-P1_Concept-2012-Side_Profile.64893dd9.jpg"
+    ],
   },
   {
     id: 25,
@@ -323,7 +419,11 @@ const cars = [
     hp: "808 hp",
     description:
       "Lamborghini's first hybrid, utilizing supercapacitors instead of standard batteries to assist its mighty V12.",
-    image: "assets/images/sian.jpg",
+    images: [
+      "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/news/2019/09_02_Sian/Sian_cover_new.jpg",
+      "https://i.ytimg.com/vi/2X5wQ1K4Hv4/maxresdefault.jpg",
+      "https://audiclubna.org/wp-content/uploads/2025/03/2021_lamborghini_sian-fkp-37_T7__9315-67406-scaled.jpg.webp"
+    ],
   },
   {
     id: 26,
@@ -336,7 +436,11 @@ const cars = [
     hp: "1140 hp",
     description:
       "An F1 car for the road designed by Adrian Newey, featuring extreme underbody aerodynamics and a Cosworth V12.",
-    image: "assets/images/valkyrie.jpg",
+    images: [
+      "https://www.topgear.com/sites/default/files/2023/03/4-Aston-Martin-Valkyrie.jpg",
+      "https://media.astonmartin.com/wp-content/uploads/2024/10/85ea0b421d020274c7e9fe3d279a7566-m.jpg.webp",
+      "https://media.astonmartin.com/wp-content/uploads/2024/10/ac67fcdd09fb7712c5cab5df037dae58-m.jpg.webp"
+    ],
   },
   {
     id: 27,
@@ -349,7 +453,11 @@ const cars = [
     hp: "543 hp",
     description:
       "A stripped-down, lightweight track special that represents the absolute peak of BMW's M4 performance capabilities.",
-    image: "assets/images/m4csl.jpg",
+    images: [
+      "https://mediapool.bmwgroup.com/download/edown/pressclub/publicq?dokNo=P90463173&attachment=1&actEvent=image",
+      "https://www.autospies.com/images/users/Agent009/images/BMW%20M4%20CSL_Studio%20(7).jpg",
+      "https://www.topgear.com/sites/default/files/2022/05/BMW_AK_M4_CSL_Seite.jpeg"
+    ],
   },
   {
     id: 28,
@@ -362,7 +470,11 @@ const cars = [
     hp: "369 hp",
     description:
       "A futuristic plug-in hybrid sports car featuring dramatic butterfly doors and an incredibly efficient carbon-fiber tub.",
-    image: "assets/images/bmwi8.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1291-01p.jpg",
+      "https://www.netcarshow.com/BMW-i8-2015-Rear.207b44eb.jpg",
+      "https://static01.nyt.com/images/2014/05/11/automobiles/autoreviews/11bmw-i8-slides-slide-XKG5/11bmw-i8-slides-slide-XKG5-superJumbo.jpg"
+    ],
   },
   {
     id: 29,
@@ -375,7 +487,11 @@ const cars = [
     hp: "740 hp",
     description:
       "A track-only, carbon-titanium masterpiece built entirely without racing restrictions, known for its deafening V12 exhaust note.",
-    image: "assets/images/zondar.jpg",
+    images: [
+      "https://www.netcarshow.com/Pagani-Zonda_R-2008-Front.cac33b10.jpg",
+      "https://www.topgear.com/sites/default/files/news/image/2015/04/Large%20Image_6751.jpg",
+      "https://www.netcarshow.com/Pagani-Zonda_R-2008-Side_Profile.cac33b10.jpg"
+    ],
   },
   {
     id: 30,
@@ -388,7 +504,11 @@ const cars = [
     hp: "1160 hp",
     description:
       "The car that officially claimed the world's fastest production car title in 2017 on a closed highway in Nevada.",
-    image: "assets/images/agerars.jpg",
+    images: [
+      "https://cdn.motor1.com/images/mgl/x4jP6/s1/koenigsegg-agera-rs-refinement-front.jpg",
+      "https://www.netcarshow.com/Koenigsegg-Agera-2011-Rear.098257f5.jpg",
+      "https://www.netcarshow.com/Koenigsegg-Agera_RS-2015-Side_Profile.ef813664.jpg"
+    ],
   },
   {
     id: 31,
@@ -401,7 +521,11 @@ const cars = [
     hp: "1817 hp",
     description:
       "An American hypercar built from the ground up to achieve one goal: absolute top speed dominance.",
-    image: "assets/images/venomf5.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/06/aut-54-rk0001-01p.jpg",
+      "https://www.hennesseymedia.com/wp-content/uploads/2025/08/Hennessey-Unveils-1-of-1-Manual-Venom-F5-with-2031-HP-Low-4.jpg",
+      "https://www.hennesseymedia.com/wp-content/uploads/2025/03/Hennessey-Venom-F5-Configurator-Clash-High-3.jpg"
+    ],
   },
   {
     id: 32,
@@ -414,7 +538,11 @@ const cars = [
     hp: "1750 hp",
     description:
       "An incredibly aerodynamic American hypercar engineered specifically to push the boundaries of straight-line speed records.",
-    image: "assets/images/tuatara.jpg",
+    images: [
+      "https://cdn.motor1.com/images/mgl/LBV8L/s1/2020-scc-tuatara.jpg",
+      "https://cdn.motor1.com/images/mgl/EMq0o/s3/2020-scc-tuatara.jpg",
+      "https://cdn.motor1.com/images/mgl/yKeX7/s1/2020-scc-tuatara.jpg"
+    ],
   },
   {
     id: 33,
@@ -427,7 +555,11 @@ const cars = [
     hp: "1914 hp",
     description:
       "An all-electric hypercar that has completely rewritten the rulebook on acceleration, quarter-mile times, and EV performance.",
-    image: "assets/images/nevera.jpg",
+    images: [
+      "https://cdn.motor1.com/images/mgl/7ZQl81/s1/rimac-nevera-15th-anniversary-edition-front-3-4.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/rimac-nevera-r-113-66be2b36ab91a.jpg?crop=0.611xw:0.916xh;0.196xw,0.0240xh&resize=1200:*",
+      "https://assets.rimac-newsroom.com/1723561686-nevera_r_press_scketch_facundo_elias.jpg"
+    ],
   },
   {
     id: 34,
@@ -440,7 +572,11 @@ const cars = [
     hp: "2000 hp",
     description:
       "A striking, fully electric hypercar featuring massive venturi tunnels through the bodywork to generate extreme downforce.",
-    image: "assets/images/evija.jpg",
+    images: [
+      "https://media.gq-magazine.co.uk/photos/5d776fec60bd0400088c1eb8/16:9/w_2560%2Cc_limit/20190910-Lotus-04.jpg",
+      "https://www.netcarshow.com/Lotus-Evija-2020-Rear.534d5115.jpg",
+      "https://www.netcarshow.com/Lotus-Evija-2020-Side_Profile.534d5115.jpg"
+    ],
   },
   {
     id: 35,
@@ -453,7 +589,11 @@ const cars = [
     hp: "986 hp",
     description:
       "Ferrari's first plug-in hybrid production car, utilizing three electric motors and a V8 to achieve near-hypercar performance.",
-    image: "assets/images/sf90.jpg",
+    images: [
+      "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0769-01p.jpg",
+      "https://www.netcarshow.com/Ferrari-SF90_Stradale-2020-Rear.984e72ec.jpg",
+      "https://media.whichcar.com.au/uploads/2025/02/e1202921-ferrari-sf90-stradale-2019-547136.jpg"
+    ],
   },
   {
     id: 36,
@@ -466,7 +606,11 @@ const cars = [
     hp: "1001 hp",
     description:
       "The successor to the Aventador, maintaining the legendary V12 but pairing it with a cutting-edge plug-in hybrid system.",
-    image: "assets/images/revuelto.jpg",
+    images: [
+      "https://hips.hearstapps.com/hmg-prod/images/2024-lamborghini-revuelto-122-641a1d50c5283.jpg",
+      "https://static0.hotcarsimages.com/wordpress/wp-content/uploads/2023/03/lamborghini-revuelto-rear-quarter-view-studio.jpg?q=50&fit=crop&w=825&dpr=1.5",
+      "https://media.autoexpress.co.uk/image/private/s--NkcOopni--/f_auto,t_content-image-full-mobile@1/v1680081685/autoexpress/2023/03/Lamborghini%20Revuelto%202023-3.jpg"
+    ],
   },
   {
     id: 37,
@@ -479,7 +623,11 @@ const cars = [
     hp: "583 hp",
     description:
       "A modern homage to the classic 300SL, featuring iconic gullwing doors and a naturally aspirated 6.2L V8.",
-    image: "assets/images/slsamg.jpg",
+    images: [
+      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG_Roadster-2012-Front.edc1a13a.jpg",
+      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG-2011-Rear.0701db24.jpg",
+      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG-2011-Side_Profile.0701db24.jpg"
+    ],
   },
   {
     id: 38,
@@ -492,7 +640,11 @@ const cars = [
     hp: "605 hp",
     description:
       "An analog masterpiece featuring a V10 engine originally developed for Le Mans and a notoriously tricky manual transmission.",
-    image: "assets/images/carreragt.jpg",
+    images: [
+      "https://www.netcarshow.com/Porsche-Carrera_GT-2004-Front.31c2ed97.jpg",
+      "https://c8.alamy.com/comp/ADTD5E/porsche-carrera-gt-rear-view-ADTD5E.jpg",
+      "https://www.stuttcars.com/wp-content/uploads/2021/07/227226_Side_Profile_Web.jpeg"
+    ],
   },
   {
     id: 39,
@@ -505,7 +657,11 @@ const cars = [
     hp: "671 hp",
     description:
       "McLaren's next-generation hybrid supercar, combining a twin-turbo V6 with an electric motor for seamless power delivery.",
-    image: "assets/images/artura.jpg",
+    images: [
+      "https://smart-motoring.com/wp-content/uploads/2026/02/mclaren-artura-mcl39-3-4-front-studio.webp",
+      "https://smart-motoring.com/wp-content/uploads/2026/02/mclaren-artura-mcl39-rear-3-4-1024x576.webp",
+      "https://www.netcarshow.com/McLaren-Artura-2022-Side_Profile.c402c9d9.jpg"
+    ],
   },
   {
     id: 40,
@@ -518,9 +674,37 @@ const cars = [
     hp: "273 hp",
     description:
       "BMW's original mid-engine supercar from the late 1970s, designed by Giugiaro and built for homologation racing.",
-    image: "assets/images/bmwm1.jpg",
+    images: [
+      "https://www.netcarshow.com/BMW-M1-1979-Front.48ea016a.jpg",
+      "https://www.netcarshow.com/BMW-M1-1979-Rear.48ea016a.jpg",
+      "https://www.bmw-m.com/content/dam/bmw/marketBMW_M/www_bmw-m_com/topics/magazine-article-pool/2018/bmw-m1-portraet/bmw-m1-gallery-2.jpg"
+    ],
   },
 ];
+
+const CAR_IMAGE_FALLBACK = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><rect width="1200" height="675" fill="#111827"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#f8fafc" font-family="Arial, sans-serif" font-size="48">Velocity Garage</text></svg>'
+)}`;
+
+function normalizeImageUrl(url) {
+  if (typeof url !== "string") return "";
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("http://")) {
+    return `https://${trimmed.slice(7)}`;
+  }
+  return trimmed;
+}
+
+for (const car of cars) {
+  const normalizedImages = Array.isArray(car.images)
+    ? car.images.map(normalizeImageUrl).filter(Boolean)
+    : [];
+
+  car.images = normalizedImages;
+  car.image = normalizeImageUrl(car.image) || normalizedImages[0] || CAR_IMAGE_FALLBACK;
+}
+
 function getCarById(id){
   return cars.find(car => car.id === id);
 }

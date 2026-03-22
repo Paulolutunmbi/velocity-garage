@@ -136,7 +136,7 @@ function carCardTemplate(car, delayMs) {
   return `
     <article class="card-reveal rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-700/60 dark:bg-slate-900/70" style="animation-delay:${delayMs}ms">
       <div class="relative overflow-hidden rounded-xl">
-        <img src="${car.image}" alt="${car.name}" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
+        <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
         <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">${car.brand}</span>
       </div>
       <h3 class="mt-4 text-xl font-bold">${car.name}</h3>
@@ -208,7 +208,7 @@ function openModal(id) {
   elements.modalSpeed.textContent = car.speed;
   elements.modalPrice.textContent = car.price;
   elements.modalDesc.textContent = car.description;
-  elements.modalCarousel.innerHTML = `<img src="${car.image}" alt="${car.name}" class="h-full w-full object-cover">`;
+  elements.modalCarousel.innerHTML = `<img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover">`;
 
   updateModalButtons();
   elements.modal.classList.remove("hidden");
@@ -292,7 +292,7 @@ function recommendationCard(car) {
       <p class="mb-2 text-xs font-bold uppercase tracking-wide text-orange-500">AI recommendation</p>
       <h3 class="text-2xl font-bold">${car.name}</h3>
       <div class="mt-4 grid gap-4 md:grid-cols-[1fr_1.2fr]">
-        <img src="${car.image}" alt="${car.name}" class="h-56 w-full rounded-xl object-cover">
+        <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full rounded-xl object-cover">
         <div>
           <p class="text-sm text-slate-600 dark:text-slate-300">${car.description}</p>
           <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
@@ -349,7 +349,7 @@ function initCarousel() {
       (car) => `
       <article class="min-w-full p-1">
         <div class="overflow-hidden rounded-2xl">
-          <img src="${car.image}" alt="${car.name}" class="h-72 w-full object-cover md:h-80">
+          <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-72 w-full object-cover md:h-80">
         </div>
         <div class="absolute bottom-10 left-4 rounded-xl bg-black/70 px-3 py-2 text-white">
           <p class="text-xs uppercase tracking-wide text-orange-300">${car.brand}</p>

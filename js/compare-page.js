@@ -56,7 +56,7 @@ function renderCompareCards(selectedCars) {
         <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-48 w-full rounded-xl object-cover">
         <h3 class="mt-3 text-lg font-bold">${car.name}</h3>
         <p class="text-sm text-slate-600 dark:text-slate-300">${car.brand} • ${car.country}</p>
-        <button data-action="remove" data-id="${car.id}" class="mt-3 rounded-lg bg-red-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-600">
+        <button data-action="remove" data-id="${car.id}" class="mt-3 rounded-lg bg-amber-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-amber-800 active:scale-[0.98]">
           Remove
         </button>
       </article>

@@ -7,6 +7,9 @@ const state = {
   favorites: new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]")),
   compare: new Set(JSON.parse(localStorage.getItem(COMPARE_KEY) || "[]")),
   currentModalCarId: null,
+  modalCarouselImages: [],
+  modalCarouselIndex: 0,
+  modalCarouselTimer: null,
   carouselIndex: 0,
   carouselTimer: null,
 };
@@ -20,6 +23,10 @@ const elements = {
   modalClose: document.getElementById("modal-close"),
   modalName: document.getElementById("modal-name"),
   modalCarousel: document.getElementById("modal-carousel"),
+  modalCarouselTrack: document.getElementById("modal-carousel-track"),
+  modalCarouselDots: document.getElementById("modal-carousel-dots"),
+  modalCarouselPrev: document.getElementById("modal-carousel-prev"),
+  modalCarouselNext: document.getElementById("modal-carousel-next"),
   modalBrand: document.getElementById("modal-brand"),
   modalMaker: document.getElementById("modal-maker"),
   modalCountry: document.getElementById("modal-country"),
@@ -51,6 +58,10 @@ const elements = {
   carouselPrev: document.getElementById("carousel-prev"),
   carouselNext: document.getElementById("carousel-next"),
 };
+
+const BUTTON_PRIMARY = "rounded-lg bg-amber-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-amber-800 active:scale-[0.98]";
+const BUTTON_SECONDARY = "rounded-lg bg-amber-700/20 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-700/35 active:scale-[0.98] dark:text-amber-200";
+const BUTTON_ACTIVE = "rounded-lg bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-200 active:scale-[0.98] dark:bg-amber-500/30 dark:text-amber-100 dark:hover:bg-amber-500/45";
 
 function persistSets() {
   localStorage.setItem(FAVORITES_KEY, JSON.stringify([...state.favorites]));
@@ -146,9 +157,9 @@ function carCardTemplate(car, delayMs) {
         <p class="rounded-lg bg-slate-100 p-2 text-center dark:bg-slate-800">${car.price}</p>
       </div>
       <div class="mt-4 flex flex-wrap gap-2">
-        <button data-action="details" data-id="${car.id}" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-black dark:bg-slate-100 dark:text-slate-900">Details</button>
-        <button data-action="compare" data-id="${car.id}" class="rounded-lg px-3 py-2 text-xs font-semibold transition ${isCompare ? "bg-slate-300 text-slate-900 dark:bg-slate-700 dark:text-slate-100" : "bg-blue-500 text-white hover:bg-blue-600"}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-        <button data-action="favorite" data-id="${car.id}" class="rounded-lg px-3 py-2 text-xs font-semibold transition ${isFav ? "bg-slate-300 text-slate-900 dark:bg-slate-700 dark:text-slate-100" : "bg-amber-400 text-black hover:bg-amber-300"}">${isFav ? "Unfavorite" : "Favorite"}</button>
+        <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
+        <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
+        <button data-action="favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
       </div>
     </article>
   `;
@@ -195,6 +206,79 @@ function populateBrandFilter() {
   }
 }
 
+function getModalImages(car) {
+  const images = Array.isArray(car.images) ? car.images.filter(Boolean) : [];
+  if (images.length) return images;
+  return [car.image || CAR_IMAGE_FALLBACK];
+}
+
+function stopModalCarouselTimer() {
+  if (state.modalCarouselTimer) {
+    clearInterval(state.modalCarouselTimer);
+    state.modalCarouselTimer = null;
+  }
+}
+
+function setModalCarouselSlide(index) {
+  const count = state.modalCarouselImages.length;
+  if (!count || !elements.modalCarouselTrack) return;
+
+  state.modalCarouselIndex = (index + count) % count;
+  elements.modalCarouselTrack.style.transform = `translateX(-${state.modalCarouselIndex * 100}%)`;
+
+  if (elements.modalCarouselDots) {
+    const dots = [...elements.modalCarouselDots.querySelectorAll("button[data-modal-dot]")];
+    dots.forEach((dot, dotIndex) => {
+      dot.classList.toggle("w-6", dotIndex === state.modalCarouselIndex);
+      dot.classList.toggle("bg-amber-500", dotIndex === state.modalCarouselIndex);
+      dot.classList.toggle("bg-white/70", dotIndex !== state.modalCarouselIndex);
+    });
+  }
+}
+
+function shiftModalCarousel(step) {
+  setModalCarouselSlide(state.modalCarouselIndex + step);
+}
+
+function startModalCarouselTimer() {
+  stopModalCarouselTimer();
+  if (state.modalCarouselImages.length <= 1) return;
+  state.modalCarouselTimer = setInterval(() => {
+    shiftModalCarousel(1);
+  }, 3800);
+}
+
+function renderModalCarousel(car) {
+  if (!elements.modalCarouselTrack || !elements.modalCarouselDots || !elements.modalCarouselPrev || !elements.modalCarouselNext) return;
+
+  state.modalCarouselImages = getModalImages(car);
+  state.modalCarouselIndex = 0;
+
+  elements.modalCarouselTrack.innerHTML = state.modalCarouselImages
+    .map(
+      (imageUrl, imageIndex) => `
+      <div class="min-w-full">
+        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-64 w-full object-cover">
+      </div>`
+    )
+    .join("");
+
+  elements.modalCarouselDots.innerHTML = state.modalCarouselImages
+    .map(
+      (_, imageIndex) =>
+        `<button data-modal-dot="${imageIndex}" class="h-2.5 w-2.5 rounded-full bg-white/70 transition" aria-label="Show car image ${imageIndex + 1}"></button>`
+    )
+    .join("");
+
+  const showControls = state.modalCarouselImages.length > 1;
+  elements.modalCarouselPrev.classList.toggle("hidden", !showControls);
+  elements.modalCarouselNext.classList.toggle("hidden", !showControls);
+  elements.modalCarouselDots.classList.toggle("hidden", !showControls);
+
+  setModalCarouselSlide(0);
+  startModalCarouselTimer();
+}
+
 function openModal(id) {
   const car = getCarById(id);
   if (!car || !elements.modal) return;
@@ -208,7 +292,9 @@ function openModal(id) {
   elements.modalSpeed.textContent = car.speed;
   elements.modalPrice.textContent = car.price;
   elements.modalDesc.textContent = car.description;
-  elements.modalCarousel.innerHTML = `<img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover">`;
+
+  // Rebuild carousel from the selected car to avoid stale modal image state.
+  renderModalCarousel(car);
 
   updateModalButtons();
   elements.modal.classList.remove("hidden");
@@ -217,6 +303,9 @@ function openModal(id) {
 
 function closeModal() {
   if (!elements.modal) return;
+  stopModalCarouselTimer();
+  state.modalCarouselImages = [];
+  state.modalCarouselIndex = 0;
   elements.modal.classList.add("hidden");
   elements.modal.classList.remove("flex");
 }
@@ -229,10 +318,10 @@ function updateModalButtons() {
   const isCompare = state.compare.has(state.currentModalCarId);
 
   elements.modalCompare.textContent = isCompare ? "Remove from Compare" : "Add to Compare";
-  elements.modalCompare.className = `rounded-xl px-4 py-2 text-sm font-semibold text-white transition ${isCompare ? "bg-slate-500 hover:bg-slate-600" : "bg-blue-500 hover:bg-blue-600"}`;
+  elements.modalCompare.className = `rounded-xl px-4 py-2 text-sm font-semibold transition ${isCompare ? "bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-500/25 dark:text-amber-100 dark:hover:bg-amber-500/40" : "bg-amber-700 text-white hover:bg-amber-800"} active:scale-[0.98]`;
 
   elements.modalFav.textContent = isFav ? "Remove from Favorites" : "Add to Favorites";
-  elements.modalFav.className = `rounded-xl px-4 py-2 text-sm font-semibold transition ${isFav ? "bg-slate-300 text-black hover:bg-slate-200" : "bg-amber-400 text-black hover:bg-amber-300"}`;
+  elements.modalFav.className = `rounded-xl px-4 py-2 text-sm font-semibold transition ${isFav ? "bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-500/25 dark:text-amber-100 dark:hover:bg-amber-500/40" : "bg-amber-700/25 text-amber-100 hover:bg-amber-700/40"} active:scale-[0.98]`;
 }
 
 function runRecommendation() {
@@ -302,9 +391,9 @@ function recommendationCard(car) {
             <p class="rounded-lg bg-slate-100 p-2 dark:bg-slate-800">Top speed: ${car.speed}</p>
           </div>
           <div class="mt-4 flex flex-wrap gap-2">
-            <button data-action="rec-compare" data-id="${car.id}" class="rounded-lg px-3 py-2 text-xs font-semibold transition ${isCompare ? "bg-slate-300 text-slate-900 dark:bg-slate-700 dark:text-slate-100" : "bg-blue-500 text-white hover:bg-blue-600"}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-            <button data-action="rec-favorite" data-id="${car.id}" class="rounded-lg px-3 py-2 text-xs font-semibold transition ${isFav ? "bg-slate-300 text-slate-900 dark:bg-slate-700 dark:text-slate-100" : "bg-amber-400 text-black hover:bg-amber-300"}">${isFav ? "Unfavorite" : "Favorite"}</button>
-            <button data-action="rec-details" data-id="${car.id}" class="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-black dark:bg-slate-100 dark:text-slate-900">Open Details</button>
+            <button data-action="rec-compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
+            <button data-action="rec-favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
+            <button data-action="rec-details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Open Details</button>
           </div>
         </div>
       </div>
@@ -438,8 +527,34 @@ function initEvents() {
     if (event.target === elements.modal) closeModal();
   });
 
+  elements.modalCarouselPrev?.addEventListener("click", () => {
+    shiftModalCarousel(-1);
+    startModalCarouselTimer();
+  });
+
+  elements.modalCarouselNext?.addEventListener("click", () => {
+    shiftModalCarousel(1);
+    startModalCarouselTimer();
+  });
+
+  elements.modalCarouselDots?.addEventListener("click", (event) => {
+    const dot = event.target.closest("button[data-modal-dot]");
+    if (!dot) return;
+    setModalCarouselSlide(Number(dot.dataset.modalDot));
+    startModalCarouselTimer();
+  });
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeModal();
+    if (elements.modal?.classList.contains("hidden")) return;
+    if (event.key === "ArrowLeft") {
+      shiftModalCarousel(-1);
+      startModalCarouselTimer();
+    }
+    if (event.key === "ArrowRight") {
+      shiftModalCarousel(1);
+      startModalCarouselTimer();
+    }
   });
 
   [elements.searchInput, elements.brandFilter, elements.regionFilter].forEach((input) => {

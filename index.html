@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Velocity Garage | Supercar Showroom</title>
 <meta name="description" content="Velocity Garage is a premium supercar showroom with favorites, comparison, and AI-based recommendations.">
+<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,6 +17,8 @@ tailwind.config = {
       colors: {
         vg: {
           orange: "#ff5b2e",
+          gold: "#b88a44",
+          goldDark: "#946d36",
           charcoal: "#13161d",
           steel: "#1f2430"
         }
@@ -66,12 +69,16 @@ tailwind.config = {
 
 <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/70 glass dark:border-slate-800/70 dark:bg-slate-950/70">
   <nav class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-    <a href="index.html" class="title-font text-3xl leading-none text-vg-orange">Velocity Garage</a>
+    <a href="index.html" class="group flex items-center gap-3">
+      <img src="assets/images/default-monochrome-black.svg" alt="Velocity Garage logo" class="h-7 w-7 dark:hidden">
+      <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="hidden h-7 w-7 dark:block">
+      <span class="text-lg font-extrabold uppercase tracking-[0.26em] text-slate-900 transition-colors group-hover:text-vg-gold dark:text-slate-100">Velocity Garage</span>
+    </a>
     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-      <button id="scroll-catalog" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black dark:bg-slate-100 dark:text-slate-900">Explore Fleet</button>
-      <button id="scroll-recommendation" class="rounded-full border border-vg-orange/30 bg-vg-orange/10 px-4 py-2 text-sm font-semibold text-vg-orange transition hover:bg-vg-orange hover:text-white">AI Match</button>
-      <a href="favorites.html" class="rounded-full border border-slate-300/80 px-4 py-2 text-sm font-semibold transition hover:border-vg-orange hover:text-vg-orange dark:border-slate-700">Favorites</a>
-      <a href="compare.html" class="rounded-full border border-slate-300/80 px-4 py-2 text-sm font-semibold transition hover:border-vg-orange hover:text-vg-orange dark:border-slate-700">Compare</a>
+      <button id="scroll-catalog" class="rounded-full bg-vg-gold px-4 py-2 text-sm font-semibold text-white transition hover:bg-vg-goldDark active:scale-[0.98] active:bg-[#7a592c]">Explore Fleet</button>
+      <button id="scroll-recommendation" class="rounded-full border border-vg-gold/40 bg-vg-gold/15 px-4 py-2 text-sm font-semibold text-vg-goldDark transition hover:bg-vg-gold hover:text-white active:scale-[0.98] dark:text-amber-300">AI Match</button>
+      <a href="favorites.html" class="rounded-full border border-vg-gold/40 bg-white/70 px-4 py-2 text-sm font-semibold text-vg-goldDark transition hover:bg-vg-gold hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300 dark:hover:text-white">Favorites</a>
+      <a href="compare.html" class="rounded-full border border-vg-gold/40 bg-white/70 px-4 py-2 text-sm font-semibold text-vg-goldDark transition hover:bg-vg-gold hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300 dark:hover:text-white">Compare</a>
       <button id="theme-toggle" class="rounded-full border border-slate-300/80 p-2 transition hover:border-vg-orange dark:border-slate-700" aria-label="Toggle theme">
         <svg id="theme-icon" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"></svg>
       </button>
@@ -81,22 +88,21 @@ tailwind.config = {
 
 <section class="mx-auto grid w-full max-w-7xl gap-6 px-4 pb-6 pt-10 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:items-center">
   <div class="space-y-5">
-    <p class="inline-flex items-center rounded-full border border-vg-orange/30 bg-vg-orange/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-vg-orange">Portfolio-ready supercar marketplace</p>
     <h1 class="title-font text-6xl leading-none text-slate-900 dark:text-white sm:text-7xl">Drive The Extraordinary</h1>
     <p class="max-w-xl text-sm text-slate-600 dark:text-slate-300 sm:text-base">Discover elite machines, shortlist your dream garage, compare specs side-by-side, and let our recommendation engine suggest the best supercar for your style.</p>
     <div class="flex flex-wrap gap-3">
-      <button id="hero-scroll" class="rounded-full bg-vg-orange px-5 py-2.5 text-sm font-bold text-white shadow-glow transition hover:scale-105">Shop Cars</button>
-      <a href="compare.html" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-bold transition hover:border-vg-orange hover:text-vg-orange dark:border-slate-700">Open Compare Page</a>
+      <button id="hero-scroll" class="rounded-full bg-vg-gold px-5 py-2.5 text-sm font-bold text-white shadow-glow transition hover:bg-vg-goldDark active:scale-[0.98]">Shop Cars</button>
+      <a href="compare.html" class="rounded-full border border-vg-gold/40 bg-white/75 px-5 py-2.5 text-sm font-bold text-vg-goldDark transition hover:bg-vg-gold hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300">Open Compare Page</a>
     </div>
   </div>
 
   <div class="relative overflow-hidden rounded-3xl border border-white/30 bg-white/50 p-3 shadow-2xl glass dark:border-slate-700/50 dark:bg-slate-900/45">
     <div id="hero-carousel" class="relative">
       <div id="carousel-track" class="flex transition-transform duration-500 ease-out"></div>
-      <button id="carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white transition hover:bg-black" aria-label="Previous slide">
+      <button id="carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-vg-gold/85 p-2 text-white transition hover:bg-vg-goldDark active:scale-95" aria-label="Previous slide">
         <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <button id="carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 p-2 text-white transition hover:bg-black" aria-label="Next slide">
+      <button id="carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-vg-gold/85 p-2 text-white transition hover:bg-vg-goldDark active:scale-95" aria-label="Next slide">
         <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </button>
       <div id="carousel-dots" class="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
@@ -130,7 +136,7 @@ tailwind.config = {
       <option value="speed">Top Speed</option>
       <option value="hp">Horsepower</option>
     </select>
-    <button id="clear-filters" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold transition hover:border-vg-orange hover:text-vg-orange dark:border-slate-700">Reset Filters</button>
+    <button id="clear-filters" class="rounded-xl border border-vg-gold/40 bg-white px-3 py-2 text-sm font-semibold text-vg-goldDark transition hover:bg-vg-gold hover:text-white active:scale-[0.98] dark:bg-slate-900 dark:text-amber-300">Reset Filters</button>
   </div>
 
   <div id="cars-container" class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3"></div>
@@ -159,7 +165,7 @@ tailwind.config = {
         <option value="usa">USA</option>
         <option value="asia">Asia</option>
       </select>
-      <button id="ai-run" class="rounded-xl bg-vg-orange px-4 py-2 text-sm font-bold text-white transition hover:brightness-110">Generate Match</button>
+      <button id="ai-run" class="rounded-xl bg-vg-gold px-4 py-2 text-sm font-bold text-white transition hover:bg-vg-goldDark active:scale-[0.98] active:bg-[#7a592c]">Generate Match</button>
     </div>
     <div id="ai-result" class="mt-5"></div>
   </div>
@@ -173,7 +179,16 @@ tailwind.config = {
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    <div id="modal-carousel" class="mb-4 h-64 overflow-hidden rounded-2xl"></div>
+    <div id="modal-carousel" class="relative mb-4 overflow-hidden rounded-2xl bg-slate-900/50">
+      <div id="modal-carousel-track" class="flex h-64 transition-transform duration-500 ease-out"></div>
+      <button id="modal-carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-vg-gold/90 p-2 text-white transition hover:bg-vg-goldDark active:scale-95" aria-label="Previous car image">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button id="modal-carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-vg-gold/90 p-2 text-white transition hover:bg-vg-goldDark active:scale-95" aria-label="Next car image">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div id="modal-carousel-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
+    </div>
     <div class="mb-4 grid grid-cols-2 gap-3 text-sm text-slate-200 sm:grid-cols-3">
       <p><span class="text-slate-400">Brand:</span> <span id="modal-brand"></span></p>
       <p><span class="text-slate-400">Maker:</span> <span id="modal-maker"></span></p>
@@ -184,8 +199,8 @@ tailwind.config = {
     </div>
     <p id="modal-desc" class="text-sm text-slate-300"></p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <button id="modal-compare" class="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"></button>
-      <button id="modal-fav" class="rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-black transition hover:bg-amber-300"></button>
+      <button id="modal-compare" class="rounded-xl bg-vg-gold px-4 py-2 text-sm font-semibold text-white transition hover:bg-vg-goldDark active:scale-[0.98]"></button>
+      <button id="modal-fav" class="rounded-xl bg-vg-gold/20 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-vg-gold/35 active:scale-[0.98]"></button>
     </div>
   </div>
 </div>

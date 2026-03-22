@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compare | Velocity Garage</title>
+<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,10 +25,14 @@ tailwind.config = {
 
 <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80 sm:px-6">
   <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
-    <a href="index.html" class="title-font text-3xl leading-none text-orange-500">Velocity Garage</a>
+    <a href="index.html" class="group flex items-center gap-3">
+      <img src="assets/images/default-monochrome-black.svg" alt="Velocity Garage logo" class="h-7 w-7 dark:hidden">
+      <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="hidden h-7 w-7 dark:block">
+      <span class="text-lg font-extrabold uppercase tracking-[0.26em] text-slate-900 transition-colors group-hover:text-amber-700 dark:text-slate-100 dark:group-hover:text-amber-300">Velocity Garage</span>
+    </a>
     <div class="flex items-center gap-2">
-      <a href="index.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Home</a>
-      <a href="favorites.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Favorites</a>
+      <a href="index.html" class="rounded-full border border-amber-700/40 bg-white/75 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-700 hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300">Home</a>
+      <a href="favorites.html" class="rounded-full border border-amber-700/40 bg-white/75 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-700 hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300">Favorites</a>
       <button id="theme-toggle" class="rounded-full border border-slate-300 p-2 transition hover:border-orange-500 dark:border-slate-700" aria-label="Toggle theme">
         <svg id="theme-icon" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"></svg>
       </button>
@@ -39,8 +44,8 @@ tailwind.config = {
   <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
     <h1 class="title-font text-5xl leading-none">Comparison Deck</h1>
     <div class="flex flex-wrap gap-2">
-      <button id="clear-compare" class="rounded-full border border-red-300/70 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-500 hover:text-white dark:text-red-300">Clear Compare</button>
-      <a href="index.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Add More Cars</a>
+      <button id="clear-compare" class="rounded-full border border-amber-800/40 bg-amber-700/15 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-700 hover:text-white active:scale-[0.98] dark:text-amber-300">Clear Compare</button>
+      <a href="index.html" class="rounded-full border border-amber-700/40 bg-white/75 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-700 hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300">Add More Cars</a>
     </div>
   </div>
 

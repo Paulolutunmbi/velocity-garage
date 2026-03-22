@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Favorites | Velocity Garage</title>
+<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,10 +25,14 @@ tailwind.config = {
 
 <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/80 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/80 sm:px-6">
   <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
-    <a href="index.html" class="title-font text-3xl leading-none text-orange-500">Velocity Garage</a>
+    <a href="index.html" class="group flex items-center gap-3">
+      <img src="assets/images/default-monochrome-black.svg" alt="Velocity Garage logo" class="h-7 w-7 dark:hidden">
+      <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="hidden h-7 w-7 dark:block">
+      <span class="text-lg font-extrabold uppercase tracking-[0.26em] text-slate-900 transition-colors group-hover:text-amber-700 dark:text-slate-100 dark:group-hover:text-amber-300">Velocity Garage</span>
+    </a>
     <div class="flex items-center gap-2">
-      <a href="index.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Home</a>
-      <a href="compare.html" class="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold transition hover:border-orange-500 hover:text-orange-500 dark:border-slate-700">Compare</a>
+      <a href="index.html" class="rounded-full border border-amber-700/40 bg-white/75 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-700 hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300">Home</a>
+      <a href="compare.html" class="rounded-full border border-amber-700/40 bg-white/75 px-4 py-2 text-sm font-semibold text-amber-800 transition hover:bg-amber-700 hover:text-white active:scale-[0.98] dark:bg-slate-900/70 dark:text-amber-300">Compare</a>
       <button id="theme-toggle" class="rounded-full border border-slate-300 p-2 transition hover:border-orange-500 dark:border-slate-700" aria-label="Toggle theme">
         <svg id="theme-icon" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"></svg>
       </button>
@@ -44,7 +49,7 @@ tailwind.config = {
   <div id="favorites-empty" class="hidden rounded-2xl border border-dashed border-slate-400/50 bg-white/70 p-8 text-center text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
     No favorites yet. Explore the fleet and add cars you love.
     <div class="mt-4">
-      <a href="index.html" class="rounded-full bg-orange-500 px-4 py-2 font-semibold text-white transition hover:brightness-110">Browse Cars</a>
+      <a href="index.html" class="rounded-full bg-amber-700 px-4 py-2 font-semibold text-white transition hover:bg-amber-800 active:scale-[0.98]">Browse Cars</a>
     </div>
   </div>
 
@@ -59,7 +64,16 @@ tailwind.config = {
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    <div id="modal-carousel" class="mb-4 h-64 overflow-hidden rounded-2xl"></div>
+    <div id="modal-carousel" class="relative mb-4 overflow-hidden rounded-2xl bg-slate-900/50">
+      <div id="modal-carousel-track" class="flex h-64 transition-transform duration-500 ease-out"></div>
+      <button id="modal-carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-amber-700/90 p-2 text-white transition hover:bg-amber-800 active:scale-95" aria-label="Previous car image">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button id="modal-carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-amber-700/90 p-2 text-white transition hover:bg-amber-800 active:scale-95" aria-label="Next car image">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div id="modal-carousel-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
+    </div>
     <div class="mb-4 grid grid-cols-2 gap-3 text-sm text-slate-200 sm:grid-cols-3">
       <p><span class="text-slate-400">Brand:</span> <span id="modal-brand"></span></p>
       <p><span class="text-slate-400">Maker:</span> <span id="modal-maker"></span></p>
@@ -70,8 +84,8 @@ tailwind.config = {
     </div>
     <p id="modal-desc" class="text-sm text-slate-300"></p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <button id="modal-compare" class="rounded-xl bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"></button>
-      <button id="modal-fav" class="rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-black transition hover:bg-amber-300"></button>
+      <button id="modal-compare" class="rounded-xl bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-800 active:scale-[0.98]"></button>
+      <button id="modal-fav" class="rounded-xl bg-amber-700/20 px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-700/35 active:scale-[0.98]"></button>
     </div>
   </div>
 </div>

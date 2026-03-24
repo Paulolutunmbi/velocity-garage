@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Velocity Garage</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Plus Jakarta Sans", sans-serif; }
+    .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-900 text-white">
+  <div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_80%_10%,rgba(255,91,46,0.16),transparent_30%),radial-gradient(circle_at_10%_80%,rgba(59,130,246,0.13),transparent_32%)]"></div>
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
+    <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <a href="index.html" class="flex items-center">
+        <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
+      </a>
+      <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
+        <a href="index.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
+        <a href="profile.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Profile</a>
+        <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-8">
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <h1 class="title-font text-5xl leading-none">Admin Dashboard</h1>
+      <span class="rounded-full border border-yellow-500/40 bg-yellow-500/15 px-4 py-1 text-xs font-semibold tracking-wide text-yellow-300">Admin Access Only</span>
+    </div>
+
+    <div id="admin-loading" class="rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-slate-200">Loading users...</div>
+    <div id="admin-error" class="hidden rounded-xl border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200"></div>
+    <div id="admin-empty" class="hidden rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-8 text-center text-sm text-slate-300">No users found in Firestore yet.</div>
+
+    <div class="mt-5 overflow-x-auto rounded-2xl border border-slate-700/80 bg-slate-900/80">
+      <table class="min-w-full text-left text-sm">
+        <thead class="border-b border-slate-700 bg-slate-950/70 text-slate-200">
+          <tr>
+            <th class="px-4 py-3 font-semibold">Photo</th>
+            <th class="px-4 py-3 font-semibold">Name</th>
+            <th class="px-4 py-3 font-semibold">Email</th>
+            <th class="px-4 py-3 font-semibold">Date Joined</th>
+          </tr>
+        </thead>
+        <tbody id="user-list-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module" src="js/admin-page.js"></script>
+</body>
+</html>

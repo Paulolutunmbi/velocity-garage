@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | Velocity Garage</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: "Plus Jakarta Sans", sans-serif; }
+    .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-900 text-white">
+  <div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_10%_8%,rgba(255,91,46,0.18),transparent_30%),radial-gradient(circle_at_90%_75%,rgba(59,130,246,0.13),transparent_32%)]"></div>
+
+  <header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
+    <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <a href="index.html" class="flex items-center">
+        <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
+      </a>
+      <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
+        <a href="index.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
+        <a href="favorites.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Favorites</a>
+        <a href="compare.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Compare</a>
+        <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 md:px-8">
+    <section class="rounded-3xl border border-slate-700/80 bg-slate-900/75 p-6 shadow-2xl sm:p-8">
+      <h1 class="title-font text-5xl leading-none">Driver Profile</h1>
+      <p class="mt-2 text-sm text-slate-300">Your account identity and account creation details.</p>
+
+      <div class="mt-6 grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
+        <img id="profile-photo" src="https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc" alt="Profile photo" class="h-24 w-24 rounded-full border border-slate-700 object-cover" referrerpolicy="no-referrer">
+        <div class="space-y-3">
+          <div class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3">
+            <p class="text-xs uppercase tracking-wider text-slate-400">Name</p>
+            <p id="profile-name" class="mt-1 text-lg font-semibold text-white">Loading...</p>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3">
+            <p class="text-xs uppercase tracking-wider text-slate-400">Email</p>
+            <p id="profile-email" class="mt-1 text-sm text-slate-200">Loading...</p>
+          </div>
+          <div class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3">
+            <p class="text-xs uppercase tracking-wider text-slate-400">Joined</p>
+            <p id="profile-joined" class="mt-1 text-sm text-slate-200">Loading...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/profile-page.js"></script>
+</body>
+</html>

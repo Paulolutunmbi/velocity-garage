@@ -1,6 +1,5 @@
 const FAVORITES_KEY = "vg-favorites";
 const COMPARE_KEY = "vg-compare";
-const THEME_KEY = "vg-theme";
 const MAX_COMPARE = 3;
 
 const state = {
@@ -51,17 +50,16 @@ const elements = {
   scrollRecommendation: document.getElementById("scroll-recommendation"),
   catalogSection: document.getElementById("catalog-section"),
   recommendationSection: document.getElementById("recommendation-section"),
-  themeToggle: document.getElementById("theme-toggle"),
-  themeIcon: document.getElementById("theme-icon"),
   carouselTrack: document.getElementById("carousel-track"),
   carouselDots: document.getElementById("carousel-dots"),
   carouselPrev: document.getElementById("carousel-prev"),
   carouselNext: document.getElementById("carousel-next"),
 };
 
-const BUTTON_PRIMARY = "rounded-lg bg-amber-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-amber-800 active:scale-[0.98]";
-const BUTTON_SECONDARY = "rounded-lg bg-amber-700/20 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-700/35 active:scale-[0.98] dark:text-amber-200";
-const BUTTON_ACTIVE = "rounded-lg bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-200 active:scale-[0.98] dark:bg-amber-500/30 dark:text-amber-100 dark:hover:bg-amber-500/45";
+// Shared action button treatment for all generated controls.
+const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
+const BUTTON_SECONDARY = BUTTON_PRIMARY;
+const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
 
 function persistSets() {
   localStorage.setItem(FAVORITES_KEY, JSON.stringify([...state.favorites]));
@@ -145,16 +143,16 @@ function carCardTemplate(car, delayMs) {
   const isCompare = state.compare.has(car.id);
 
   return `
-    <article class="card-reveal rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl dark:border-slate-700/60 dark:bg-slate-900/70" style="animation-delay:${delayMs}ms">
+    <article class="card-reveal rounded-2xl border border-slate-700/80 bg-slate-800/85 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl" style="animation-delay:${delayMs}ms">
       <div class="relative overflow-hidden rounded-xl">
         <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
         <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">${car.brand}</span>
       </div>
-      <h3 class="mt-4 text-xl font-bold">${car.name}</h3>
-      <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-slate-600 dark:text-slate-300">
-        <p class="rounded-lg bg-slate-100 p-2 text-center dark:bg-slate-800">${car.hp}</p>
-        <p class="rounded-lg bg-slate-100 p-2 text-center dark:bg-slate-800">${car.speed}</p>
-        <p class="rounded-lg bg-slate-100 p-2 text-center dark:bg-slate-800">${car.price}</p>
+      <h3 class="mt-4 text-xl font-bold text-white">${car.name}</h3>
+      <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-slate-100">
+        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.hp}</p>
+        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.speed}</p>
+        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.price}</p>
       </div>
       <div class="mt-4 flex flex-wrap gap-2">
         <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
@@ -187,7 +185,7 @@ function renderCatalog() {
   if (selectedSort === "hp") filtered.sort((a, b) => parseHp(b) - parseHp(a));
 
   if (!filtered.length) {
-    elements.carsContainer.innerHTML = "<p class='rounded-2xl border border-dashed border-slate-300 bg-white/70 p-6 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300'>No cars matched your filter. Try broadening your search.</p>";
+    elements.carsContainer.innerHTML = "<p class='rounded-2xl border border-dashed border-slate-600 bg-slate-900/70 p-6 text-sm text-slate-200'>No cars matched your filter. Try broadening your search.</p>";
     return;
   }
 
@@ -318,10 +316,10 @@ function updateModalButtons() {
   const isCompare = state.compare.has(state.currentModalCarId);
 
   elements.modalCompare.textContent = isCompare ? "Remove from Compare" : "Add to Compare";
-  elements.modalCompare.className = `rounded-xl px-4 py-2 text-sm font-semibold transition ${isCompare ? "bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-500/25 dark:text-amber-100 dark:hover:bg-amber-500/40" : "bg-amber-700 text-white hover:bg-amber-800"} active:scale-[0.98]`;
+  elements.modalCompare.className = `${isCompare ? BUTTON_ACTIVE : BUTTON_PRIMARY} text-sm`;
 
   elements.modalFav.textContent = isFav ? "Remove from Favorites" : "Add to Favorites";
-  elements.modalFav.className = `rounded-xl px-4 py-2 text-sm font-semibold transition ${isFav ? "bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-500/25 dark:text-amber-100 dark:hover:bg-amber-500/40" : "bg-amber-700/25 text-amber-100 hover:bg-amber-700/40"} active:scale-[0.98]`;
+  elements.modalFav.className = `${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY} text-sm`;
 }
 
 function runRecommendation() {
@@ -331,7 +329,7 @@ function runRecommendation() {
   const priority = elements.aiPriority.value;
   const region = elements.aiRegion.value;
 
-  elements.aiResult.innerHTML = "<div class='flex items-center gap-3 rounded-xl border border-slate-200 bg-white/70 p-4 text-sm dark:border-slate-700 dark:bg-slate-900/70'><div class='h-5 w-5 animate-spin rounded-full border-2 border-orange-400 border-t-transparent'></div>Analyzing your preferences...</div>";
+  elements.aiResult.innerHTML = "<div class='flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/70 p-4 text-sm text-slate-200'><div class='h-5 w-5 animate-spin rounded-full border-2 border-orange-400 border-t-transparent'></div>Analyzing your preferences...</div>";
 
   setTimeout(() => {
     let bestCar = null;
@@ -363,7 +361,7 @@ function runRecommendation() {
     }
 
     if (!bestCar) {
-      elements.aiResult.innerHTML = "<p class='rounded-xl border border-dashed border-slate-300 bg-white/70 p-4 text-sm dark:border-slate-700 dark:bg-slate-900/70'>No recommendation available right now.</p>";
+      elements.aiResult.innerHTML = "<p class='rounded-xl border border-dashed border-slate-600 bg-slate-900/70 p-4 text-sm text-slate-200'>No recommendation available right now.</p>";
       return;
     }
 
@@ -377,18 +375,18 @@ function recommendationCard(car) {
   const isCompare = state.compare.has(car.id);
 
   return `
-    <article class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900/70">
+    <article class="rounded-2xl border border-slate-700/80 bg-slate-800/85 p-5 shadow-xl">
       <p class="mb-2 text-xs font-bold uppercase tracking-wide text-orange-500">AI recommendation</p>
-      <h3 class="text-2xl font-bold">${car.name}</h3>
+      <h3 class="text-2xl font-bold text-white">${car.name}</h3>
       <div class="mt-4 grid gap-4 md:grid-cols-[1fr_1.2fr]">
         <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full rounded-xl object-cover">
         <div>
-          <p class="text-sm text-slate-600 dark:text-slate-300">${car.description}</p>
-          <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
-            <p class="rounded-lg bg-slate-100 p-2 dark:bg-slate-800">Brand: ${car.brand}</p>
-            <p class="rounded-lg bg-slate-100 p-2 dark:bg-slate-800">Country: ${car.country}</p>
-            <p class="rounded-lg bg-slate-100 p-2 dark:bg-slate-800">Power: ${car.hp}</p>
-            <p class="rounded-lg bg-slate-100 p-2 dark:bg-slate-800">Top speed: ${car.speed}</p>
+          <p class="text-sm text-slate-200">${car.description}</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-xs text-slate-100">
+            <p class="rounded-lg bg-slate-900 p-2">Brand: ${car.brand}</p>
+            <p class="rounded-lg bg-slate-900 p-2">Country: ${car.country}</p>
+            <p class="rounded-lg bg-slate-900 p-2">Power: ${car.hp}</p>
+            <p class="rounded-lg bg-slate-900 p-2">Top speed: ${car.speed}</p>
           </div>
           <div class="mt-4 flex flex-wrap gap-2">
             <button data-action="rec-compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
@@ -409,24 +407,6 @@ function renderRecommendationCardIfPresent() {
   if (car) {
     elements.aiResult.innerHTML = recommendationCard(car);
   }
-}
-
-function initTheme() {
-  const saved = localStorage.getItem(THEME_KEY);
-  const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const theme = saved || (preferDark ? "dark" : "light");
-
-  document.documentElement.classList.toggle("dark", theme === "dark");
-  localStorage.setItem(THEME_KEY, theme);
-  updateThemeIcon();
-}
-
-function updateThemeIcon() {
-  if (!elements.themeIcon) return;
-  const isDark = document.documentElement.classList.contains("dark");
-  elements.themeIcon.innerHTML = isDark
-    ? "<path d='M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0L16.95 7.05M7.05 16.95l-1.414 1.414'/><circle cx='12' cy='12' r='4'/>"
-    : "<path d='M21 12.79A9 9 0 1 1 11.21 3c0 .3 0 .6.05.9A7 7 0 0 0 20.1 12c.3.05.6.05.9.79z'/>";
 }
 
 function initCarousel() {
@@ -597,12 +577,6 @@ function initEvents() {
     });
   }
 
-  elements.themeToggle?.addEventListener("click", () => {
-    const isDark = document.documentElement.classList.toggle("dark");
-    localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
-    updateThemeIcon();
-  });
-
   window.addEventListener("storage", (event) => {
     if (event.key === FAVORITES_KEY) {
       state.favorites = new Set(JSON.parse(event.newValue || "[]"));
@@ -621,7 +595,6 @@ function initEvents() {
 }
 
 function init() {
-  initTheme();
   populateBrandFilter();
   renderCatalog();
   updateCompareBar();

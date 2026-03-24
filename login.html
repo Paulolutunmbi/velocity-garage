@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login | Velocity Garage</title>
+	<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		body { font-family: "Plus Jakarta Sans", sans-serif; }
+		.title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+	</style>
+</head>
+<body class="min-h-screen bg-gray-900 text-white">
+	<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_75%_12%,rgba(255,91,46,0.16),transparent_30%),radial-gradient(circle_at_15%_85%,rgba(59,130,246,0.13),transparent_32%)]"></div>
+
+	<header class="border-b border-slate-800/80 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
+		<div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
+			<a href="index.html" class="flex items-center">
+				<img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage" class="h-12 w-auto md:h-14">
+			</a>
+			<div class="flex flex-wrap gap-2">
+				<a href="index.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
+				<a href="signup.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Create Account</a>
+			</div>
+		</div>
+	</header>
+
+	<main class="mx-auto grid min-h-[calc(100vh-92px)] w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:px-8">
+		<section class="hidden md:flex flex-col justify-center items-center">
+			<div class="relative w-full h-96 rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-900">
+				<img id="login-carousel-img" src="https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=600&q=80" alt="Supercar" class="w-full h-full object-cover"/>
+				<div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+			</div>
+			<p class="mt-4 text-sm text-slate-300 text-center">Experience premium vehicles at your fingertips</p>
+		</section>
+
+		<section class="rounded-3xl border border-slate-700/80 bg-slate-900/80 p-6 shadow-2xl">
+			<h2 class="text-xl font-bold text-white">Login to your account</h2>
+			<p class="mt-1 text-sm text-slate-300">Use email or continue with a provider.</p>
+
+			<div id="login-error" class="mt-4 hidden rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+
+			<form id="login-form" class="mt-5 space-y-4" novalidate>
+				<div>
+					<label for="login-email" class="mb-1 block text-sm font-semibold text-slate-200">Email</label>
+					<input id="login-email" name="email" type="email" autocomplete="email" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="you@example.com">
+				</div>
+				<div>
+					<label for="login-password" class="mb-1 block text-sm font-semibold text-slate-200">Password</label>
+					<input id="login-password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="Enter your password">
+				</div>
+				<button id="login-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Login</button>
+			</form>
+
+			<div class="my-5 flex items-center gap-3">
+				<div class="h-px flex-1 bg-slate-700"></div>
+				<span class="text-xs uppercase tracking-widest text-slate-400">or</span>
+				<div class="h-px flex-1 bg-slate-700"></div>
+			</div>
+
+			<div class="grid gap-3 sm:grid-cols-2">
+				<button id="google-login-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Continue with Google</button>
+				<button id="github-login-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Continue with GitHub</button>
+			</div>
+
+			<p class="mt-5 text-sm text-slate-300">No account yet? <a href="signup.html" class="font-semibold text-yellow-400 hover:text-yellow-300">Sign up here</a>.</p>
+		</section>
+	</main>
+
+	<script type="module" src="js/login-page.js"></script>
+</body>
+</html>

@@ -420,7 +420,7 @@ const cars = [
     description:
       "Lamborghini's first hybrid, utilizing supercapacitors instead of standard batteries to assist its mighty V12.",
     images: [
-      "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/news/2019/09_02_Sian/Sian_cover_new.jpg",
+      "https://4kwallpapers.com/images/walls/thumbs_3t/14478.jpg",
       "https://i.ytimg.com/vi/2X5wQ1K4Hv4/maxresdefault.jpg",
       "https://audiclubna.org/wp-content/uploads/2025/03/2021_lamborghini_sian-fkp-37_T7__9315-67406-scaled.jpg.webp"
     ],
@@ -472,7 +472,7 @@ const cars = [
       "A futuristic plug-in hybrid sports car featuring dramatic butterfly doors and an incredibly efficient carbon-fiber tub.",
     images: [
       "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1291-01p.jpg",
-      "https://www.netcarshow.com/BMW-i8-2015-Rear.207b44eb.jpg",
+      "https://w0.peakpx.com/wallpaper/471/798/HD-wallpaper-bmw-i8-bmw-car-blue-sportscar-supercar-rear-view.jpg",
       "https://static01.nyt.com/images/2014/05/11/automobiles/autoreviews/11bmw-i8-slides-slide-XKG5/11bmw-i8-slides-slide-XKG5-superJumbo.jpg"
     ],
   },
@@ -488,9 +488,9 @@ const cars = [
     description:
       "A track-only, carbon-titanium masterpiece built entirely without racing restrictions, known for its deafening V12 exhaust note.",
     images: [
-      "https://www.netcarshow.com/Pagani-Zonda_R-2008-Front.cac33b10.jpg",
+      "https://www.kimballstock.com/pix/car/p/05/aut-44-bk0008-01p.jpg",
       "https://www.topgear.com/sites/default/files/news/image/2015/04/Large%20Image_6751.jpg",
-      "https://www.netcarshow.com/Pagani-Zonda_R-2008-Side_Profile.cac33b10.jpg"
+      "https://w0.peakpx.com/wallpaper/436/970/HD-wallpaper-pagani-zonda-r-side-car.jpg"
     ],
   },
   {
@@ -505,9 +505,9 @@ const cars = [
     description:
       "The car that officially claimed the world's fastest production car title in 2017 on a closed highway in Nevada.",
     images: [
-      "https://cdn.motor1.com/images/mgl/x4jP6/s1/koenigsegg-agera-rs-refinement-front.jpg",
-      "https://www.netcarshow.com/Koenigsegg-Agera-2011-Rear.098257f5.jpg",
-      "https://www.netcarshow.com/Koenigsegg-Agera_RS-2015-Side_Profile.ef813664.jpg"
+      "https://w0.peakpx.com/wallpaper/895/215/HD-wallpaper-koenigsegg-agera-rs1-2019-hypercar-front-view-white-sports-coupe-supercar-tuning-agera-white-agera-rs1-koenigsegg.jpg",
+      "https://c8.alamy.com/comp/P6J377/19-may-2018-london-england-close-up-detail-of-an-supercar-koenigsegg-agera-r-elegant-brake-light-in-london-motor-show-P6J377.jpg",
+      "https://w0.peakpx.com/wallpaper/32/591/HD-wallpaper-2017-koenigsegg-agera-rs-final-one-of-1-side-car.jpg"
     ],
   },
   {
@@ -574,8 +574,8 @@ const cars = [
       "A striking, fully electric hypercar featuring massive venturi tunnels through the bodywork to generate extreme downforce.",
     images: [
       "https://media.gq-magazine.co.uk/photos/5d776fec60bd0400088c1eb8/16:9/w_2560%2Cc_limit/20190910-Lotus-04.jpg",
-      "https://www.netcarshow.com/Lotus-Evija-2020-Rear.534d5115.jpg",
-      "https://www.netcarshow.com/Lotus-Evija-2020-Side_Profile.534d5115.jpg"
+      "https://realtimeuk.com/wp-content/uploads/2022/06/lotus_evija_big_sur_config_movie_showreel_launch_0620-scaled.jpg",
+      "https://hips.hearstapps.com/hmg-prod/images/2025-lotus-evija-124-6878019b99101.jpg?crop=0.821xw:0.617xh;0.179xw,0.186xh&resize=1200:*"
     ],
   },
   {
@@ -591,7 +591,7 @@ const cars = [
       "Ferrari's first plug-in hybrid production car, utilizing three electric motors and a V8 to achieve near-hypercar performance.",
     images: [
       "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0769-01p.jpg",
-      "https://www.netcarshow.com/Ferrari-SF90_Stradale-2020-Rear.984e72ec.jpg",
+      "https://media.gettyimages.com/id/1713180684/photo/ferrari-sf90-sports-car-rear-lights-detail.jpg?s=1024x1024&w=gi&k=20&c=g95UgcD4X_Y01tUZHNurd7eMlXtv2G2yZYvFsbWEG0A=",
       "https://media.whichcar.com.au/uploads/2025/02/e1202921-ferrari-sf90-stradale-2019-547136.jpg"
     ],
   },
@@ -624,9 +624,9 @@ const cars = [
     description:
       "A modern homage to the classic 300SL, featuring iconic gullwing doors and a naturally aspirated 6.2L V8.",
     images: [
-      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG_Roadster-2012-Front.edc1a13a.jpg",
-      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG-2011-Rear.0701db24.jpg",
-      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG-2011-Side_Profile.0701db24.jpg"
+      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG_Black_Series-2014-wallpaper.jpg",
+      "https://w0.peakpx.com/wallpaper/149/132/HD-wallpaper-mercedes-benz-sls-amg-silver-sports-coupe-supercar-rear-view-tuning-sls-silver-sls-german-sports-cars-mercedes-thumbnail.jpg",
+      "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG_Black_Series-2014-Side_Profile.c75a767d.jpg"
     ],
   },
   {
@@ -641,7 +641,7 @@ const cars = [
     description:
       "An analog masterpiece featuring a V10 engine originally developed for Le Mans and a notoriously tricky manual transmission.",
     images: [
-      "https://www.netcarshow.com/Porsche-Carrera_GT-2004-Front.31c2ed97.jpg",
+      "https://static0.carbuzzimages.com/wordpress/wp-content/uploads/2025/02/2005-porsche-carrera-gt-exterior-front-view-at-rm-sothebys.jpg",
       "https://c8.alamy.com/comp/ADTD5E/porsche-carrera-gt-rear-view-ADTD5E.jpg",
       "https://www.stuttcars.com/wp-content/uploads/2021/07/227226_Side_Profile_Web.jpeg"
     ],
@@ -660,7 +660,7 @@ const cars = [
     images: [
       "https://smart-motoring.com/wp-content/uploads/2026/02/mclaren-artura-mcl39-3-4-front-studio.webp",
       "https://smart-motoring.com/wp-content/uploads/2026/02/mclaren-artura-mcl39-rear-3-4-1024x576.webp",
-      "https://www.netcarshow.com/McLaren-Artura-2022-Side_Profile.c402c9d9.jpg"
+      "https://website-images.mclaren.com/5305/mclaren-artura-mcl39.jpg"
     ],
   },
   {
@@ -675,15 +675,15 @@ const cars = [
     description:
       "BMW's original mid-engine supercar from the late 1970s, designed by Giugiaro and built for homologation racing.",
     images: [
-      "https://www.netcarshow.com/BMW-M1-1979-Front.48ea016a.jpg",
-      "https://www.netcarshow.com/BMW-M1-1979-Rear.48ea016a.jpg",
+      "https://media.gq-magazine.co.uk/photos/5d13aa559fa601dcdf839c19/16:9/w_2560%2Cc_limit/gq_bmw_m1_004.jpg",
+      "https://static0.carbuzzimages.com/wordpress/wp-content/uploads/2025/07/1978-bmw-m1-2.jpg",
       "https://www.bmw-m.com/content/dam/bmw/marketBMW_M/www_bmw-m_com/topics/magazine-article-pool/2018/bmw-m1-portraet/bmw-m1-gallery-2.jpg"
     ],
   },
 ];
 
 const CAR_IMAGE_FALLBACK = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><rect width="1200" height="675" fill="#111827"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#f8fafc" font-family="Arial, sans-serif" font-size="48">Velocity Garage</text></svg>'
+  '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><rect width="1200" height="675" fill="#111827"/><circle cx="600" cy="337.5" r="110" fill="#eab308"/><path d="M540 355h120l-22 36h-76z" fill="#111827"/></svg>'
 )}`;
 
 function normalizeImageUrl(url) {

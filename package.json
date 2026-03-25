@@ -1,0 +1,20 @@
+{
+  "name": "velocity-garage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static HTML/CSS/JS site with Firebase runtime env injection for browser usage.",
+  "scripts": {
+    "build": "node generate-env.js",
+    "dev": "npm run build ; npx serve . -p 5000"
+  },
+  "scriptComments": {
+    "build": "Generates /env.js from FIREBASE_* environment variables so browser scripts can read window.__ENV during local and Vercel builds.",
+    "dev": "Runs the build step first, then serves the static site on port 5000 with no framework or bundler."
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

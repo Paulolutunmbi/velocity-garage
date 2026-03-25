@@ -8,3 +8,4 @@ dist
 build
 .DS_Store
 js/env.js
+env.js

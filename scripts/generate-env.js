@@ -4,7 +4,7 @@ const path = require("path");
 const rootDir = path.resolve(__dirname, "..");
 const envPath = path.join(rootDir, ".env");
 const envLocalPath = path.join(rootDir, ".env.local");
-const outputPath = path.join(rootDir, "js", "env.js");
+const outputPath = path.join(rootDir, "env.js");
 
 const REQUIRED_KEYS = [
   "FIREBASE_API_KEY",

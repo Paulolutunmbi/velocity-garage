@@ -1,4 +1,4 @@
-import { login, loginWithGoogle, loginWithGithub, onAuthChange } from "./auth.js";
+import { completeOAuthRedirectSignIn, login, loginWithGoogle, loginWithGithub, onAuthChange } from "./auth.js";
 
 const loginForm = document.getElementById("login-form");
 const googleBtn = document.getElementById("google-login-btn");
@@ -8,6 +8,11 @@ const submitBtn = document.getElementById("login-submit");
 
 const params = new URLSearchParams(window.location.search);
 const nextPath = params.get("next") || "home.html";
+let authBootstrapped = false;
+
+function authMessage(error, fallback) {
+  return error?.message || error?.original?.message || fallback;
+}
 
 function setError(message = "") {
   if (!errorBox) return;
@@ -41,11 +46,27 @@ function setBusy(isBusy) {
 }
 
 onAuthChange((user) => {
+  if (!authBootstrapped) return;
   if (user) {
     console.log("✓ User authenticated, redirecting to:", nextPath);
     window.location.href = nextPath;
   }
 });
+
+async function initializeAuthFlow() {
+  setBusy(true);
+  try {
+    await completeOAuthRedirectSignIn();
+  } catch (error) {
+    console.error("✗ Redirect auth error:", error);
+    setError(authMessage(error, "Unable to complete sign-in redirect."));
+  } finally {
+    authBootstrapped = true;
+    setBusy(false);
+  }
+}
+
+initializeAuthFlow();
 
 loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -67,7 +88,7 @@ loginForm?.addEventListener("submit", async (event) => {
     console.log("✓ Login successful!");
   } catch (error) {
     console.error("✗ Login error:", error);
-    setError(error.message || "Unable to sign in.");
+    setError(authMessage(error, "Unable to sign in."));
     setBusy(false);
   }
 });
@@ -81,7 +102,7 @@ googleBtn?.addEventListener("click", async () => {
     console.log("✓ Google login successful!");
   } catch (error) {
     console.error("✗ Google login error:", error);
-    setError(error.message || "Google login failed.");
+    setError(authMessage(error, "Google login failed."));
     setBusy(false);
   }
 });
@@ -95,7 +116,7 @@ githubBtn?.addEventListener("click", async () => {
     console.log("✓ GitHub login successful!");
   } catch (error) {
     console.error("✗ GitHub login error:", error);
-    setError(error.message || "GitHub login failed.");
+    setError(authMessage(error, "GitHub login failed."));
     setBusy(false);
   }
 });

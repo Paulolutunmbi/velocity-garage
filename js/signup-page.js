@@ -1,4 +1,4 @@
-import { signup, loginWithGoogle, loginWithGithub, onAuthChange } from "./auth.js";
+import { completeOAuthRedirectSignIn, signup, loginWithGoogle, loginWithGithub, onAuthChange } from "./auth.js";
 
 const signupForm = document.getElementById("signup-form");
 const googleBtn = document.getElementById("google-signup-btn");
@@ -8,6 +8,11 @@ const submitBtn = document.getElementById("signup-submit");
 
 const params = new URLSearchParams(window.location.search);
 const nextPath = params.get("next") || "home.html";
+let authBootstrapped = false;
+
+function authMessage(error, fallback) {
+  return error?.message || error?.original?.message || fallback;
+}
 
 function setError(message = "") {
   if (!errorBox) return;
@@ -41,11 +46,27 @@ function setBusy(isBusy) {
 }
 
 onAuthChange((user) => {
+  if (!authBootstrapped) return;
   if (user) {
     console.log("✓ User registered and authenticated, redirecting to:", nextPath);
     window.location.href = nextPath;
   }
 });
+
+async function initializeAuthFlow() {
+  setBusy(true);
+  try {
+    await completeOAuthRedirectSignIn();
+  } catch (error) {
+    console.error("✗ Redirect auth error:", error);
+    setError(authMessage(error, "Unable to complete sign-up redirect."));
+  } finally {
+    authBootstrapped = true;
+    setBusy(false);
+  }
+}
+
+initializeAuthFlow();
 
 signupForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -79,7 +100,7 @@ signupForm?.addEventListener("submit", async (event) => {
     console.log("✓ Signup successful!");
   } catch (error) {
     console.error("✗ Signup error:", error);
-    setError(error.message || "Unable to create your account.");
+    setError(authMessage(error, "Unable to create your account."));
     setBusy(false);
   }
 });
@@ -93,7 +114,7 @@ googleBtn?.addEventListener("click", async () => {
     console.log("✓ Google signup successful!");
   } catch (error) {
     console.error("✗ Google signup error:", error);
-    setError(error.message || "Google signup failed.");
+    setError(authMessage(error, "Google signup failed."));
     setBusy(false);
   }
 });
@@ -107,7 +128,7 @@ githubBtn?.addEventListener("click", async () => {
     console.log("✓ GitHub signup successful!");
   } catch (error) {
     console.error("✗ GitHub signup error:", error);
-    setError(error.message || "GitHub signup failed.");
+    setError(authMessage(error, "GitHub signup failed."));
     setBusy(false);
   }
 });

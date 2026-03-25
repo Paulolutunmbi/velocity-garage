@@ -12,10 +12,11 @@
 tailwind.config = {};
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="js/env.js"></script>
 <script type="module">
 import { checkAuth } from "./js/auth-guard.js";
 
-checkAuth().catch(() => {});
+checkAuth({ redirectTo: "index.html" }).catch(() => {});
 </script>
 <style>
   body { font-family: "Plus Jakarta Sans", sans-serif; }
@@ -34,7 +35,7 @@ checkAuth().catch(() => {});
     </a>
     <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
       <!-- Shared button treatment used across the app. -->
-      <a href="index.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Home</a>
+      <a href="home.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Home</a>
       <a href="favorites.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Favorites</a>
       <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
     </div>
@@ -46,7 +47,7 @@ checkAuth().catch(() => {});
     <h1 class="title-font text-5xl leading-none">Comparison Deck</h1>
     <div class="flex flex-wrap gap-2">
       <button id="clear-compare" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Clear Compare</button>
-      <a href="index.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Add More Cars</a>
+      <a href="home.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Add More Cars</a>
     </div>
   </div>
 

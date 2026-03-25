@@ -7,7 +7,7 @@ const errorBox = document.getElementById("login-error");
 const submitBtn = document.getElementById("login-submit");
 
 const params = new URLSearchParams(window.location.search);
-const nextPath = params.get("next") || "index.html";
+const nextPath = params.get("next") || "home.html";
 
 function setError(message = "") {
   if (!errorBox) return;

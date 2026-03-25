@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocity Garage | Supercar Showroom</title>
+<meta name="description" content="Velocity Garage is a premium supercar showroom with favorites, comparison, and AI-based recommendations.">
+<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        vg: {
+          orange: "#ff5b2e",
+          gold: "#b88a44",
+          goldDark: "#946d36",
+          charcoal: "#13161d",
+          steel: "#1f2430"
+        }
+      },
+      boxShadow: {
+        glow: "0 20px 45px -20px rgba(255, 91, 46, 0.55)"
+      }
+    }
+  }
+};
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    background-image: radial-gradient(circle at 20% 0%, rgba(255, 91, 46, 0.26) 0%, rgba(255, 91, 46, 0) 34%), linear-gradient(180deg, #0d1117 0%, #111827 100%);
+  }
+  .title-font {
+    font-family: "Bebas Neue", sans-serif;
+    letter-spacing: 0.05em;
+  }
+  .glass {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .card-reveal {
+    animation: riseUp .5s ease both;
+  }
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .icon-spin {
+    animation: softSpin 5s linear infinite;
+  }
+  @keyframes softSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+
+<body class="min-h-screen bg-gray-900 text-white transition-colors duration-300">
+<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_80%_20%,rgba(255,91,46,0.14),transparent_36%),radial-gradient(circle_at_15%_75%,rgba(59,130,246,0.14),transparent_34%)]"></div>
+
+<header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 glass">
+  <nav class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:px-8">
+    <a href="home.html" class="flex items-center">
+      <!-- Dark-mode-only logo. -->
+      <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
+    </a>
+    <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
+      <!-- Shared global button system. -->
+      <button id="scroll-catalog" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Explore Fleet</button>
+      <button id="scroll-recommendation" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">AI Match</button>
+      <a href="favorites.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Favorites</a>
+      <a href="compare.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Compare</a>
+      <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
+    </div>
+  </nav>
+</header>
+
+<section class="mx-auto grid w-full max-w-7xl gap-4 md:gap-6 px-4 sm:px-6 md:px-8 pb-6 pt-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+  <div class="space-y-5">
+    <h1 class="title-font text-5xl leading-none sm:text-7xl">Drive The Extraordinary</h1>
+    <p class="max-w-xl text-sm text-slate-200 sm:text-base">Discover elite machines, shortlist your dream garage, compare specs side-by-side, and let our recommendation engine suggest the best supercar for your style.</p>
+    <div class="flex flex-wrap gap-3">
+      <button id="hero-scroll" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Shop Cars</button>
+      <a href="compare.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Open Compare Page</a>
+    </div>
+  </div>
+
+  <div class="relative overflow-hidden rounded-3xl border border-slate-700/70 bg-slate-900/55 p-3 shadow-2xl glass">
+    <div id="hero-carousel" class="relative">
+      <div id="carousel-track" class="flex transition-transform duration-500 ease-out"></div>
+      <button id="carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button id="carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div id="carousel-dots" class="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
+    </div>
+  </div>
+</section>
+
+<section id="catalog-section" class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 py-8">
+  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <h2 class="title-font text-5xl leading-none">Supercar Collection</h2>
+    <div id="compare-bar" class="hidden rounded-full border border-blue-400/30 bg-blue-500/15 px-4 py-2 text-sm font-semibold text-blue-300"></div>
+  </div>
+
+  <div class="mb-6 grid gap-4 md:gap-6 rounded-2xl border border-slate-700/80 bg-slate-900/70 p-4 shadow-sm glass md:grid-cols-2 lg:grid-cols-5">
+    <input id="search" type="text" placeholder="Search by name or brand" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+    <select id="filter-brand" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+      <option value="">All Brands</option>
+    </select>
+    <select id="filter-region" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+      <option value="">All Regions</option>
+      <option value="Italy">Italy</option>
+      <option value="Germany">Germany</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="USA">USA</option>
+      <option value="Japan">Japan</option>
+    </select>
+    <select id="sort-by" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+      <option value="">Sort By</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="price-high">Price: High to Low</option>
+      <option value="speed">Top Speed</option>
+      <option value="hp">Horsepower</option>
+    </select>
+    <button id="clear-filters" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Reset Filters</button>
+  </div>
+
+  <div id="cars-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"></div>
+</section>
+
+<section id="recommendation-section" class="mx-auto w-full max-w-5xl px-4 sm:px-6 md:px-8 py-12">
+  <div class="rounded-3xl border border-slate-700/80 bg-slate-900/70 p-6 shadow-xl glass">
+    <h2 class="title-font text-5xl leading-none">Find Your Perfect Car</h2>
+    <p class="mt-2 text-sm text-slate-200">Choose your preferences and get one tailored recommendation instantly.</p>
+    <div class="mt-5 grid gap-3 md:grid-cols-4">
+      <select id="ai-budget" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+        <option value="">Budget</option>
+        <option value="500k">Under $500k</option>
+        <option value="1m">Under $1M</option>
+        <option value="3m">$1M+</option>
+      </select>
+      <select id="ai-priority" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+        <option value="">Priority</option>
+        <option value="speed">Top Speed</option>
+        <option value="power">Horsepower</option>
+        <option value="balanced">Balanced</option>
+      </select>
+      <select id="ai-region" class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none ring-vg-orange/50 transition focus:ring-2">
+        <option value="">Region</option>
+        <option value="europe">Europe</option>
+        <option value="usa">USA</option>
+        <option value="asia">Asia</option>
+      </select>
+      <button id="ai-run" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Generate Match</button>
+    </div>
+    <div id="ai-result" class="mt-5"></div>
+  </div>
+</section>
+
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/65 p-4">
+  <div class="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-950 p-5 text-slate-100 shadow-2xl">
+    <div class="mb-4 flex items-start justify-between gap-4">
+      <h2 id="modal-name" class="title-font text-5xl leading-none"></h2>
+      <button id="modal-close" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Close details">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="modal-carousel" class="relative mb-4 overflow-hidden rounded-2xl bg-slate-900/50">
+      <div id="modal-carousel-track" class="flex h-64 transition-transform duration-500 ease-out"></div>
+      <button id="modal-carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Previous car image">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button id="modal-carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Next car image">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div id="modal-carousel-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
+    </div>
+    <div class="mb-4 grid grid-cols-2 gap-3 text-sm text-slate-200 sm:grid-cols-3">
+      <p><span class="text-slate-400">Brand:</span> <span id="modal-brand"></span></p>
+      <p><span class="text-slate-400">Maker:</span> <span id="modal-maker"></span></p>
+      <p><span class="text-slate-400">Country:</span> <span id="modal-country"></span></p>
+      <p><span class="text-slate-400">Horsepower:</span> <span id="modal-hp"></span></p>
+      <p><span class="text-slate-400">Top Speed:</span> <span id="modal-speed"></span></p>
+      <p><span class="text-slate-400">Price:</span> <span id="modal-price"></span></p>
+    </div>
+    <p id="modal-desc" class="text-sm text-slate-300"></p>
+    <div class="mt-5 flex flex-wrap gap-3">
+      <button id="modal-compare" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
+      <button id="modal-fav" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
+    </div>
+  </div>
+</div>
+
+<div id="notification" class="pointer-events-none fixed right-4 top-20 z-50 hidden rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xl"></div>
+
+<button id="back-to-top" class="group fixed bottom-6 right-6 z-40 hidden rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 shadow-glow transition" aria-label="Back to top">
+  <svg class="h-5 w-5 transition group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 19V5"/>
+    <path d="M5 12l7-7 7 7"/>
+  </svg>
+</button>
+
+<script src="js/cars.js"></script>
+<script src="js/cars.js"></script>
+<script src="js/env.js"></script>
+<script type="module">
+import { checkAuth } from "./js/auth-guard.js";
+import { initAuthNavbar } from "./js/navbar-auth.js";
+
+checkAuth({ redirectTo: "index.html" })
+  .then(() => {
+    initAuthNavbar();
+    const appScript = document.createElement("script");
+    appScript.src = "js/app.js";
+    document.body.appendChild(appScript);
+  })
+  .catch(() => {});
+</script>
+</body>
+</html>

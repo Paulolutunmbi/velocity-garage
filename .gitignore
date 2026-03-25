@@ -1,1 +1,10 @@
 explain.txt
+node_modules
+.env
+.env.local
+serviceAccount.json
+firebase-adminsdk.json
+dist
+build
+.DS_Store
+js/env.js

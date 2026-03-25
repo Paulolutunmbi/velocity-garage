@@ -16,7 +16,7 @@ function waitForAuth() {
   });
 }
 
-export async function checkAuth({ redirectTo = "login.html" } = {}) {
+export async function checkAuth({ redirectTo = "index.html" } = {}) {
   const user = await waitForAuth();
   if (user) return user;
 
@@ -26,7 +26,7 @@ export async function checkAuth({ redirectTo = "login.html" } = {}) {
 }
 
 export async function checkAdmin({ redirectTo = "index.html" } = {}) {
-  const user = await checkAuth();
+  const user = await checkAuth({ redirectTo: "index.html" });
   if (isAdmin(user)) return user;
 
   window.location.href = redirectTo;

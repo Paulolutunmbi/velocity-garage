@@ -9,7 +9,6 @@ import {
 import {
   collection,
   doc,
-  getDoc,
   onSnapshot,
   query,
   setDoc,
@@ -25,12 +24,6 @@ function avatarForName(name) {
 async function ensureUserDocument(user, preferredName = "") {
   try {
     const userRef = doc(db, "users", user.uid);
-    const existing = await getDoc(userRef);
-
-    if (existing.exists()) {
-      console.log("✓ User document already exists:", user.uid);
-      return existing.data();
-    }
 
     const docData = {
       uid: user.uid,
@@ -40,15 +33,36 @@ async function ensureUserDocument(user, preferredName = "") {
       createdAt: serverTimestamp(),
     };
 
-    // Use merge: true to avoid overwriting if document somehow exists
+    // Merge keeps existing fields while ensuring core user data is always present.
     await setDoc(userRef, docData, { merge: true });
-    console.log("✓ User document created successfully:", user.uid, docData);
+    console.log("✓ User document saved/updated:", user.uid, docData);
     return docData;
   } catch (error) {
-    console.error("✗ Error creating user document:", error);
+    console.error("✗ Error saving user document:", error);
     throw error;
   }
 }
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          name: user.displayName || "No Name",
+          email: user.email || "",
+          photo: user.photoURL || "",
+          createdAt: new Date(),
+        },
+        { merge: true }
+      );
+
+      console.log("User saved to Firestore");
+    } catch (error) {
+      console.error("Error saving user:", error);
+    }
+  }
+});
 
 export async function signup({ name, email, password }) {
   console.log("📝 Signing up:", email);

@@ -1,0 +1,60 @@
+Security Fix Report - Velocity Garage
+
+1) Secrets detected
+- Hardcoded Firebase web config in js/firebase-config.js:
+  - apiKey
+  - authDomain
+  - projectId
+  - storageBucket
+  - messagingSenderId
+  - appId
+- Admin email hardcoded in js/firebase-config.js
+
+2) What was moved to .env
+- FIREBASE_API_KEY
+- FIREBASE_AUTH_DOMAIN
+- FIREBASE_PROJECT_ID
+- FIREBASE_STORAGE_BUCKET
+- FIREBASE_MESSAGING_SENDER_ID
+- FIREBASE_APP_ID
+- FIREBASE_ADMIN_EMAIL
+
+3) Code updates
+- js/firebase-config.js now reads Firebase values from window.__ENV with required-value checks.
+- Runtime env bootstrap added to Firebase-dependent pages via js/env.js script include.
+- Added scripts/generate-env.js to generate js/env.js from .env for browser runtime.
+- Added .env.example so teammates can set up local values safely.
+
+4) .gitignore updates
+Added the following entries:
+- node_modules
+- .env
+- .env.local
+- serviceAccount.json
+- firebase-adminsdk.json
+- dist
+- build
+- .DS_Store
+- js/env.js
+
+5) Why this protects the project
+- Secrets are removed from tracked source files and kept in local environment files.
+- .env and generated runtime env files are ignored by Git and will not be committed.
+- Browser code no longer hardcodes credentials in repository history for new commits.
+- Missing env values fail fast at startup, preventing accidental production misconfiguration.
+
+6) Operational notes
+- If this repository has already been pushed with exposed keys, rotate the Firebase API key and any affected credentials.
+- Regenerate runtime env after editing .env:
+  node scripts/generate-env.js
+
+7) Git history cleanup (if possible)
+- Not executed automatically in this pass because history rewrite should be done from a clean working tree and coordinated before force-push.
+- Recommended commands:
+  1. git checkout main
+  2. git pull
+  3. pip install git-filter-repo
+  4. git filter-repo --path js/firebase-config.js --invert-paths
+  5. git push --force --all
+  6. git push --force --tags
+- After rewriting history, re-add the safe js/firebase-config.js version and push normally.

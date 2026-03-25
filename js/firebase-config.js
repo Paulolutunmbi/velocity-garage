@@ -2,10 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// In build environments (for example Vercel), FIREBASE_* values can be injected
+// via process.env. In the browser, values are provided by js/env.js as window.__ENV.
+const processEnv = typeof process !== "undefined" && process?.env ? process.env : {};
 const runtimeEnv = typeof window !== "undefined" ? window.__ENV || {} : {};
 
 function getEnvValue(name, fallback = "") {
-  const value = runtimeEnv[name];
+  const value = processEnv[name] || runtimeEnv[name];
   if (typeof value === "string" && value.trim()) return value.trim();
   return fallback;
 }
@@ -63,7 +66,7 @@ if (typeof window !== "undefined") {
   }
 }
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();

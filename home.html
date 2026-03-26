@@ -184,6 +184,29 @@ tailwind.config = {
   </div>
 </section>
 
+<section id="leaderboard-section" class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 py-8 md:py-12">
+  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <h2 class="title-font text-5xl leading-none">Live Leaderboard</h2>
+    <span class="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">Real-time</span>
+  </div>
+
+  <div class="grid gap-5 lg:grid-cols-2">
+    <article class="rounded-3xl border border-slate-700/80 bg-slate-900/70 p-5 shadow-xl glass">
+      <h3 class="text-xl font-bold text-white">Top Favorited Cars</h3>
+      <p class="mt-1 text-xs text-slate-300">Most loved cars across all drivers.</p>
+      <div id="home-leaderboard-cars-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/70 bg-slate-900/60 px-4 py-3 text-sm text-slate-300 hidden">No favorites yet.</div>
+      <div id="home-leaderboard-cars" class="mt-4 grid gap-3 sm:grid-cols-2"></div>
+    </article>
+
+    <article class="rounded-3xl border border-slate-700/80 bg-slate-900/70 p-5 shadow-xl glass">
+      <h3 class="text-xl font-bold text-white">Top Drivers</h3>
+      <p class="mt-1 text-xs text-slate-300">Highest favorite activity.</p>
+      <div id="home-leaderboard-users-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/70 bg-slate-900/60 px-4 py-3 text-sm text-slate-300 hidden">No user activity yet.</div>
+      <div id="home-leaderboard-users" class="mt-4 grid gap-3"></div>
+    </article>
+  </div>
+</section>
+
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/65 p-4">
   <div class="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-950 p-5 text-slate-100 shadow-2xl">
     <div class="mb-4 flex items-start justify-between gap-4">

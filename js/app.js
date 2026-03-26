@@ -62,12 +62,108 @@ const elements = {
   carouselPrev: document.getElementById("carousel-prev"),
   carouselNext: document.getElementById("carousel-next"),
   pageLoading: document.getElementById("page-loading"),
+  leaderboardCars: document.getElementById("home-leaderboard-cars"),
+  leaderboardCarsEmpty: document.getElementById("home-leaderboard-cars-empty"),
+  leaderboardUsers: document.getElementById("home-leaderboard-users"),
+  leaderboardUsersEmpty: document.getElementById("home-leaderboard-users-empty"),
 };
 
 const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
 const BUTTON_SECONDARY = BUTTON_PRIMARY;
 const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
 const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";
+
+function medal(rank) {
+  if (rank === 0) return "🥇";
+  if (rank === 1) return "🥈";
+  if (rank === 2) return "🥉";
+  return `#${rank + 1}`;
+}
+
+function shortUid(uid = "") {
+  return uid ? `${uid.slice(0, 6)}...` : "Driver";
+}
+
+function normalizeTopCars(carsMap = {}) {
+  return Object.entries(carsMap)
+    .map(([carId, count]) => ({ carId, count: Math.max(0, Number(count || 0)) }))
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+}
+
+function normalizeTopUsers(usersMap = {}) {
+  return Object.entries(usersMap)
+    .map(([uid, value]) => ({
+      uid,
+      count: Math.max(0, Number(value?.count || 0)),
+      firstName: String(value?.name || "").trim().split(/\s+/)[0] || shortUid(uid),
+    }))
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+}
+
+function renderHomeTopCars(topCars = []) {
+  if (!elements.leaderboardCars || !elements.leaderboardCarsEmpty) return;
+
+  if (!topCars.length) {
+    elements.leaderboardCars.innerHTML = "";
+    elements.leaderboardCarsEmpty.classList.remove("hidden");
+    return;
+  }
+
+  elements.leaderboardCarsEmpty.classList.add("hidden");
+  elements.leaderboardCars.innerHTML = topCars
+    .map((item, index) => {
+      const car = getCarById(Number(item.carId));
+      if (!car) return "";
+
+      return `
+      <article class="card-reveal rounded-xl border border-slate-700/80 bg-slate-950/70 p-3 text-sm transition hover:-translate-y-0.5 hover:border-orange-400/50 hover:shadow-lg">
+        <div class="flex items-center gap-3">
+          <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-12 w-16 rounded object-cover">
+          <div class="min-w-0 flex-1">
+            <p class="truncate font-semibold text-white">${medal(index)} ${car.name}</p>
+            <p class="text-xs text-slate-300">${car.brand}</p>
+          </div>
+          <span class="rounded-full border border-orange-300/40 bg-orange-500/15 px-2 py-0.5 text-xs font-semibold text-orange-300">${item.count} ❤️</span>
+        </div>
+      </article>`;
+    })
+    .join("");
+}
+
+function renderHomeTopUsers(topUsers = []) {
+  if (!elements.leaderboardUsers || !elements.leaderboardUsersEmpty) return;
+
+  if (!topUsers.length) {
+    elements.leaderboardUsers.innerHTML = "";
+    elements.leaderboardUsersEmpty.classList.remove("hidden");
+    return;
+  }
+
+  elements.leaderboardUsersEmpty.classList.add("hidden");
+  elements.leaderboardUsers.innerHTML = topUsers
+    .map(
+      (item, index) => `
+      <article class="card-reveal flex items-center justify-between rounded-xl border border-slate-700/80 bg-slate-950/70 px-3 py-2 text-sm transition hover:-translate-y-0.5 hover:border-blue-400/50 hover:shadow-lg">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/20 text-xs font-bold text-blue-300">${medal(index)}</span>
+          <span class="font-semibold text-white">${item.firstName}</span>
+        </div>
+        <span class="rounded-full border border-blue-300/40 bg-blue-500/15 px-2 py-0.5 text-xs font-semibold text-blue-300">${item.count} ❤️</span>
+      </article>`
+    )
+    .join("");
+}
+
+function initLeaderboard() {
+  window.vgUserStore?.subscribeLeaderboard?.((stats) => {
+    renderHomeTopCars(normalizeTopCars(stats?.cars || {}));
+    renderHomeTopUsers(normalizeTopUsers(stats?.users || {}));
+  });
+}
 
 async function persistSets() {
   const payload = {
@@ -517,7 +613,7 @@ function syncFromRemote(remote) {
 }
 
 async function loadFavorites(uid) {
-  const remote = await window.vgUserStore?.waitForReady?.();
+  const remote = await window.vgUserStore?.loadUserData?.(uid);
   console.log("[UI Read] loadFavorites for uid:", uid, remote?.favorites || []);
   return new Set(remote?.favorites || []);
 }
@@ -525,9 +621,8 @@ async function loadFavorites(uid) {
 async function loadUserState() {
   const user = window.vgUserStore?.getCurrentUser?.();
   const uid = user?.uid || "unknown";
+  const remote = await window.vgUserStore?.loadUserData?.(uid);
   state.favorites = await loadFavorites(uid);
-
-  const remote = window.vgUserStore?.getLocalState?.() || { wishlist: [], compare: [] };
   state.wishlist = new Set(remote.wishlist || []);
   state.compare = new Set(remote.compare || []);
 }
@@ -657,6 +752,7 @@ async function init() {
   renderCatalog();
   updateCompareBar();
   initCarousel();
+  initLeaderboard();
   initEvents();
   elements.pageLoading?.classList.add("hidden");
 

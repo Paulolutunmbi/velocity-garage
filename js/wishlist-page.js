@@ -294,7 +294,8 @@ function syncFromRemote(remote) {
 
 async function loadUserState() {
   await window.vgUserStore?.waitForReady?.();
-  const remote = window.vgUserStore?.getLocalState?.() || { favorites: [], wishlist: [], compare: [] };
+  const uid = window.vgUserStore?.getCurrentUser?.()?.uid || "unknown";
+  const remote = await window.vgUserStore?.loadUserData?.(uid) || { favorites: [], wishlist: [], compare: [] };
   console.log("[UI Read] wishlist page loaded state", remote);
   state.favorites = new Set(remote.favorites || []);
   state.wishlist = new Set(remote.wishlist || []);

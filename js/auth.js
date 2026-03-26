@@ -13,6 +13,7 @@ import {
 import {
   collection,
   doc,
+  getDoc,
   onSnapshot,
   query,
   setDoc,
@@ -39,6 +40,10 @@ function avatarForName(name) {
 async function ensureUserDocument(user, preferredName = "") {
   try {
     const userRef = doc(db, "users", user.uid);
+    const existingSnap = await getDoc(userRef);
+    const isNewUserDoc = !existingSnap.exists();
+    const existingData = existingSnap.exists() ? existingSnap.data() : {};
+    const shouldPatchCreatedAt = !isNewUserDoc && !existingData?.createdAt;
 
     const docData = {
       uid: user.uid,
@@ -46,12 +51,16 @@ async function ensureUserDocument(user, preferredName = "") {
       firstName: (preferredName || user.displayName || user.email || "Driver").split(/\s|@/)[0],
       email: user.email || "",
       photo: user.photoURL || avatarForName(preferredName || user.displayName),
-      favorites: [],
-      wishlist: [],
-      compare: [],
-      darkMode: true,
-      favoriteCount: 0,
-      createdAt: user.metadata?.creationTime || serverTimestamp(),
+      ...(isNewUserDoc
+        ? {
+            favorites: [],
+            wishlist: [],
+            compare: [],
+            darkMode: true,
+            favoriteCount: 0,
+          }
+        : {}),
+      ...(isNewUserDoc || shouldPatchCreatedAt ? { createdAt: serverTimestamp() } : {}),
     };
 
     // Merge keeps existing fields while ensuring core user data is always present.

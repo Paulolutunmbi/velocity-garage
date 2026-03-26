@@ -147,7 +147,9 @@ function initEvents() {
 
 async function init() {
   await window.vgUserStore?.waitForReady?.();
-  compareSet = new Set(window.vgUserStore?.getLocalState?.().compare || []);
+  const uid = window.vgUserStore?.getCurrentUser?.()?.uid || "unknown";
+  const remote = await window.vgUserStore?.loadUserData?.(uid);
+  compareSet = new Set(remote?.compare || []);
   console.log("[UI Read] compare page loaded compare list", [...compareSet]);
 
   renderComparePage();

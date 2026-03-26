@@ -295,15 +295,16 @@ function syncFromRemote(remote) {
 }
 
 async function loadFavorites(uid) {
-  const remote = await window.vgUserStore?.waitForReady?.();
+  const remote = await window.vgUserStore?.loadUserData?.(uid);
   console.log("[UI Read] favorites page loadFavorites for uid:", uid, remote?.favorites || []);
   return new Set(remote?.favorites || []);
 }
 
 async function loadUserState() {
   const user = window.vgUserStore?.getCurrentUser?.();
-  state.favorites = await loadFavorites(user?.uid || "unknown");
-  const remote = window.vgUserStore?.getLocalState?.() || { wishlist: [], compare: [] };
+  const uid = user?.uid || "unknown";
+  const remote = await window.vgUserStore?.loadUserData?.(uid);
+  state.favorites = await loadFavorites(uid);
   state.wishlist = new Set(remote.wishlist || []);
   state.compare = new Set(remote.compare || []);
 }

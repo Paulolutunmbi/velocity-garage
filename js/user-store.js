@@ -1,12 +1,13 @@
 import {
   doc,
+  getDoc,
+  increment,
   onSnapshot,
-  runTransaction,
   serverTimestamp,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { db } from "./firebase-config.js";
-import { onAuthChange } from "./auth.js";
+import { isAdmin, onAuthChange } from "./auth.js";
 
 const MAX_COMPARE = 3;
 const listeners = new Set();
@@ -119,6 +120,9 @@ function applyThemeToDom(isDarkMode) {
 }
 
 async function ensureUserDocument(user) {
+  const existingSnap = await getDoc(doc(db, "users", user.uid));
+  const isNewUserDoc = !existingSnap.exists();
+
   await setDoc(
     doc(db, "users", user.uid),
     {
@@ -126,14 +130,37 @@ async function ensureUserDocument(user) {
       email: user.email || "",
       name: user.displayName || "Velocity Driver",
       firstName: getFirstName(user),
-      favorites: [],
-      wishlist: [],
-      compare: [],
-      darkMode: true,
+      ...(isNewUserDoc
+        ? {
+            favorites: [],
+            wishlist: [],
+            compare: [],
+            darkMode: true,
+            createdAt: serverTimestamp(),
+          }
+        : {}),
       updatedAt: serverTimestamp(),
     },
     { merge: true }
   );
+}
+
+async function loadUserData(uid) {
+  if (!uid) return normalizeState();
+
+  try {
+    const snapshot = await getDoc(doc(db, "users", uid));
+    if (!snapshot.exists()) {
+      console.log("[Firestore Read] users/" + uid + " not found, returning defaults");
+      return normalizeState();
+    }
+
+    console.log("[Firestore Read] loadUserData users/" + uid, snapshot.data());
+    return normalizeState(snapshot.data());
+  } catch (error) {
+    console.error("[Firestore Read Error] loadUserData users/" + uid, error);
+    return normalizeState();
+  }
 }
 
 function diffFavorites(previousList, nextList) {
@@ -150,43 +177,51 @@ function diffFavorites(previousList, nextList) {
 }
 
 async function updateLeaderboard(user, previousState, nextState) {
+  // Keep leaderboard writes admin-only so the app remains compatible with strict Firestore rules.
+  if (!isAdmin(user)) {
+    return;
+  }
+
   const { added, removed } = diffFavorites(previousState.favorites, nextState.favorites);
   if (!added.length && !removed.length) return;
 
   const statsRef = doc(db, "leaderboard", "stats");
 
-  await runTransaction(db, async (transaction) => {
-    const statsSnap = await transaction.get(statsRef);
-    const statsData = statsSnap.exists() ? statsSnap.data() : {};
+  const carsPatch = {};
+  for (const carId of added) {
+    carsPatch[`cars.${String(carId)}`] = increment(1);
+  }
 
-    const carsData = statsData?.cars && typeof statsData.cars === "object" ? { ...statsData.cars } : {};
-    const usersData = statsData?.users && typeof statsData.users === "object" ? { ...statsData.users } : {};
+  for (const carId of removed) {
+    carsPatch[`cars.${String(carId)}`] = increment(-1);
+  }
 
-    for (const carId of added) {
-      const key = String(carId);
-      carsData[key] = Math.max(0, Number(carsData[key] || 0) + 1);
+  const usersPatch = {
+    [`users.${user.uid}.count`]: nextState.favorites.length,
+    [`users.${user.uid}.name`]: getFirstName(user),
+    [`users.${user.uid}.updatedAt`]: serverTimestamp(),
+  };
+
+  await setDoc(statsRef, { ...carsPatch, ...usersPatch }, { merge: true });
+}
+
+function subscribeLeaderboard(listener) {
+  if (typeof listener !== "function") return () => {};
+
+  return onSnapshot(
+    doc(db, "leaderboard", "stats"),
+    (snapshot) => {
+      const data = snapshot.exists() ? snapshot.data() : {};
+      listener({
+        cars: data?.cars && typeof data.cars === "object" ? data.cars : {},
+        users: data?.users && typeof data.users === "object" ? data.users : {},
+      });
+    },
+    (error) => {
+      console.error("[Firestore Read Error] leaderboard/stats", error);
+      listener({ cars: {}, users: {} });
     }
-
-    for (const carId of removed) {
-      const key = String(carId);
-      carsData[key] = Math.max(0, Number(carsData[key] || 0) - 1);
-    }
-
-    usersData[user.uid] = {
-      name: usersData[user.uid]?.name || getFirstName(user),
-      count: nextState.favorites.length,
-      updatedAt: new Date().toISOString(),
-    };
-
-    transaction.set(
-      statsRef,
-      {
-        cars: carsData,
-        users: usersData,
-      },
-      { merge: true }
-    );
-  });
+  );
 }
 
 async function persistRemote(patch) {
@@ -205,21 +240,48 @@ async function persistRemote(patch) {
   // Firestore is the single source of truth; every change writes to users/{uid} immediately.
   console.log("[Firestore Write] users/" + currentUser.uid, nextState);
 
-  await setDoc(
-    doc(db, "users", currentUser.uid),
-    {
-      favorites: nextState.favorites,
-      wishlist: nextState.wishlist,
-      compare: nextState.compare,
-      darkMode: nextState.darkMode,
-      firstName: getFirstName(currentUser),
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
+  try {
+    await setDoc(
+      doc(db, "users", currentUser.uid),
+      {
+        uid: currentUser.uid,
+        email: currentUser.email || "",
+        name: currentUser.displayName || "Velocity Driver",
+        firstName: getFirstName(currentUser),
+        photo: currentUser.photoURL || "",
+        favorites: nextState.favorites,
+        wishlist: nextState.wishlist,
+        compare: nextState.compare,
+        darkMode: nextState.darkMode,
+        favoriteCount: nextState.favorites.length,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+  } catch (error) {
+    console.error("[Firestore Write Error] users/" + currentUser.uid, {
+      error,
+      payload: nextState,
+    });
+    currentState = previousState;
+    applyThemeToDom(currentState.darkMode);
+    notifyState();
+    throw error;
+  }
 
-  await updateLeaderboard(currentUser, previousState, nextState);
-  console.log("[Firestore Write] leaderboard/stats updated from favorites diff");
+  // Re-fetch after writes to avoid stale UI and guarantee Firestore is the source of truth.
+  currentState = await loadUserData(currentUser.uid);
+  applyThemeToDom(currentState.darkMode);
+  notifyState();
+
+  try {
+    await updateLeaderboard(currentUser, previousState, nextState);
+    console.log("[Firestore Write] leaderboard/stats updated from favorites diff");
+  } catch (error) {
+    // Leaderboard failure must not block the main user-state write path.
+    console.warn("[Firestore Write Warning] leaderboard/stats update skipped", error);
+  }
+
   return currentState;
 }
 
@@ -262,6 +324,11 @@ async function setupUserListener(user) {
 
   await ensureUserDocument(user);
 
+  currentState = await loadUserData(user.uid);
+  applyThemeToDom(currentState.darkMode);
+  markReady();
+  notifyState();
+
   unsubscribeUserDoc = onSnapshot(doc(db, "users", user.uid), (snapshot) => {
     if (!snapshot.exists()) return;
     // Real-time sync keeps all pages and devices in lockstep.
@@ -279,8 +346,10 @@ async function setupUserListener(user) {
 
 const store = {
   getLocalState: () => ({ ...currentState }),
+  loadUserData,
   updateUserState: persistRemote,
   subscribeUserState,
+  subscribeLeaderboard,
   bindThemeToggle,
   waitForReady: () => readyPromise,
   getCurrentUser: () => currentUser,

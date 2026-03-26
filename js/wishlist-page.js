@@ -42,7 +42,7 @@ const elements = {
   pageLoading: document.getElementById("page-loading"),
 };
 
-const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
+const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
 const BUTTON_SECONDARY = BUTTON_PRIMARY;
 const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
 const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";

@@ -22,7 +22,7 @@
       <a href="index.html" class="flex items-center">
         <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
       </a>
-      <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
+      <div class="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
         <a href="home.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
         <a href="profile.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Profile</a>
         <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
@@ -54,7 +54,7 @@
       </table>
     </div>
 
-    <section class="mt-8 grid gap-6 lg:grid-cols-2">
+    <section class="mt-8 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
       <article class="rounded-2xl border border-slate-700/80 bg-slate-900/80 p-4">
         <h2 class="title-font text-4xl leading-none">Top Favorited Cars</h2>
         <p class="mt-2 text-xs text-slate-300">Real-time favorite counts by car ID.</p>
@@ -67,6 +67,13 @@
         <p class="mt-2 text-xs text-slate-300">Top users ranked by current favorite count.</p>
         <div id="leaderboard-users-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-3 text-sm text-slate-300 hidden">No user stats yet.</div>
         <ul id="leaderboard-users" class="mt-4 space-y-2"></ul>
+      </article>
+
+      <article class="rounded-2xl border border-slate-700/80 bg-slate-900/80 p-4">
+        <h2 class="title-font text-4xl leading-none">Top Wishlisted Cars</h2>
+        <p class="mt-2 text-xs text-slate-300">Real-time wishlist counts by car ID.</p>
+        <div id="leaderboard-wishlist-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-3 text-sm text-slate-300 hidden">No wishlist activity yet.</div>
+        <ul id="leaderboard-wishlist" class="mt-4 space-y-2"></ul>
       </article>
     </section>
   </main>

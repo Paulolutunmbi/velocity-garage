@@ -75,7 +75,7 @@ tailwind.config = {
       <!-- Dark-mode-only logo. -->
       <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
     </a>
-    <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
+    <div class="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
       <!-- Shared global button system. -->
       <button id="scroll-catalog" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Explore Fleet</button>
       <button id="scroll-recommendation" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">AI Match</button>
@@ -152,7 +152,7 @@ tailwind.config = {
     <button id="clear-filters" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Reset Filters</button>
   </div>
 
-  <div id="cars-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"></div>
+  <div id="cars-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"></div>
 </section>
 
 <section id="recommendation-section" class="mx-auto w-full max-w-5xl px-4 sm:px-6 md:px-8 py-12">
@@ -244,11 +244,10 @@ tailwind.config = {
 
 <div id="notification" class="pointer-events-none fixed right-4 top-20 z-50 hidden rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xl"></div>
 
-<button id="back-to-top" class="group fixed bottom-6 right-6 z-40 hidden rounded-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold p-3 shadow-glow transition" aria-label="Back to top">
-  <svg class="h-5 w-5 transition group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M12 4l0 12"/>
-    <path d="M8 8l4-4 4 4"/>
-    <rect x="4" y="18" width="16" height="2" rx="1"/>
+<button id="back-to-top" class="group fixed bottom-4 right-4 z-40 hidden h-12 w-12 items-center justify-center rounded-full border border-yellow-300/60 bg-yellow-500 text-black shadow-glow transition hover:scale-105 hover:bg-yellow-600 md:bottom-6 md:right-6" aria-label="Back to top">
+  <svg class="h-5 w-5 transition group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <path d="M12 19V5"/>
+    <path d="M6 11l6-6 6 6"/>
   </svg>
 </button>
 

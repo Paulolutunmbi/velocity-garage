@@ -1,8 +1,6 @@
 import { checkAdmin } from "./auth-guard.js";
 import { initAuthNavbar } from "./navbar-auth.js";
 import { watchUsers } from "./auth.js";
-import { collection, doc, getDocs, onSnapshot, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { db } from "./firebase-config.js";
 
 const loadingState = document.getElementById("admin-loading");
 const errorState = document.getElementById("admin-error");
@@ -12,7 +10,8 @@ const leaderboardCars = document.getElementById("leaderboard-cars");
 const leaderboardCarsEmpty = document.getElementById("leaderboard-cars-empty");
 const leaderboardUsers = document.getElementById("leaderboard-users");
 const leaderboardUsersEmpty = document.getElementById("leaderboard-users-empty");
-let hasAttemptedLeaderboardRecovery = false;
+const leaderboardWishlist = document.getElementById("leaderboard-wishlist");
+const leaderboardWishlistEmpty = document.getElementById("leaderboard-wishlist-empty");
 
 function ensureLeaderboardAnimations() {
   if (document.getElementById("vg-admin-anim")) return;
@@ -27,11 +26,32 @@ function shortUid(uid = "") {
 }
 
 function formatJoinDate(value) {
-  if (!value) return "Not available";
-  if (typeof value.toDate === "function") {
-    return value.toDate().toLocaleString();
+  if (!value) return "Joined recently";
+
+  const dateValue = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+  if (Number.isNaN(dateValue.getTime())) return "Joined recently";
+
+  const diffMs = Date.now() - dateValue.getTime();
+  if (diffMs < 0) return "Joined recently";
+
+  const day = 24 * 60 * 60 * 1000;
+  const month = 30 * day;
+  const year = 365 * day;
+
+  if (diffMs < day) return "Joined today";
+
+  if (diffMs >= year) {
+    const years = Math.floor(diffMs / year);
+    return `Joined ${years} year${years > 1 ? "s" : ""} ago`;
   }
-  return String(value);
+
+  if (diffMs >= month) {
+    const months = Math.floor(diffMs / month);
+    return `Joined ${months} month${months > 1 ? "s" : ""} ago`;
+  }
+
+  const days = Math.floor(diffMs / day);
+  return `Joined ${days} day${days > 1 ? "s" : ""} ago`;
 }
 
 function renderUsers(users) {
@@ -86,33 +106,9 @@ function medal(index) {
   return `#${index + 1}`;
 }
 
-function normalizeTopCars(data = {}) {
-  return Object.entries(data)
-    .map(([carId, count]) => ({
-      carId,
-      count: Math.max(0, Number(count || 0)),
-    }))
-    .filter((item) => item.count > 0)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-}
-
-function normalizeTopUsers(data = {}) {
-  return Object.entries(data)
-    .map(([uid, value]) => {
-      const count = Math.max(0, Number(typeof value === "number" ? value : value?.count || 0));
-      const nameSource = String(typeof value === "object" ? value?.name || "" : "").trim();
-      const firstName = nameSource ? nameSource.split(/\s+/)[0] : shortUid(uid);
-
-      return {
-        uid,
-        firstName,
-        count,
-      };
-    })
-    .filter((item) => item.count > 0)
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+function normalizeIds(value) {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0))];
 }
 
 function getFirstNameFromUserRecord(user = {}) {
@@ -128,48 +124,48 @@ function getFirstNameFromUserRecord(user = {}) {
   return "Driver";
 }
 
-async function rebuildLeaderboardFromUsersOnce() {
-  if (hasAttemptedLeaderboardRecovery) return;
-  hasAttemptedLeaderboardRecovery = true;
-
-  try {
-    console.log("[Leaderboard Recovery] rebuilding leaderboard/stats from users collection");
-    const usersSnap = await getDocs(collection(db, "users"));
-
-    const cars = {};
-    const users = {};
-
-    usersSnap.docs.forEach((userDoc) => {
-      const data = userDoc.data() || {};
-      const uid = userDoc.id;
-      const favorites = Array.isArray(data.favorites) ? [...new Set(data.favorites.map(Number).filter((id) => Number.isFinite(id) && id > 0))] : [];
-
-      users[uid] = {
-        count: favorites.length,
-        name: getFirstNameFromUserRecord(data),
-        updatedAt: serverTimestamp(),
-      };
-
-      favorites.forEach((carId) => {
-        const key = String(carId);
-        cars[key] = (cars[key] || 0) + 1;
-      });
+function getTopCarsFromUsers(users = []) {
+  // Recompute from live users docs so admin leaderboard always reflects current favorites.
+  const counts = {};
+  users.forEach((user) => {
+    normalizeIds(user.favorites).forEach((carId) => {
+      const key = String(carId);
+      counts[key] = (counts[key] || 0) + 1;
     });
+  });
 
-    await setDoc(
-      doc(db, "leaderboard", "stats"),
-      {
-        cars,
-        users,
-        recoveredAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+  return Object.entries(counts)
+    .map(([carId, count]) => ({ carId, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+}
 
-    console.log("[Leaderboard Recovery] completed", { carsCount: Object.keys(cars).length, usersCount: Object.keys(users).length });
-  } catch (error) {
-    console.error("[Leaderboard Recovery] failed", error);
-  }
+function getTopUsersFromUsers(users = []) {
+  return users
+    .map((user) => ({
+      uid: user.id,
+      firstName: getFirstNameFromUserRecord(user) || shortUid(user.id),
+      count: normalizeIds(user.favorites).length,
+    }))
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
+}
+
+function getTopWishlistedCarsFromUsers(users = []) {
+  // Wishlist leaderboard uses the same live aggregation strategy as favorites.
+  const counts = {};
+  users.forEach((user) => {
+    normalizeIds(user.wishlist).forEach((carId) => {
+      const key = String(carId);
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+
+  return Object.entries(counts)
+    .map(([carId, count]) => ({ carId, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 }
 
 function renderTopCars(topCars = []) {
@@ -225,24 +221,32 @@ function renderTopUsers(topUsers = []) {
     .join("")}</div>`;
 }
 
-function loadLeaderboard() {
-  onSnapshot(doc(db, "leaderboard", "stats"), (snapshot) => {
-    const data = snapshot.exists() ? snapshot.data() : {};
-    const topCars = normalizeTopCars(data?.cars || {});
-    const topUsers = normalizeTopUsers(data?.users || {});
-    console.log("[Leaderboard] top cars:", topCars, "top users:", topUsers);
+function renderTopWishlistedCars(topCars = []) {
+  if (!leaderboardWishlist || !leaderboardWishlistEmpty) return;
 
-    if (!topCars.length && !topUsers.length) {
-      rebuildLeaderboardFromUsersOnce();
-    }
+  if (!topCars.length) {
+    leaderboardWishlistEmpty.classList.remove("hidden");
+    leaderboardWishlist.innerHTML = "";
+    return;
+  }
 
-    renderTopCars(topCars);
-    renderTopUsers(topUsers);
-  }, (error) => {
-    console.error("[Firestore Read Error] leaderboard/stats", error);
-    renderTopCars([]);
-    renderTopUsers([]);
-  });
+  leaderboardWishlistEmpty.classList.add("hidden");
+  leaderboardWishlist.innerHTML = `<div class="grid gap-3 sm:grid-cols-2">${topCars
+    .map(
+      (item, index) => `
+      <article class="animate-[riseUp_.35s_ease] rounded-xl border border-slate-700/80 bg-slate-950/70 p-3 text-sm transition hover:-translate-y-0.5 hover:border-purple-400/40 hover:shadow-lg">
+        <div class="flex items-center gap-3">
+          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-12 w-16 rounded object-cover" />
+          <div class="min-w-0 flex-1">
+            <p class="truncate font-semibold text-white">${medal(index)} ${getCarNameById(item.carId)}</p>
+            <p class="text-xs text-slate-300">Car ID: ${item.carId}</p>
+          </div>
+          <span class="rounded-full border border-purple-300/40 bg-purple-500/15 px-2 py-0.5 text-xs font-semibold text-purple-200">${item.count} ★</span>
+        </div>
+      </article>
+      `
+    )
+    .join("")}</div>`;
 }
 
 async function initAdmin() {
@@ -255,6 +259,10 @@ async function initAdmin() {
     watchUsers(
       (users) => {
         renderUsers(users);
+        // Single snapshot source keeps table + leaderboard cards in sync.
+        renderTopCars(getTopCarsFromUsers(users));
+        renderTopUsers(getTopUsersFromUsers(users));
+        renderTopWishlistedCars(getTopWishlistedCarsFromUsers(users));
       },
       (error) => {
         loadingState.classList.add("hidden");
@@ -263,7 +271,6 @@ async function initAdmin() {
       }
     );
 
-    loadLeaderboard();
   } catch (error) {
     loadingState.classList.add("hidden");
     errorState.textContent = error.message || "Unable to access admin.";

@@ -1,4 +1,4 @@
-const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
+const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
 
 const elements = {
   compareCards: document.getElementById("compare-cards"),

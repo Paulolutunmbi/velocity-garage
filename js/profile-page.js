@@ -9,19 +9,19 @@ const profilePhoto = document.getElementById("profile-photo");
 const profileJoined = document.getElementById("profile-joined");
 
 function formatJoinDate(value) {
-  if (!value) return "Recently joined";
+  if (!value) return "Joined recently";
 
   const rawDate = typeof value.toDate === "function" ? value.toDate() : new Date(value);
-  if (Number.isNaN(rawDate.getTime())) return "Recently joined";
+  if (Number.isNaN(rawDate.getTime())) return "Joined recently";
 
   const diffMs = Date.now() - rawDate.getTime();
-  if (diffMs < 0) return "Recently joined";
+  if (diffMs < 0) return "Joined recently";
 
-  const minute = 60 * 1000;
-  const hour = 60 * minute;
-  const day = 24 * hour;
+  const day = 24 * 60 * 60 * 1000;
   const month = 30 * day;
   const year = 365 * day;
+
+  if (diffMs < day) return "Joined today";
 
   if (diffMs >= year) {
     const years = Math.floor(diffMs / year);
@@ -33,18 +33,8 @@ function formatJoinDate(value) {
     return `Joined ${months} month${months > 1 ? "s" : ""} ago`;
   }
 
-  if (diffMs >= day) {
-    const days = Math.floor(diffMs / day);
-    return `Joined ${days} day${days > 1 ? "s" : ""} ago`;
-  }
-
-  if (diffMs >= hour) {
-    const hours = Math.floor(diffMs / hour);
-    return `Joined ${hours} hour${hours > 1 ? "s" : ""} ago`;
-  }
-
-  const minutes = Math.max(1, Math.floor(diffMs / minute));
-  return `Joined ${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+  const days = Math.floor(diffMs / day);
+  return `Joined ${days} day${days > 1 ? "s" : ""} ago`;
 }
 
 async function initProfile() {
@@ -59,7 +49,7 @@ async function initProfile() {
   const userRef = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
   if (!userSnap.exists()) {
-    profileJoined.textContent = "Recently joined";
+    profileJoined.textContent = "Joined recently";
     return;
   }
 

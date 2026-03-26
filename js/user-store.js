@@ -1,13 +1,13 @@
 import {
+  collection,
   doc,
   getDoc,
-  increment,
   onSnapshot,
   serverTimestamp,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { db } from "./firebase-config.js";
-import { isAdmin, onAuthChange } from "./auth.js";
+import { onAuthChange } from "./auth.js";
 
 const MAX_COMPARE = 3;
 const listeners = new Set();
@@ -15,6 +15,7 @@ const listeners = new Set();
 let unsubscribeUserDoc = null;
 let currentUser = null;
 let currentState = normalizeState();
+let persistQueue = Promise.resolve();
 let isReady = false;
 let resolveReady = () => {};
 let readyPromise = new Promise((resolve) => {
@@ -109,7 +110,7 @@ function applyThemeToDom(isDarkMode) {
 
   const logo = document.getElementById("site-logo");
   if (logo) {
-    logo.src = isDarkMode ? "assets/images/default-monochrome-white.svg" : "assets/images/default.svg";
+    logo.src = isDarkMode ? "assets/images/default-monochrome-white.svg" : "assets/images/default-monochrome-black.svg";
   }
 
   const toggle = document.getElementById("theme-toggle");
@@ -163,71 +164,29 @@ async function loadUserData(uid) {
   }
 }
 
-function diffFavorites(previousList, nextList) {
-  const previous = new Set(previousList);
-  const next = new Set(nextList);
-
-  const added = [];
-  const removed = [];
-
-  for (const id of next) if (!previous.has(id)) added.push(id);
-  for (const id of previous) if (!next.has(id)) removed.push(id);
-
-  return { added, removed };
-}
-
-async function updateLeaderboard(user, previousState, nextState) {
-  // Keep leaderboard writes admin-only so the app remains compatible with strict Firestore rules.
-  if (!isAdmin(user)) {
-    return;
-  }
-
-  const { added, removed } = diffFavorites(previousState.favorites, nextState.favorites);
-  if (!added.length && !removed.length) return;
-
-  const statsRef = doc(db, "leaderboard", "stats");
-
-  const carsPatch = {};
-  for (const carId of added) {
-    carsPatch[`cars.${String(carId)}`] = increment(1);
-  }
-
-  for (const carId of removed) {
-    carsPatch[`cars.${String(carId)}`] = increment(-1);
-  }
-
-  const usersPatch = {
-    [`users.${user.uid}.count`]: nextState.favorites.length,
-    [`users.${user.uid}.name`]: getFirstName(user),
-    [`users.${user.uid}.updatedAt`]: serverTimestamp(),
-  };
-
-  await setDoc(statsRef, { ...carsPatch, ...usersPatch }, { merge: true });
-}
-
-function subscribeLeaderboard(listener) {
+function subscribeUsers(listener) {
   if (typeof listener !== "function") return () => {};
 
   return onSnapshot(
-    doc(db, "leaderboard", "stats"),
+    collection(db, "users"),
     (snapshot) => {
-      const data = snapshot.exists() ? snapshot.data() : {};
-      listener({
-        cars: data?.cars && typeof data.cars === "object" ? data.cars : {},
-        users: data?.users && typeof data.users === "object" ? data.users : {},
-      });
+      listener(
+        snapshot.docs.map((item) => ({
+          id: item.id,
+          ...(item.data() || {}),
+        }))
+      );
     },
     (error) => {
-      console.error("[Firestore Read Error] leaderboard/stats", error);
-      listener({ cars: {}, users: {} });
+      console.error("[Firestore Read Error] users collection", error);
+      listener([]);
     }
   );
 }
 
-async function persistRemote(patch) {
+async function runPersistRemote(patch) {
   const nextState = normalizeState({ ...currentState, ...patch });
   const previousState = { ...currentState };
-
   currentState = nextState;
   applyThemeToDom(currentState.darkMode);
   notifyState();
@@ -269,20 +228,21 @@ async function persistRemote(patch) {
     throw error;
   }
 
-  // Re-fetch after writes to avoid stale UI and guarantee Firestore is the source of truth.
+  // Re-fetch after writes to keep local state aligned with Firestore snapshots.
   currentState = await loadUserData(currentUser.uid);
   applyThemeToDom(currentState.darkMode);
   notifyState();
 
-  try {
-    await updateLeaderboard(currentUser, previousState, nextState);
-    console.log("[Firestore Write] leaderboard/stats updated from favorites diff");
-  } catch (error) {
-    // Leaderboard failure must not block the main user-state write path.
-    console.warn("[Firestore Write Warning] leaderboard/stats update skipped", error);
-  }
-
   return currentState;
+}
+
+function persistRemote(patch) {
+  // Serialize writes so rapid button taps never race and drop leaderboard/user updates.
+  persistQueue = persistQueue
+    .catch(() => undefined)
+    .then(() => runPersistRemote(patch));
+
+  return persistQueue;
 }
 
 function bindThemeToggle() {
@@ -294,7 +254,11 @@ function bindThemeToggle() {
   themeToggle.dataset.vgBound = "true";
   themeToggle.addEventListener("click", async () => {
     const nextDark = !currentState.darkMode;
-    await persistRemote({ darkMode: nextDark });
+    try {
+      await persistRemote({ darkMode: nextDark });
+    } catch (error) {
+      console.error("[Theme Toggle] failed to persist preference", error);
+    }
   });
 }
 
@@ -349,7 +313,7 @@ const store = {
   loadUserData,
   updateUserState: persistRemote,
   subscribeUserState,
-  subscribeLeaderboard,
+  subscribeUsers,
   bindThemeToggle,
   waitForReady: () => readyPromise,
   getCurrentUser: () => currentUser,

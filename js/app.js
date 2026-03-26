@@ -68,7 +68,7 @@ const elements = {
   leaderboardUsersEmpty: document.getElementById("home-leaderboard-users-empty"),
 };
 
-const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
+const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
 const BUTTON_SECONDARY = BUTTON_PRIMARY;
 const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
 const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";
@@ -102,6 +102,37 @@ function normalizeTopUsers(usersMap = {}) {
     .filter((item) => item.count > 0)
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
+}
+
+function normalizeIds(value) {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0))];
+}
+
+function getTopCarsFromUsers(users = []) {
+  const cars = {};
+  users.forEach((user) => {
+    normalizeIds(user.favorites).forEach((carId) => {
+      const key = String(carId);
+      cars[key] = (cars[key] || 0) + 1;
+    });
+  });
+
+  return normalizeTopCars(cars);
+}
+
+function getTopUsersFromUsers(users = []) {
+  const usersMap = {};
+  users.forEach((user) => {
+    const uid = String(user.id || "");
+    if (!uid) return;
+    usersMap[uid] = {
+      count: normalizeIds(user.favorites).length,
+      name: String(user.firstName || user.name || user.email || "").split(/\s|@/)[0] || shortUid(uid),
+    };
+  });
+
+  return normalizeTopUsers(usersMap);
 }
 
 function renderHomeTopCars(topCars = []) {
@@ -159,9 +190,10 @@ function renderHomeTopUsers(topUsers = []) {
 }
 
 function initLeaderboard() {
-  window.vgUserStore?.subscribeLeaderboard?.((stats) => {
-    renderHomeTopCars(normalizeTopCars(stats?.cars || {}));
-    renderHomeTopUsers(normalizeTopUsers(stats?.users || {}));
+  // Live users snapshot avoids stale leaderboard/stats docs and updates immediately.
+  window.vgUserStore?.subscribeUsers?.((users) => {
+    renderHomeTopCars(getTopCarsFromUsers(users));
+    renderHomeTopUsers(getTopUsersFromUsers(users));
   });
 }
 

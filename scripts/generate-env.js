@@ -15,6 +15,21 @@ const REQUIRED_KEYS = [
   "FIREBASE_APP_ID",
 ];
 
+const ENV_ALIASES = {
+  FIREBASE_API_KEY: ["NEXT_PUBLIC_FIREBASE_API_KEY", "VITE_FIREBASE_API_KEY", "REACT_APP_FIREBASE_API_KEY"],
+  FIREBASE_AUTH_DOMAIN: ["NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "VITE_FIREBASE_AUTH_DOMAIN", "REACT_APP_FIREBASE_AUTH_DOMAIN"],
+  FIREBASE_PROJECT_ID: ["NEXT_PUBLIC_FIREBASE_PROJECT_ID", "VITE_FIREBASE_PROJECT_ID", "REACT_APP_FIREBASE_PROJECT_ID"],
+  FIREBASE_STORAGE_BUCKET: ["NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET", "VITE_FIREBASE_STORAGE_BUCKET", "REACT_APP_FIREBASE_STORAGE_BUCKET"],
+  FIREBASE_MESSAGING_SENDER_ID: [
+    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID",
+    "REACT_APP_FIREBASE_MESSAGING_SENDER_ID",
+  ],
+  FIREBASE_APP_ID: ["NEXT_PUBLIC_FIREBASE_APP_ID", "VITE_FIREBASE_APP_ID", "REACT_APP_FIREBASE_APP_ID"],
+  FIREBASE_ADMIN_EMAIL: ["NEXT_PUBLIC_FIREBASE_ADMIN_EMAIL"],
+  FIREBASE_EXPECTED_AUTH_DOMAINS: ["NEXT_PUBLIC_FIREBASE_EXPECTED_AUTH_DOMAINS"],
+};
+
 function stripWrappingQuotes(value) {
   if (!value) return value;
   if (
@@ -55,6 +70,45 @@ function mergeEnv(...sources) {
   return Object.assign({}, ...sources);
 }
 
+function firstNonEmpty(source, keys) {
+  for (const key of keys) {
+    const value = source[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+  return "";
+}
+
+function applyAliases(source) {
+  const normalized = { ...source };
+  for (const [target, aliases] of Object.entries(ENV_ALIASES)) {
+    if (typeof normalized[target] === "string" && normalized[target].trim()) continue;
+    const aliasValue = firstNonEmpty(source, aliases);
+    if (aliasValue) normalized[target] = aliasValue;
+  }
+  return normalized;
+}
+
+function deriveFirebaseFields(vars) {
+  const next = { ...vars };
+
+  if (!next.FIREBASE_PROJECT_ID && next.FIREBASE_AUTH_DOMAIN) {
+    const match = next.FIREBASE_AUTH_DOMAIN.match(/^([^.]+)\.firebaseapp\.com$/i);
+    if (match) next.FIREBASE_PROJECT_ID = match[1];
+  }
+
+  if (!next.FIREBASE_AUTH_DOMAIN && next.FIREBASE_PROJECT_ID) {
+    next.FIREBASE_AUTH_DOMAIN = `${next.FIREBASE_PROJECT_ID}.firebaseapp.com`;
+  }
+
+  if (!next.FIREBASE_STORAGE_BUCKET && next.FIREBASE_PROJECT_ID) {
+    next.FIREBASE_STORAGE_BUCKET = `${next.FIREBASE_PROJECT_ID}.firebasestorage.app`;
+  }
+
+  return next;
+}
+
 function pickFirebaseVars(source) {
   const result = {};
   const keys = [
@@ -91,7 +145,8 @@ const envFromDotEnv = readEnvFile(envPath);
 const envFromLocal = readEnvFile(envLocalPath);
 const envFromProcess = pickFirebaseVars(process.env || {});
 const mergedEnv = mergeEnv(envFromDotEnv, envFromLocal, envFromProcess);
-const envVars = pickFirebaseVars(mergedEnv);
+const normalizedEnv = applyAliases(mergedEnv);
+const envVars = deriveFirebaseFields(pickFirebaseVars(normalizedEnv));
 
 if (!fs.existsSync(envLocalPath)) {
   writeEnvLocalFile(envVars);

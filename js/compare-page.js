@@ -1,5 +1,3 @@
-const COMPARE_KEY = "vg-compare";
-
 const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
 
 const elements = {
@@ -10,7 +8,14 @@ const elements = {
   emptyState: document.getElementById("compare-empty"),
   clearCompare: document.getElementById("clear-compare"),
   notification: document.getElementById("notification"),
+  pageLoading: document.getElementById("page-loading"),
 };
+
+const localState = window.vgUserStore?.getLocalState?.() || {
+  compare: [],
+};
+
+let compareSet = new Set(localState.compare || []);
 
 function showNotification(message) {
   if (!elements.notification) return;
@@ -20,23 +25,23 @@ function showNotification(message) {
 }
 
 function getSelectedCars() {
-  const ids = JSON.parse(localStorage.getItem(COMPARE_KEY) || "[]");
-  return ids.map((id) => getCarById(id)).filter(Boolean);
+  return [...compareSet].map((id) => getCarById(Number(id))).filter(Boolean);
 }
 
-function saveCompareFromCars(selectedCars) {
-  localStorage.setItem(COMPARE_KEY, JSON.stringify(selectedCars.map((car) => car.id)));
+async function persistCompare() {
+  await window.vgUserStore?.updateUserState?.({ compare: [...compareSet] });
 }
 
-function removeCompare(id) {
-  const selectedCars = getSelectedCars().filter((car) => car.id !== id);
-  saveCompareFromCars(selectedCars);
+async function removeCompare(id) {
+  compareSet.delete(Number(id));
+  await persistCompare();
   renderComparePage();
   showNotification("Removed from Compare");
 }
 
-function clearCompare() {
-  localStorage.setItem(COMPARE_KEY, "[]");
+async function clearCompare() {
+  compareSet.clear();
+  await persistCompare();
   renderComparePage();
   showNotification("Compare list cleared");
 }
@@ -130,18 +135,33 @@ function renderComparePage() {
 }
 
 function initEvents() {
-  elements.compareCards?.addEventListener("click", (event) => {
+  elements.compareCards?.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action='remove']");
     if (!button) return;
-    removeCompare(Number(button.dataset.id));
+    await removeCompare(Number(button.dataset.id));
   });
 
   elements.clearCompare?.addEventListener("click", clearCompare);
 
-  window.addEventListener("storage", (event) => {
-    if (event.key === COMPARE_KEY) renderComparePage();
+}
+
+async function init() {
+  await window.vgUserStore?.waitForReady?.();
+  compareSet = new Set(window.vgUserStore?.getLocalState?.().compare || []);
+  console.log("[UI Read] compare page loaded compare list", [...compareSet]);
+
+  renderComparePage();
+  initEvents();
+  elements.pageLoading?.classList.add("hidden");
+
+  window.vgUserStore?.bindThemeToggle?.();
+  window.vgUserStore?.subscribeUserState?.((remote) => {
+    compareSet = new Set(remote.compare || []);
+    renderComparePage();
   });
 }
 
-renderComparePage();
-initEvents();
+init().catch((error) => {
+  console.error("[UI Init Error] compare page failed to initialize", error);
+  elements.pageLoading?.classList.add("hidden");
+});

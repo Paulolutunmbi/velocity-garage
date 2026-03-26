@@ -19,6 +19,7 @@ function formatJoinDate(value) {
 async function initProfile() {
   const user = await checkAuth();
   initAuthNavbar();
+  window.vgUserStore?.bindThemeToggle?.();
 
   profileName.textContent = user.displayName || "Velocity Driver";
   profileEmail.textContent = user.email || "No email";

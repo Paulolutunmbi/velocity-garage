@@ -708,3 +708,7 @@ for (const car of cars) {
 function getCarById(id){
   return cars.find(car => car.id === id);
 }
+
+window.cars = cars;
+window.getCarById = getCarById;
+window.CAR_IMAGE_FALLBACK = CAR_IMAGE_FALLBACK;

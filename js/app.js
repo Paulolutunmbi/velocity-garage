@@ -1,10 +1,16 @@
-const FAVORITES_KEY = "vg-favorites";
-const COMPARE_KEY = "vg-compare";
 const MAX_COMPARE = 3;
 
+const localState = window.vgUserStore?.getLocalState?.() || {
+  favorites: [],
+  wishlist: [],
+  compare: [],
+  darkMode: true,
+};
+
 const state = {
-  favorites: new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY) || "[]")),
-  compare: new Set(JSON.parse(localStorage.getItem(COMPARE_KEY) || "[]")),
+  favorites: new Set(localState.favorites || []),
+  wishlist: new Set(localState.wishlist || []),
+  compare: new Set(localState.compare || []),
   currentModalCarId: null,
   modalCarouselImages: [],
   modalCarouselIndex: 0,
@@ -35,6 +41,7 @@ const elements = {
   modalDesc: document.getElementById("modal-desc"),
   modalCompare: document.getElementById("modal-compare"),
   modalFav: document.getElementById("modal-fav"),
+  modalWishlist: document.getElementById("modal-wishlist"),
   searchInput: document.getElementById("search"),
   brandFilter: document.getElementById("filter-brand"),
   regionFilter: document.getElementById("filter-region"),
@@ -54,16 +61,22 @@ const elements = {
   carouselDots: document.getElementById("carousel-dots"),
   carouselPrev: document.getElementById("carousel-prev"),
   carouselNext: document.getElementById("carousel-next"),
+  pageLoading: document.getElementById("page-loading"),
 };
 
-// Shared action button treatment for all generated controls.
 const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition";
 const BUTTON_SECONDARY = BUTTON_PRIMARY;
 const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
+const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";
 
-function persistSets() {
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify([...state.favorites]));
-  localStorage.setItem(COMPARE_KEY, JSON.stringify([...state.compare]));
+async function persistSets() {
+  const payload = {
+    favorites: [...state.favorites],
+    wishlist: [...state.wishlist],
+    compare: [...state.compare],
+  };
+
+  await window.vgUserStore?.updateUserState?.(payload);
 }
 
 function showNotification(message) {
@@ -89,7 +102,7 @@ function getCompareCars() {
   return [...state.compare].map((id) => getCarById(id)).filter(Boolean);
 }
 
-function toggleFavorite(id) {
+async function toggleFavorite(id) {
   if (state.favorites.has(id)) {
     state.favorites.delete(id);
     showNotification("Removed from Favorites");
@@ -98,13 +111,28 @@ function toggleFavorite(id) {
     showNotification("Added to Favorites");
   }
 
-  persistSets();
+  await persistSets();
   renderCatalog();
   renderRecommendationCardIfPresent();
   updateModalButtons();
 }
 
-function toggleCompare(id) {
+async function toggleWishlist(id) {
+  if (state.wishlist.has(id)) {
+    state.wishlist.delete(id);
+    showNotification("Removed from Wishlist");
+  } else {
+    state.wishlist.add(id);
+    showNotification("Added to Wishlist");
+  }
+
+  await persistSets();
+  renderCatalog();
+  renderRecommendationCardIfPresent();
+  updateModalButtons();
+}
+
+async function toggleCompare(id) {
   if (state.compare.has(id)) {
     state.compare.delete(id);
     showNotification("Removed from Compare");
@@ -117,7 +145,7 @@ function toggleCompare(id) {
     showNotification("Added to Compare");
   }
 
-  persistSets();
+  await persistSets();
   updateCompareBar();
   renderCatalog();
   renderRecommendationCardIfPresent();
@@ -140,6 +168,7 @@ function updateCompareBar() {
 
 function carCardTemplate(car, delayMs) {
   const isFav = state.favorites.has(car.id);
+  const isWishlist = state.wishlist.has(car.id);
   const isCompare = state.compare.has(car.id);
 
   return `
@@ -158,6 +187,7 @@ function carCardTemplate(car, delayMs) {
         <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
         <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
         <button data-action="favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
+        <button data-action="wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
       </div>
     </article>
   `;
@@ -291,7 +321,6 @@ function openModal(id) {
   elements.modalPrice.textContent = car.price;
   elements.modalDesc.textContent = car.description;
 
-  // Rebuild carousel from the selected car to avoid stale modal image state.
   renderModalCarousel(car);
 
   updateModalButtons();
@@ -309,17 +338,22 @@ function closeModal() {
 }
 
 function updateModalButtons() {
-  if (!elements.modalCompare || !elements.modalFav) return;
-  if (state.currentModalCarId === null) return;
+  if (!elements.modalCompare || !elements.modalFav || state.currentModalCarId === null) return;
 
   const isFav = state.favorites.has(state.currentModalCarId);
   const isCompare = state.compare.has(state.currentModalCarId);
+  const isWishlist = state.wishlist.has(state.currentModalCarId);
 
   elements.modalCompare.textContent = isCompare ? "Remove from Compare" : "Add to Compare";
-  elements.modalCompare.className = `${isCompare ? BUTTON_ACTIVE : BUTTON_PRIMARY} text-sm`;
+  elements.modalCompare.className = `${isCompare ? MODAL_BUTTON_ACTIVE : BUTTON_PRIMARY} text-sm`;
 
   elements.modalFav.textContent = isFav ? "Remove from Favorites" : "Add to Favorites";
-  elements.modalFav.className = `${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY} text-sm`;
+  elements.modalFav.className = `${isFav ? MODAL_BUTTON_ACTIVE : BUTTON_SECONDARY} text-sm`;
+
+  if (elements.modalWishlist) {
+    elements.modalWishlist.textContent = isWishlist ? "Remove from Wishlist" : "Add to Wishlist";
+    elements.modalWishlist.className = `${isWishlist ? MODAL_BUTTON_ACTIVE : BUTTON_SECONDARY} text-sm`;
+  }
 }
 
 function runRecommendation() {
@@ -372,6 +406,7 @@ function runRecommendation() {
 
 function recommendationCard(car) {
   const isFav = state.favorites.has(car.id);
+  const isWishlist = state.wishlist.has(car.id);
   const isCompare = state.compare.has(car.id);
 
   return `
@@ -391,6 +426,7 @@ function recommendationCard(car) {
           <div class="mt-4 flex flex-wrap gap-2">
             <button data-action="rec-compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
             <button data-action="rec-favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
+            <button data-action="rec-wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
             <button data-action="rec-details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Open Details</button>
           </div>
         </div>
@@ -416,7 +452,7 @@ function initCarousel() {
   elements.carouselTrack.innerHTML = slides
     .map(
       (car) => `
-      <article class="min-w-full p-1">
+      <article class="relative min-w-full p-1">
         <div class="overflow-hidden rounded-2xl">
           <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-72 w-full object-cover md:h-80">
         </div>
@@ -470,35 +506,69 @@ function initCarousel() {
   setSlide(0);
 }
 
+function syncFromRemote(remote) {
+  state.favorites = new Set(remote.favorites || []);
+  state.wishlist = new Set(remote.wishlist || []);
+  state.compare = new Set(remote.compare || []);
+  renderCatalog();
+  updateCompareBar();
+  renderRecommendationCardIfPresent();
+  updateModalButtons();
+}
+
+async function loadFavorites(uid) {
+  const remote = await window.vgUserStore?.waitForReady?.();
+  console.log("[UI Read] loadFavorites for uid:", uid, remote?.favorites || []);
+  return new Set(remote?.favorites || []);
+}
+
+async function loadUserState() {
+  const user = window.vgUserStore?.getCurrentUser?.();
+  const uid = user?.uid || "unknown";
+  state.favorites = await loadFavorites(uid);
+
+  const remote = window.vgUserStore?.getLocalState?.() || { wishlist: [], compare: [] };
+  state.wishlist = new Set(remote.wishlist || []);
+  state.compare = new Set(remote.compare || []);
+}
+
 function initEvents() {
-  elements.carsContainer?.addEventListener("click", (event) => {
+  elements.carsContainer?.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
     const id = Number(button.dataset.id);
     const action = button.dataset.action;
     if (action === "details") openModal(id);
-    if (action === "favorite") toggleFavorite(id);
-    if (action === "compare") toggleCompare(id);
+    if (action === "favorite") await toggleFavorite(id);
+    if (action === "wishlist") await toggleWishlist(id);
+    if (action === "compare") await toggleCompare(id);
   });
 
-  elements.aiResult?.addEventListener("click", (event) => {
+  elements.aiResult?.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
     const id = Number(button.dataset.id);
-    if (button.dataset.action === "rec-favorite") toggleFavorite(id);
-    if (button.dataset.action === "rec-compare") toggleCompare(id);
+    if (button.dataset.action === "rec-favorite") await toggleFavorite(id);
+    if (button.dataset.action === "rec-wishlist") await toggleWishlist(id);
+    if (button.dataset.action === "rec-compare") await toggleCompare(id);
     if (button.dataset.action === "rec-details") openModal(id);
   });
 
-  elements.modalCompare?.addEventListener("click", () => {
+  elements.modalCompare?.addEventListener("click", async () => {
     if (state.currentModalCarId !== null) {
-      toggleCompare(state.currentModalCarId);
+      await toggleCompare(state.currentModalCarId);
     }
   });
 
-  elements.modalFav?.addEventListener("click", () => {
+  elements.modalFav?.addEventListener("click", async () => {
     if (state.currentModalCarId !== null) {
-      toggleFavorite(state.currentModalCarId);
+      await toggleFavorite(state.currentModalCarId);
+    }
+  });
+
+  elements.modalWishlist?.addEventListener("click", async () => {
+    if (state.currentModalCarId !== null) {
+      await toggleWishlist(state.currentModalCarId);
     }
   });
 
@@ -577,29 +647,26 @@ function initEvents() {
     });
   }
 
-  window.addEventListener("storage", (event) => {
-    if (event.key === FAVORITES_KEY) {
-      state.favorites = new Set(JSON.parse(event.newValue || "[]"));
-      renderCatalog();
-      renderRecommendationCardIfPresent();
-      updateModalButtons();
-    }
-    if (event.key === COMPARE_KEY) {
-      state.compare = new Set(JSON.parse(event.newValue || "[]"));
-      renderCatalog();
-      renderRecommendationCardIfPresent();
-      updateModalButtons();
-      updateCompareBar();
-    }
-  });
 }
 
-function init() {
+async function init() {
+  await window.vgUserStore?.waitForReady?.();
+  await loadUserState();
+
   populateBrandFilter();
   renderCatalog();
   updateCompareBar();
   initCarousel();
   initEvents();
+  elements.pageLoading?.classList.add("hidden");
+
+  window.vgUserStore?.bindThemeToggle?.();
+  window.vgUserStore?.subscribeUserState?.((remote) => {
+    syncFromRemote(remote);
+  });
 }
 
-init();
+init().catch((error) => {
+  console.error("[UI Init Error] home app failed to initialize", error);
+  elements.pageLoading?.classList.add("hidden");
+});

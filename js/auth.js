@@ -43,9 +43,15 @@ async function ensureUserDocument(user, preferredName = "") {
     const docData = {
       uid: user.uid,
       name: preferredName || user.displayName || "Velocity Driver",
+      firstName: (preferredName || user.displayName || user.email || "Driver").split(/\s|@/)[0],
       email: user.email || "",
       photo: user.photoURL || avatarForName(preferredName || user.displayName),
-      createdAt: serverTimestamp(),
+      favorites: [],
+      wishlist: [],
+      compare: [],
+      darkMode: true,
+      favoriteCount: 0,
+      createdAt: user.metadata?.creationTime || serverTimestamp(),
     };
 
     // Merge keeps existing fields while ensuring core user data is always present.
@@ -57,27 +63,6 @@ async function ensureUserDocument(user, preferredName = "") {
     throw error;
   }
 }
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    try {
-      await setDoc(
-        doc(db, "users", user.uid),
-        {
-          name: user.displayName || "No Name",
-          email: user.email || "",
-          photo: user.photoURL || "",
-          createdAt: new Date(),
-        },
-        { merge: true }
-      );
-
-      console.log("User saved to Firestore");
-    } catch (error) {
-      console.error("Error saving user:", error);
-    }
-  }
-});
 
 const AUTH_ERROR_MESSAGES = {
   "auth/invalid-action-code": "Invalid or expired authentication action. Check your Firebase Authorized Domains and OAuth redirect settings.",

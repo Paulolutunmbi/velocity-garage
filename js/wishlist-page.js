@@ -18,9 +18,9 @@ const state = {
 };
 
 const elements = {
-  favoritesContainer: document.getElementById("favorites-container"),
-  favoritesEmpty: document.getElementById("favorites-empty"),
-  compareQuickInfo: document.getElementById("compare-quick-info"),
+  wishlistContainer: document.getElementById("wishlist-container"),
+  wishlistEmpty: document.getElementById("wishlist-empty"),
+  wishlistQuickInfo: document.getElementById("wishlist-quick-info"),
   notification: document.getElementById("notification"),
   modal: document.getElementById("modal"),
   modalClose: document.getElementById("modal-close"),
@@ -68,10 +68,9 @@ function showNotification(message) {
   setTimeout(() => elements.notification.classList.add("hidden"), 1700);
 }
 
-function updateCompareQuickInfo() {
-  if (!elements.compareQuickInfo) return;
-  const count = state.compare.size;
-  elements.compareQuickInfo.textContent = count ? `Compare list: ${count}/3 ready` : "Compare list: 0/3";
+function updateQuickInfo() {
+  if (!elements.wishlistQuickInfo) return;
+  elements.wishlistQuickInfo.textContent = `Wishlist: ${state.wishlist.size} cars`;
 }
 
 async function toggleFavorite(id) {
@@ -84,7 +83,7 @@ async function toggleFavorite(id) {
   }
 
   await persistSets();
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
@@ -98,7 +97,7 @@ async function toggleWishlist(id) {
   }
 
   await persistSets();
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
@@ -116,14 +115,13 @@ async function toggleCompare(id) {
   }
 
   await persistSets();
-  updateCompareQuickInfo();
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
-function favoritesTemplate(car) {
+function wishlistTemplate(car) {
   const isCompare = state.compare.has(car.id);
-  const isWishlist = state.wishlist.has(car.id);
+  const isFav = state.favorites.has(car.id);
 
   return `
     <article class="rounded-2xl border border-slate-700/80 bg-slate-800/85 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl">
@@ -140,28 +138,28 @@ function favoritesTemplate(car) {
       <div class="mt-4 flex flex-wrap gap-2">
         <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
         <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-        <button data-action="favorite" data-id="${car.id}" class="${BUTTON_ACTIVE}">Unfavorite</button>
-        <button data-action="wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
+        <button data-action="favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
+        <button data-action="wishlist" data-id="${car.id}" class="${BUTTON_ACTIVE}">Remove Wishlist</button>
       </div>
     </article>
   `;
 }
 
-function renderFavoritesPage() {
-  if (!elements.favoritesContainer || !elements.favoritesEmpty) return;
+function renderWishlistPage() {
+  if (!elements.wishlistContainer || !elements.wishlistEmpty) return;
 
-  const favoriteCars = [...state.favorites].map((id) => getCarById(id)).filter(Boolean);
+  const wishlistCars = [...state.wishlist].map((id) => getCarById(id)).filter(Boolean);
 
-  if (!favoriteCars.length) {
-    elements.favoritesContainer.innerHTML = "";
-    elements.favoritesEmpty.classList.remove("hidden");
-    updateCompareQuickInfo();
+  if (!wishlistCars.length) {
+    elements.wishlistContainer.innerHTML = "";
+    elements.wishlistEmpty.classList.remove("hidden");
+    updateQuickInfo();
     return;
   }
 
-  elements.favoritesEmpty.classList.add("hidden");
-  elements.favoritesContainer.innerHTML = favoriteCars.map(favoritesTemplate).join("");
-  updateCompareQuickInfo();
+  elements.wishlistEmpty.classList.add("hidden");
+  elements.wishlistContainer.innerHTML = wishlistCars.map(wishlistTemplate).join("");
+  updateQuickInfo();
 }
 
 function getModalImages(car) {
@@ -290,26 +288,21 @@ function syncFromRemote(remote) {
   state.favorites = new Set(remote.favorites || []);
   state.wishlist = new Set(remote.wishlist || []);
   state.compare = new Set(remote.compare || []);
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
-async function loadFavorites(uid) {
-  const remote = await window.vgUserStore?.waitForReady?.();
-  console.log("[UI Read] favorites page loadFavorites for uid:", uid, remote?.favorites || []);
-  return new Set(remote?.favorites || []);
-}
-
 async function loadUserState() {
-  const user = window.vgUserStore?.getCurrentUser?.();
-  state.favorites = await loadFavorites(user?.uid || "unknown");
-  const remote = window.vgUserStore?.getLocalState?.() || { wishlist: [], compare: [] };
+  await window.vgUserStore?.waitForReady?.();
+  const remote = window.vgUserStore?.getLocalState?.() || { favorites: [], wishlist: [], compare: [] };
+  console.log("[UI Read] wishlist page loaded state", remote);
+  state.favorites = new Set(remote.favorites || []);
   state.wishlist = new Set(remote.wishlist || []);
   state.compare = new Set(remote.compare || []);
 }
 
 function initEvents() {
-  elements.favoritesContainer?.addEventListener("click", async (event) => {
+  elements.wishlistContainer?.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
 
@@ -372,10 +365,9 @@ function initEvents() {
 }
 
 async function init() {
-  await window.vgUserStore?.waitForReady?.();
   await loadUserState();
 
-  renderFavoritesPage();
+  renderWishlistPage();
   initEvents();
   elements.pageLoading?.classList.add("hidden");
 
@@ -386,6 +378,6 @@ async function init() {
 }
 
 init().catch((error) => {
-  console.error("[UI Init Error] favorites page failed to initialize", error);
+  console.error("[UI Init Error] wishlist page failed to initialize", error);
   elements.pageLoading?.classList.add("hidden");
 });

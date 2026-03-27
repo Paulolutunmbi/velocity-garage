@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,70 +7,163 @@
 	<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;1,400;1,700&family=Manrope:wght@300;400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300&display=swap" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+	<!-- Stitch UI Integration: Added Tailwind theme tokens and typography to match the provided design language. -->
+	<script>
+		tailwind.config = {
+			darkMode: "class",
+			theme: {
+				extend: {
+					colors: {
+						background: "#121212",
+						surface: "#171717",
+						surfaceSoft: "#1f1f1f",
+						outline: "#303030",
+						primary: "#d2d2d2",
+						tertiary: "#ff8f72",
+						onBackground: "#e6e2e0",
+						onMuted: "#9a9a9a"
+					},
+					fontFamily: {
+						headline: ["Newsreader", "serif"],
+						body: ["Manrope", "sans-serif"],
+						label: ["Space Grotesk", "sans-serif"]
+					}
+				}
+			}
+		}
+	</script>
 	<style>
-		body { font-family: "Plus Jakarta Sans", sans-serif; }
-		.title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+		.material-symbols-outlined {
+			font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+		}
+		.glass-effect {
+			backdrop-filter: blur(20px);
+			background: rgba(18, 18, 18, 0.72);
+		}
 	</style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
-	<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_75%_12%,rgba(255,91,46,0.16),transparent_30%),radial-gradient(circle_at_15%_85%,rgba(59,130,246,0.13),transparent_32%)]"></div>
-
-	<header class="border-b border-slate-800/80 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
-		<div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
-			<a href="index.html" class="flex items-center">
-				<img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage" class="h-12 w-auto md:h-14">
-			</a>
-			<div class="flex flex-wrap gap-2">
-				<a href="index.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
-				<a href="signup.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Create Account</a>
+<body class="min-h-screen bg-background text-onBackground font-body selection:bg-tertiary/70 selection:text-black">
+	<main class="relative flex min-h-screen flex-col overflow-hidden lg:flex-row">
+		<!-- Stitch UI Integration: Desktop visual panel copied from Stitch concept and adapted to local assets. -->
+		<section class="relative hidden w-1/2 overflow-hidden border-r border-outline/60 lg:flex">
+			<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcZNbJq-C3V4xPgdIuC_4NwydFOOs6LKgNs-H5V3FQMgjavqxMCKTW4WmLcViuxDwFMOdrPg25I5zeZ6VS0kVKhC5daG3AggE7d15ux2-MOS0nVAwywRP8KgXR-P8L87SZ57w8Dx5AlUPFJDvp81LvmCk6BKcbx6tPLzhTbilC8WIZAHpEAxVRU9HseRGcDX7mkRQ1Aeh1mFfvI_GeTXtQ5v83GgsZSlIqHYRcozJBIe7jQA5eDbXdBorpGWZWj9tmbQ5uXMnZangA" alt="Garage interior" class="absolute inset-0 h-full w-full object-cover grayscale">
+			<div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-black/20"></div>
+			<div class="relative z-10 flex h-full w-full flex-col justify-between p-12 xl:p-16">
+				<div>
+					<!-- Responsive logo sizing: larger visual presence while preserving the existing layout behavior. -->
+					<img src="assets/images/screen-removebg-preview.png" alt="Velocity Garage Logo" class="mb-10 h-auto w-48 max-w-full object-contain sm:w-56 xl:w-64">
+					<h1 class="font-headline text-6xl italic leading-[0.9] tracking-tight text-onBackground xl:text-7xl">
+						Pilot<br><span class="text-tertiary">Access.</span>
+					</h1>
+					<p class="mt-6 max-w-md text-base leading-relaxed text-onBackground/80 xl:text-lg">
+						Authenticate your identity to engage the master interface. Elite inventory and real-time performance analytics await.
+					</p>
+				</div>
+				<div class="space-y-7">
+					<div class="grid grid-cols-2 gap-8 text-xs uppercase tracking-[0.22em] text-onMuted">
+						<div>
+							<p>Security Protocol</p>
+							<p class="mt-2 text-[11px] font-semibold tracking-[0.14em] text-primary">Class IV Biometric</p>
+						</div>
+						<div>
+							<p>Server Status</p>
+							<p class="mt-2 text-[11px] font-semibold tracking-[0.14em] text-primary">Nominal // Ready</p>
+						</div>
+					</div>
+					<div class="h-px w-full bg-outline/70"></div>
+					<p class="font-headline text-2xl italic text-onBackground/30">Velocity Garage Elite.</p>
+				</div>
 			</div>
-		</div>
-	</header>
-
-	<main class="mx-auto grid min-h-[calc(100vh-92px)] w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:px-8">
-		<section class="hidden md:flex flex-col justify-center items-center">
-			<div class="relative w-full h-96 rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-900">
-				<img id="login-carousel-img" src="https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=600&q=80" alt="Supercar" class="w-full h-full object-cover"/>
-				<div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-			</div>
-			<p class="mt-4 text-sm text-slate-300 text-center">Experience premium vehicles at your fingertips</p>
 		</section>
 
-		<section class="rounded-3xl border border-slate-700/80 bg-slate-900/80 p-6 shadow-2xl">
-			<h2 class="text-xl font-bold text-white">Login to your account</h2>
-			<p class="mt-1 text-sm text-slate-300">Use email or continue with a provider.</p>
-
-			<div id="login-error" class="mt-4 hidden rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
-
-			<form id="login-form" class="mt-5 space-y-4" novalidate>
-				<div>
-					<label for="login-email" class="mb-1 block text-sm font-semibold text-slate-200">Email</label>
-					<input id="login-email" name="email" type="email" autocomplete="email" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="you@example.com">
+		<section class="relative flex flex-1 items-center justify-center p-5 sm:p-8 lg:p-12">
+			<div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_14%,rgba(255,143,114,0.14),transparent_34%),radial-gradient(circle_at_16%_90%,rgba(115,115,115,0.2),transparent_38%)]"></div>
+			<div class="w-full max-w-md">
+				<!-- Stitch UI Integration: Mobile/tablet hero text and logo for non-desktop layouts. -->
+				<div class="mb-10 lg:hidden">
+					<!-- Responsive logo sizing: scales cleanly from small mobile to tablet widths. -->
+					<img src="assets/images/screen-removebg-preview.png" alt="Velocity Garage Logo" class="mb-6 h-auto w-40 max-w-full object-contain sm:w-48">
+					<h1 class="font-headline text-5xl italic leading-tight text-onBackground sm:text-6xl">
+						Access the <br><span class="text-tertiary">Inner Sanctum.</span>
+					</h1>
 				</div>
-				<div>
-					<label for="login-password" class="mb-1 block text-sm font-semibold text-slate-200">Password</label>
-					<input id="login-password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="Enter your password">
+
+				<div class="glass-effect rounded-lg border border-outline/70 p-6 shadow-2xl sm:p-8 lg:p-10">
+					<!-- Stitch UI Integration: Preserved original error hook id for existing JS error handling. -->
+					<div id="login-error" class="mb-5 hidden rounded border border-red-500/60 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+
+					<!-- Stitch UI Integration: Preserved login-form, login-email, login-password, and input names used by JS auth flow. -->
+					<form id="login-form" class="flex flex-col gap-7" novalidate>
+						<div class="space-y-6">
+							<div class="group">
+								<label for="login-email" class="mb-2 block font-label text-[11px] uppercase tracking-[0.2em] text-onMuted transition-colors group-focus-within:text-tertiary">
+									Operator Email
+								</label>
+								<div class="relative">
+									<span class="material-symbols-outlined pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-lg text-onMuted/50">alternate_email</span>
+									<input id="login-email" name="email" type="email" autocomplete="email" required placeholder="pilot@velocity.com" class="w-full border-0 border-b border-outline bg-transparent py-3 pl-8 text-sm text-onBackground placeholder:text-onMuted/30 focus:border-tertiary focus:ring-0">
+								</div>
+							</div>
+
+							<div class="group">
+								<div class="mb-2 flex items-center justify-between gap-2">
+									<label for="login-password" class="font-label text-[11px] uppercase tracking-[0.2em] text-onMuted transition-colors group-focus-within:text-tertiary">
+										Access Key
+									</label>
+									<a href="#" class="font-label text-[9px] uppercase tracking-widest text-onMuted/60 transition-colors hover:text-tertiary">Forgot Password?</a>
+								</div>
+								<div class="relative">
+									<span class="material-symbols-outlined pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-lg text-onMuted/50">lock_open</span>
+									<input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••••••" class="w-full border-0 border-b border-outline bg-transparent py-3 pl-8 pr-8 text-sm text-onBackground placeholder:text-onMuted/30 focus:border-tertiary focus:ring-0">
+									<span class="material-symbols-outlined pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-lg text-onMuted/50">visibility_off</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="flex flex-col gap-5">
+							<!-- Stitch UI Integration: Preserved login-submit id used to toggle busy state text in JS. -->
+							<button id="login-submit" type="submit" class="rounded-md bg-primary py-4 font-label text-xs font-bold uppercase tracking-[0.2em] text-black transition-all duration-300 hover:bg-tertiary hover:text-black active:scale-[0.99]">
+								Start Engine
+							</button>
+
+							<div class="flex items-center gap-4 py-1">
+								<div class="h-px flex-1 bg-outline/70"></div>
+								<span class="font-label text-[10px] uppercase tracking-widest text-onMuted/50">Secondary Bypass</span>
+								<div class="h-px flex-1 bg-outline/70"></div>
+							</div>
+
+							<div class="flex flex-col gap-3">
+								<!-- Stitch UI Integration: Preserved google-login-btn and github-login-btn ids for existing OAuth listeners. -->
+								<button id="google-login-btn" type="button" class="flex w-full items-center justify-center gap-3 rounded-md border border-outline/80 bg-surfaceSoft py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-onBackground transition-all duration-300 hover:border-tertiary/60 hover:bg-surface">
+									Continue with Google
+								</button>
+
+								<button id="github-login-btn" type="button" class="flex w-full items-center justify-center gap-3 rounded-md border border-outline/80 bg-surfaceSoft py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-onBackground transition-all duration-300 hover:border-tertiary/60 hover:bg-surface">
+									Continue with GitHub
+								</button>
+							</div>
+						</div>
+					</form>
+
+					<div class="mt-7 text-center">
+						<p class="font-label text-[11px] uppercase tracking-widest text-onMuted/80">
+							New Operator? <a href="signup.html" class="ml-1 text-tertiary transition-colors hover:text-[#ffb39f]">Signup for access</a>
+						</p>
+					</div>
 				</div>
-				<button id="login-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Login</button>
-			</form>
 
-			<div class="my-5 flex items-center gap-3">
-				<div class="h-px flex-1 bg-slate-700"></div>
-				<span class="text-xs uppercase tracking-widest text-slate-400">or</span>
-				<div class="h-px flex-1 bg-slate-700"></div>
+				<div class="mt-10 flex items-center justify-between px-1 opacity-55">
+					<span class="font-label text-[9px] uppercase tracking-[0.35em] text-onMuted">© 2026 Velocity Garage</span>
+					<span class="font-label text-[9px] uppercase tracking-[0.35em] text-onMuted">Security: Encrypted</span>
+				</div>
 			</div>
-
-			<div class="grid gap-3 sm:grid-cols-2">
-				<button id="google-login-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Continue with Google</button>
-				<button id="github-login-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Continue with GitHub</button>
-			</div>
-
-			<p class="mt-5 text-sm text-slate-300">No account yet? <a href="signup.html" class="font-semibold text-yellow-400 hover:text-yellow-300">Sign up here</a>.</p>
 		</section>
 	</main>
 
+	<!-- Stitch UI Integration: Existing env/Firebase/auth scripts are kept unchanged to preserve functionality. -->
 	<script src="/env.js"></script>
 	<script type="module" src="/js/firebase-config.js"></script>
 	<script type="module" src="/js/login-page.js"></script>

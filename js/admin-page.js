@@ -178,17 +178,17 @@ function renderTopCars(topCars = []) {
   }
 
   leaderboardCarsEmpty.classList.add("hidden");
-  leaderboardCars.innerHTML = `<div class="grid gap-3 sm:grid-cols-2">${topCars
+  leaderboardCars.innerHTML = `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">${topCars
     .map(
       (item, index) => `
       <article class="animate-[riseUp_.35s_ease] rounded-xl border border-slate-700/80 bg-slate-950/70 p-3 text-sm transition hover:-translate-y-0.5 hover:border-orange-400/50 hover:shadow-lg">
-        <div class="flex items-center gap-3">
-          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-12 w-16 rounded object-cover" />
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-32 w-full rounded object-cover sm:h-12 sm:w-16" />
           <div class="min-w-0 flex-1">
-            <p class="truncate font-semibold text-white">${medal(index)} ${getCarNameById(item.carId)}</p>
+            <p class="truncate text-sm font-semibold text-white md:text-base">${medal(index)} ${getCarNameById(item.carId)}</p>
             <p class="text-xs text-slate-300">Car ID: ${item.carId}</p>
           </div>
-          <span class="rounded-full border border-orange-300/40 bg-orange-500/15 px-2 py-0.5 text-xs font-semibold text-orange-300">${item.count} ❤️</span>
+          <span class="self-start rounded-full border border-orange-300/40 bg-orange-500/15 px-2 py-0.5 text-xs font-semibold text-orange-300 sm:self-auto">${item.count} ❤️</span>
         </div>
       </article>
       `
@@ -231,17 +231,17 @@ function renderTopWishlistedCars(topCars = []) {
   }
 
   leaderboardWishlistEmpty.classList.add("hidden");
-  leaderboardWishlist.innerHTML = `<div class="grid gap-3 sm:grid-cols-2">${topCars
+  leaderboardWishlist.innerHTML = `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">${topCars
     .map(
       (item, index) => `
       <article class="animate-[riseUp_.35s_ease] rounded-xl border border-slate-700/80 bg-slate-950/70 p-3 text-sm transition hover:-translate-y-0.5 hover:border-purple-400/40 hover:shadow-lg">
-        <div class="flex items-center gap-3">
-          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-12 w-16 rounded object-cover" />
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-32 w-full rounded object-cover sm:h-12 sm:w-16" />
           <div class="min-w-0 flex-1">
-            <p class="truncate font-semibold text-white">${medal(index)} ${getCarNameById(item.carId)}</p>
+            <p class="truncate text-sm font-semibold text-white md:text-base">${medal(index)} ${getCarNameById(item.carId)}</p>
             <p class="text-xs text-slate-300">Car ID: ${item.carId}</p>
           </div>
-          <span class="rounded-full border border-purple-300/40 bg-purple-500/15 px-2 py-0.5 text-xs font-semibold text-purple-200">${item.count} ★</span>
+          <span class="self-start rounded-full border border-purple-300/40 bg-purple-500/15 px-2 py-0.5 text-xs font-semibold text-purple-200 sm:self-auto">${item.count} ★</span>
         </div>
       </article>
       `

@@ -9,8 +9,10 @@ const cars = [
     price: "$500,000",
     speed: "350 km/h",
     hp: "770 hp",
-    description:
-      "A flagship V12 supercar famous for its aggressive, stealth-fighter styling and iconic scissor doors.",
+    zeroTo100Mph: "5.9 s",
+    weight: "1,575 kg",
+    vehicleType: "Combustion",
+    description: "A flagship V12 supercar famous for its aggressive, stealth-fighter styling and iconic scissor doors.",
     images: [
       "https://preview.thenewsmarket.com/Previews/lamb/StillAssets/1920x1440/518305.jpg",
       "https://www.kimballstock.com/pix/car/p/06/lam-01-rk0798-01p.jpg",
@@ -26,8 +28,10 @@ const cars = [
     price: "$280,000",
     speed: "330 km/h",
     hp: "661 hp",
-    description:
-      "An incredibly responsive mid-engine V8 supercar that delivers blistering track performance and daily usability.",
+    zeroTo100Mph: "6.9 s",
+    weight: "1,475 kg",
+    vehicleType: "Combustion",
+    description: "An incredibly responsive mid-engine V8 supercar that delivers blistering track performance and daily usability.",
     images: [
       "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0736-01p.jpg",
       "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0722-01p.jpg",
@@ -43,8 +47,10 @@ const cars = [
     price: "$300,000",
     speed: "341 km/h",
     hp: "710 hp",
-    description:
-      "A lightweight, aerodynamically advanced supercar offering mind-bending acceleration and a high-tech carbon fiber chassis.",
+    zeroTo100Mph: "4.8 s",
+    weight: "1,419 kg",
+    vehicleType: "Combustion",
+    description: "A lightweight, aerodynamically advanced supercar offering mind-bending acceleration and a high-tech carbon fiber chassis.",
     images: [
       "https://hips.hearstapps.com/autoweek/assets/s3fs-public/7506-mclaren720s-07-studio.jpg",
       "https://hips.hearstapps.com/autoweek/assets/s3fs-public/7508-mclaren720s-09-studio.jpg",
@@ -60,8 +66,10 @@ const cars = [
     price: "$3,000,000",
     speed: "420 km/h",
     hp: "1500 hp",
-    description:
-      "An ultra-luxury hypercar powered by a quad-turbo W16 engine, renowned for its record-breaking top speeds.",
+    zeroTo100Mph: "4.4 s",
+    weight: "1,995 kg",
+    vehicleType: "Combustion",
+    description: "An ultra-luxury hypercar powered by a quad-turbo W16 engine, renowned for its record-breaking top speeds.",
     images: [
       "https://www.kimballstock.com/pix/car/p/01/aut-02-rk0165-01p.jpg",
       "https://picolio.auto123.com/auto123tv/images/xc/ri/BUgatti-Chiron_003.JPG?scaledown=980",
@@ -77,11 +85,13 @@ const cars = [
     price: "$230,000",
     speed: "330 km/h",
     hp: "640 hp",
-    description:
-      "The ultimate everyday supercar, combining all-wheel-drive traction with explosive twin-turbo flat-six power.",
+    zeroTo100Mph: "5.8 s",
+    weight: "1,640 kg",
+    vehicleType: "Combustion",
+    description: "The ultimate everyday supercar, combining all-wheel-drive traction with explosive twin-turbo flat-six power.",
     images: [
       "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/image_1290x726/dam/US-local/Press-Releases/2025/9-SEPTEMBER/New-911-Turbo-S/Images/Coupe/PCNA25_1117_fine.jpg/jcr:content/PCNA25_1117_fine.jpg",
-      "http://press.porsche.com/prod/presse_pag/PressResources.nsf/jumppage/modelle-911-911_turbo_s/$file/2020_911_turbo_s.jpg",
+      "https://press.porsche.com/prod/presse_pag/PressResources.nsf/jumppage/modelle-911-911_turbo_s/$file/2020_911_turbo_s.jpg",
       "https://cdn.dealeraccelerate.com/studio/1/28/3274/x/2019-porsche-911-turbo-s"
     ],
   },
@@ -94,8 +104,10 @@ const cars = [
     price: "$200,000",
     speed: "330 km/h",
     hp: "602 hp",
-    description:
-      "A refined, naturally aspirated V10 supercar sharing its core DNA with the Lamborghini Huracán.",
+    zeroTo100Mph: "7.6 s",
+    weight: "1,555 kg",
+    vehicleType: "Combustion",
+    description: "A refined, naturally aspirated V10 supercar sharing its core DNA with the Lamborghini Huracán.",
     images: [
       "https://www.netcarshow.com/Audi-R8_V10_plus-2013-Front_Three-Quarter.dda750a0.jpg",
       "https://www.netcarshow.com/Audi-R8_Coupe_V10_plus_selection_24h-2016-Rear.cc3a1530.jpg",
@@ -111,8 +123,10 @@ const cars = [
     price: "$325,000",
     speed: "325 km/h",
     hp: "720 hp",
-    description:
-      "A track-focused monster featuring a flat-plane crank V8 and extreme aerodynamics derived from GT3 racing.",
+    zeroTo100Mph: "6.8 s",
+    weight: "1,615 kg",
+    vehicleType: "Combustion",
+    description: "A track-focused monster featuring a flat-plane crank V8 and extreme aerodynamics derived from GT3 racing.",
     images: [
       "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Front.395da237.jpg",
       "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Rear_Three-Quarter.395da237.jpg",
@@ -128,8 +142,10 @@ const cars = [
     price: "$130,000",
     speed: "305 km/h",
     hp: "617 hp",
-    description:
-      "A heavily muscular grand tourer that crosses into supercar territory with its ferocious twin-turbo V8 and all-wheel drive.",
+    zeroTo100Mph: "7.2 s",
+    weight: "1,885 kg",
+    vehicleType: "Combustion",
+    description: "A heavily muscular grand tourer that crosses into supercar territory with its ferocious twin-turbo V8 and all-wheel drive.",
     images: [
       "https://www.netcarshow.com/BMW-M8_Competition_Coupe-2020-Front.0616f34d.jpg",
       "https://mediacloud.carbuyer.co.uk/image/private/s--y-iJbnqW--/f_auto,t_content-image-full-mobile@1/v1579647100/carbuyer/2019/06/p90348780_highres.jpg",
@@ -145,8 +161,10 @@ const cars = [
     price: "$316,000",
     speed: "340 km/h",
     hp: "715 hp",
-    description:
-      "A stunningly beautiful V12 grand tourer offering massive torque and classic British elegance.",
+    zeroTo100Mph: "6.4 s",
+    weight: "1,693 kg",
+    vehicleType: "Combustion",
+    description: "A stunningly beautiful V12 grand tourer offering massive torque and classic British elegance.",
     images: [
       "https://www.dimmitt.com/blogs/3093/wp-content/uploads/2018/07/aston-martin-DBS-Superleggera-tampa-dimmitt-front.jpg",
       "https://c8.alamy.com/comp/T19AN6/2019-aston-martin-dbs-superleggera-rear-34-view-wales-uk-T19AN6.jpg",
@@ -162,8 +180,10 @@ const cars = [
     price: "$2,600,000",
     speed: "383 km/h",
     hp: "730 hp",
-    description:
-      "A rolling piece of art featuring active aerodynamics and a bespoke AMG-sourced twin-turbo V12.",
+    zeroTo100Mph: "5.6 s",
+    weight: "1,350 kg",
+    vehicleType: "Combustion",
+    description: "A rolling piece of art featuring active aerodynamics and a bespoke AMG-sourced twin-turbo V12.",
     images: [
       "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1348-01p.jpg",
       "https://www.pagani.com/app/uploads/2025/02/4-Huayra-R-Evo-Roadster_Rear.jpg",
@@ -179,8 +199,10 @@ const cars = [
     price: "$3,000,000",
     speed: "480 km/h",
     hp: "1600 hp",
-    description:
-      "A track-oriented megacar engineered to break the 300 mph barrier, featuring a revolutionary 9-speed 'Light Speed Transmission'.",
+    zeroTo100Mph: "4.7 s",
+    weight: "1,420 kg",
+    vehicleType: "Combustion",
+    description: "A track-oriented megacar engineered to break the 300 mph barrier, featuring a revolutionary 9-speed 'Light Speed Transmission'.",
     images: [
       "https://www.kimballstock.com/pix/car/p/06/aut-55-rk0017-01p.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/koenigsegg-jesko-105-1551799593.jpg",
@@ -196,8 +218,10 @@ const cars = [
     price: "$500,000",
     speed: "347 km/h",
     hp: "660 hp",
-    description:
-      "A Le Mans-winning race car for the road, built almost entirely of carbon fiber with a potent EcoBoost V6.",
+    zeroTo100Mph: "6.4 s",
+    weight: "1,385 kg",
+    vehicleType: "Combustion",
+    description: "A Le Mans-winning race car for the road, built almost entirely of carbon fiber with a potent EcoBoost V6.",
     images: [
       "https://www.netcarshow.com/Ford-GT-2017-Front.973f35eb.jpg",
       "https://www.automotiverhythms.com/wp-content/uploads/2022/02/2022-Ford-GT-Alan-Mann-Heritage-Edition_05.jpg",
@@ -213,8 +237,10 @@ const cars = [
     price: "$110,000",
     speed: "313 km/h",
     hp: "670 hp",
-    description:
-      "An American supercar disruptor packing a high-revving, flat-plane crank naturally aspirated V8.",
+    zeroTo100Mph: "6.0 s",
+    weight: "1,561 kg",
+    vehicleType: "Combustion",
+    description: "An American supercar disruptor packing a high-revving, flat-plane crank naturally aspirated V8.",
     images: [
       "https://www.kimballstock.com/pix/car/p/07/vet-01-bk0056-01p.jpg",
       "https://news.chevroletarabia.com/dld/content/dam/Media/images/US/Vehicles/Chevrolet/Cars/Corvette_Z06/2023/Product/Vehicle/2023-chevrolet-corvette-z06-203.jpg",
@@ -230,8 +256,10 @@ const cars = [
     price: "$210,000",
     speed: "330 km/h",
     hp: "600 hp",
-    description:
-      "The pinnacle of the 'Godzilla' lineage, featuring GT3 race-derived turbochargers and carbon fiber bodywork.",
+    zeroTo100Mph: "6.5 s",
+    weight: "1,720 kg",
+    vehicleType: "Combustion",
+    description: "The pinnacle of the 'Godzilla' lineage, featuring GT3 race-derived turbochargers and carbon fiber bodywork.",
     images: [
       "https://wieck-nissanao-production.s3.us-west-1.amazonaws.com/releaseInlineImages/a5c21ac282c8cec160193ee5f450fe8a911959cb",
       "https://images.caricos.com/n/nissan/2020_nissan_gt-r_nismo/images/2560x1440/2020_nissan_gt-r_nismo_22_2560x1440.jpg",
@@ -247,8 +275,10 @@ const cars = [
     price: "$170,000",
     speed: "307 km/h",
     hp: "600 hp",
-    description:
-      "A highly advanced hybrid supercar utilizing three electric motors and a twin-turbo V6 for precise torque vectoring.",
+    zeroTo100Mph: "6.2 s",
+    weight: "1,725 kg",
+    vehicleType: "Hybrid",
+    description: "A highly advanced hybrid supercar utilizing three electric motors and a twin-turbo V6 for precise torque vectoring.",
     images: [
       "https://wieck-honda-production.s3.us-west-1.amazonaws.com/releaseInlineImages/1bfea2109e3f1463bce8984cf31384d13fd121e9",
       "https://hips.hearstapps.com/hmg-prod/images/2022-acura-nsx-type-s-5-1628792635.jpg?crop=1xw:0.84375xh;center,top&resize=1200:*",
@@ -264,8 +294,10 @@ const cars = [
     price: "$375,000",
     speed: "325 km/h",
     hp: "552 hp",
-    description:
-      "A legendary, limited-production supercar famous for having one of the best-sounding V10 engines in automotive history.",
+    zeroTo100Mph: "7.6 s",
+    weight: "1,480 kg",
+    vehicleType: "Combustion",
+    description: "A legendary, limited-production supercar famous for having one of the best-sounding V10 engines in automotive history.",
     images: [
       "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1187-01p.jpg",
       "https://s.yimg.com/ny/api/res/1.2/6g_s0xGGm6f5rEeIKWHI1A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTM2MA--/https://media.zenfs.com/en/car_and_driver_581/668ce12bcc8e6a0feb47de0487722766",
@@ -281,8 +313,10 @@ const cars = [
     price: "$210,000",
     speed: "325 km/h",
     hp: "621 hp",
-    description:
-      "Maserati’s return to mid-engine supercars, powered by the innovative twin-spark 'Nettuno' V6 engine.",
+    zeroTo100Mph: "5.9 s",
+    weight: "1,500 kg",
+    vehicleType: "Combustion",
+    description: "Maserati’s return to mid-engine supercars, powered by the innovative twin-spark 'Nettuno' V6 engine.",
     images: [
       "https://www.kimballstock.com/pix/car/p/07/aut-57-rk0002-01p.jpg",
       "https://car-images.bauersecure.com/wp-images/4158/480x270/mc20_058.jpg",
@@ -298,8 +332,10 @@ const cars = [
     price: "$280,000",
     speed: "340 km/h",
     hp: "710 hp",
-    description:
-      "A tribute to Ferrari's most powerful V8 engine, wrapping staggering performance in beautiful, aerodynamic bodywork.",
+    zeroTo100Mph: "5.8 s",
+    weight: "1,435 kg",
+    vehicleType: "Combustion",
+    description: "A tribute to Ferrari's most powerful V8 engine, wrapping staggering performance in beautiful, aerodynamic bodywork.",
     images: [
       "https://hips.hearstapps.com/mtg-prod/65c7fe20def97800082b12ed/ferrari-f8-tributo-front-three-quarters.jpg",
       "https://hips.hearstapps.com/mtg-prod/65c7fe2058b907000853e329/ferrari-f8-tributo-rear-three-quarters.jpg",
@@ -315,8 +351,10 @@ const cars = [
     price: "$275,000",
     speed: "325 km/h",
     hp: "631 hp",
-    description:
-      "A track-focused variant of the Huracán featuring the innovative 'ALA' active aerodynamics system.",
+    zeroTo100Mph: "5.9 s",
+    weight: "1,382 kg",
+    vehicleType: "Combustion",
+    description: "A track-focused variant of the Huracán featuring the innovative 'ALA' active aerodynamics system.",
     images: [
       "https://www.kimballstock.com/pix/car/p/07/lam-01-rk0982-01p.jpg",
       "https://www.netcarshow.com/Lamborghini-Huracan_Performante-2018-Rear.3ce24414.jpg",
@@ -332,8 +370,10 @@ const cars = [
     price: "$1,000,000",
     speed: "335 km/h",
     hp: "789 hp",
-    description:
-      "An unapologetic track car designed solely to set lap records, prioritizing downforce and weight reduction above all else.",
+    zeroTo100Mph: "4.8 s",
+    weight: "1,198 kg",
+    vehicleType: "Combustion",
+    description: "An unapologetic track car designed solely to set lap records, prioritizing downforce and weight reduction above all else.",
     images: [
       "https://www.kimballstock.com/pix/car/p/04/aut-28-rk0245-01p.jpg",
       "https://www.netcarshow.com/McLaren-Senna-2019-Rear_Three-Quarter.8f50278b.jpg",
@@ -349,8 +389,10 @@ const cars = [
     price: "$2,500,000",
     speed: "431 km/h",
     hp: "1200 hp",
-    description:
-      "The hypercar that defined an era, holding the production car top speed record for years with its massive W16 engine.",
+    zeroTo100Mph: "4.8 s",
+    weight: "1,838 kg",
+    vehicleType: "Combustion",
+    description: "The hypercar that defined an era, holding the production car top speed record for years with its massive W16 engine.",
     images: [
       "https://www.shutterstock.com/image-photo/dorlisheim-france-septembre-13th-2025-600nw-2680197625.jpg",
       "https://bugatti-newsroom.imgix.net/1aea0a52-c9e3-41d6-a718-38542fd55361/studio_004_1",
@@ -366,8 +408,10 @@ const cars = [
     price: "$845,000",
     speed: "345 km/h",
     hp: "887 hp",
-    description:
-      "A member of the 'Holy Trinity', this hybrid hypercar proved that electrification could push track performance to new limits.",
+    zeroTo100Mph: "4.9 s",
+    weight: "1,634 kg",
+    vehicleType: "Hybrid",
+    description: "A member of the 'Holy Trinity', this hybrid hypercar proved that electrification could push track performance to new limits.",
     images: [
       "https://www.kimballstock.com/pix/car/p/07/por-04-bk0019-01p.jpg",
       "https://www.kimballstock.com/pix/car/p/07/por-04-bk0021-01p.jpg",
@@ -383,8 +427,10 @@ const cars = [
     price: "$1,400,000",
     speed: "350 km/h",
     hp: "950 hp",
-    description:
-      "Ferrari's ultimate expression of performance, combining a screaming V12 with a KERS hybrid system for instant response.",
+    zeroTo100Mph: "4.8 s",
+    weight: "1,585 kg",
+    vehicleType: "Hybrid",
+    description: "Ferrari's ultimate expression of performance, combining a screaming V12 with a KERS hybrid system for instant response.",
     images: [
       "https://www.kimballstock.com/pix/car/p/06/aut-50-rk0860-01p.jpg",
       "https://www.kimballstock.com/pix/car/p/06/aut-50-rk0864-01p.jpg",
@@ -400,8 +446,10 @@ const cars = [
     price: "$1,150,000",
     speed: "350 km/h",
     hp: "903 hp",
-    description:
-      "A hybrid hypercar known for its aggressive power delivery and striking, aerodynamic shrink-wrapped design.",
+    zeroTo100Mph: "4.7 s",
+    weight: "1,547 kg",
+    vehicleType: "Hybrid",
+    description: "A hybrid hypercar known for its aggressive power delivery and striking, aerodynamic shrink-wrapped design.",
     images: [
       "https://www.kimballstock.com/pix/car/p/04/aut-28-rk0201-01p.jpg",
       "https://www.kimballstock.com/pix/car/p/04/aut-28-rk0203-01p.jpg",
@@ -417,8 +465,10 @@ const cars = [
     price: "$3,600,000",
     speed: "350 km/h",
     hp: "808 hp",
-    description:
-      "Lamborghini's first hybrid, utilizing supercapacitors instead of standard batteries to assist its mighty V12.",
+    zeroTo100Mph: "5.8 s",
+    weight: "1,595 kg",
+    vehicleType: "Hybrid",
+    description: "Lamborghini's first hybrid, utilizing supercapacitors instead of standard batteries to assist its mighty V12.",
     images: [
       "https://4kwallpapers.com/images/walls/thumbs_3t/14478.jpg",
       "https://i.ytimg.com/vi/2X5wQ1K4Hv4/maxresdefault.jpg",
@@ -434,8 +484,10 @@ const cars = [
     price: "$3,000,000",
     speed: "400 km/h",
     hp: "1140 hp",
-    description:
-      "An F1 car for the road designed by Adrian Newey, featuring extreme underbody aerodynamics and a Cosworth V12.",
+    zeroTo100Mph: "5.0 s",
+    weight: "1,270 kg",
+    vehicleType: "Combustion",
+    description: "An F1 car for the road designed by Adrian Newey, featuring extreme underbody aerodynamics and a Cosworth V12.",
     images: [
       "https://www.topgear.com/sites/default/files/2023/03/4-Aston-Martin-Valkyrie.jpg",
       "https://media.astonmartin.com/wp-content/uploads/2024/10/85ea0b421d020274c7e9fe3d279a7566-m.jpg.webp",
@@ -451,8 +503,10 @@ const cars = [
     price: "$140,000",
     speed: "307 km/h",
     hp: "543 hp",
-    description:
-      "A stripped-down, lightweight track special that represents the absolute peak of BMW's M4 performance capabilities.",
+    zeroTo100Mph: "8.1 s",
+    weight: "1,625 kg",
+    vehicleType: "Combustion",
+    description: "A stripped-down, lightweight track special that represents the absolute peak of BMW's M4 performance capabilities.",
     images: [
       "https://mediapool.bmwgroup.com/download/edown/pressclub/publicq?dokNo=P90463173&attachment=1&actEvent=image",
       "https://www.autospies.com/images/users/Agent009/images/BMW%20M4%20CSL_Studio%20(7).jpg",
@@ -468,8 +522,10 @@ const cars = [
     price: "$147,000",
     speed: "250 km/h",
     hp: "369 hp",
-    description:
-      "A futuristic plug-in hybrid sports car featuring dramatic butterfly doors and an incredibly efficient carbon-fiber tub.",
+    zeroTo100Mph: "9.8 s",
+    weight: "1,535 kg",
+    vehicleType: "Hybrid",
+    description: "A futuristic plug-in hybrid sports car featuring dramatic butterfly doors and an incredibly efficient carbon-fiber tub.",
     images: [
       "https://www.kimballstock.com/pix/car/p/01/aut-09-rk1291-01p.jpg",
       "https://w0.peakpx.com/wallpaper/471/798/HD-wallpaper-bmw-i8-bmw-car-blue-sportscar-supercar-rear-view.jpg",
@@ -485,8 +541,10 @@ const cars = [
     price: "$2,800,000",
     speed: "350 km/h",
     hp: "740 hp",
-    description:
-      "A track-only, carbon-titanium masterpiece built entirely without racing restrictions, known for its deafening V12 exhaust note.",
+    zeroTo100Mph: "6.0 s",
+    weight: "1,070 kg",
+    vehicleType: "Combustion",
+    description: "A track-only, carbon-titanium masterpiece built entirely without racing restrictions, known for its deafening V12 exhaust note.",
     images: [
       "https://www.kimballstock.com/pix/car/p/05/aut-44-bk0008-01p.jpg",
       "https://www.topgear.com/sites/default/files/news/image/2015/04/Large%20Image_6751.jpg",
@@ -502,8 +560,10 @@ const cars = [
     price: "$2,500,000",
     speed: "447 km/h",
     hp: "1160 hp",
-    description:
-      "The car that officially claimed the world's fastest production car title in 2017 on a closed highway in Nevada.",
+    zeroTo100Mph: "5.5 s",
+    weight: "1,395 kg",
+    vehicleType: "Combustion",
+    description: "The car that officially claimed the world's fastest production car title in 2017 on a closed highway in Nevada.",
     images: [
       "https://w0.peakpx.com/wallpaper/895/215/HD-wallpaper-koenigsegg-agera-rs1-2019-hypercar-front-view-white-sports-coupe-supercar-tuning-agera-white-agera-rs1-koenigsegg.jpg",
       "https://c8.alamy.com/comp/P6J377/19-may-2018-london-england-close-up-detail-of-an-supercar-koenigsegg-agera-r-elegant-brake-light-in-london-motor-show-P6J377.jpg",
@@ -519,8 +579,10 @@ const cars = [
     price: "$2,100,000",
     speed: "435 km/h",
     hp: "1817 hp",
-    description:
-      "An American hypercar built from the ground up to achieve one goal: absolute top speed dominance.",
+    zeroTo100Mph: "4.7 s",
+    weight: "1,385 kg",
+    vehicleType: "Combustion",
+    description: "An American hypercar built from the ground up to achieve one goal: absolute top speed dominance.",
     images: [
       "https://www.kimballstock.com/pix/car/p/06/aut-54-rk0001-01p.jpg",
       "https://www.hennesseymedia.com/wp-content/uploads/2025/08/Hennessey-Unveils-1-of-1-Manual-Venom-F5-with-2031-HP-Low-4.jpg",
@@ -536,8 +598,10 @@ const cars = [
     price: "$1,900,000",
     speed: "455 km/h",
     hp: "1750 hp",
-    description:
-      "An incredibly aerodynamic American hypercar engineered specifically to push the boundaries of straight-line speed records.",
+    zeroTo100Mph: "5.4 s",
+    weight: "1,247 kg",
+    vehicleType: "Combustion",
+    description: "An incredibly aerodynamic American hypercar engineered specifically to push the boundaries of straight-line speed records.",
     images: [
       "https://cdn.motor1.com/images/mgl/LBV8L/s1/2020-scc-tuatara.jpg",
       "https://cdn.motor1.com/images/mgl/EMq0o/s3/2020-scc-tuatara.jpg",
@@ -553,8 +617,10 @@ const cars = [
     price: "$2,200,000",
     speed: "412 km/h",
     hp: "1914 hp",
-    description:
-      "An all-electric hypercar that has completely rewritten the rulebook on acceleration, quarter-mile times, and EV performance.",
+    zeroTo100Mph: "4.3 s",
+    weight: "2,150 kg",
+    vehicleType: "Full Electric",
+    description: "An all-electric hypercar that has completely rewritten the rulebook on acceleration, quarter-mile times, and EV performance.",
     images: [
       "https://cdn.motor1.com/images/mgl/7ZQl81/s1/rimac-nevera-15th-anniversary-edition-front-3-4.jpg",
       "https://hips.hearstapps.com/hmg-prod/images/rimac-nevera-r-113-66be2b36ab91a.jpg?crop=0.611xw:0.916xh;0.196xw,0.0240xh&resize=1200:*",
@@ -570,8 +636,10 @@ const cars = [
     price: "$2,300,000",
     speed: "320 km/h",
     hp: "2000 hp",
-    description:
-      "A striking, fully electric hypercar featuring massive venturi tunnels through the bodywork to generate extreme downforce.",
+    zeroTo100Mph: "6.0 s",
+    weight: "1,680 kg",
+    vehicleType: "Full Electric",
+    description: "A striking, fully electric hypercar featuring massive venturi tunnels through the bodywork to generate extreme downforce.",
     images: [
       "https://media.gq-magazine.co.uk/photos/5d776fec60bd0400088c1eb8/16:9/w_2560%2Cc_limit/20190910-Lotus-04.jpg",
       "https://realtimeuk.com/wp-content/uploads/2022/06/lotus_evija_big_sur_config_movie_showreel_launch_0620-scaled.jpg",
@@ -587,8 +655,10 @@ const cars = [
     price: "$500,000",
     speed: "340 km/h",
     hp: "986 hp",
-    description:
-      "Ferrari's first plug-in hybrid production car, utilizing three electric motors and a V8 to achieve near-hypercar performance.",
+    zeroTo100Mph: "4.7 s",
+    weight: "1,570 kg",
+    vehicleType: "Hybrid",
+    description: "Ferrari's first plug-in hybrid production car, utilizing three electric motors and a V8 to achieve near-hypercar performance.",
     images: [
       "https://www.kimballstock.com/pix/car/p/06/frr-04-rk0769-01p.jpg",
       "https://media.gettyimages.com/id/1713180684/photo/ferrari-sf90-sports-car-rear-lights-detail.jpg?s=1024x1024&w=gi&k=20&c=g95UgcD4X_Y01tUZHNurd7eMlXtv2G2yZYvFsbWEG0A=",
@@ -604,8 +674,10 @@ const cars = [
     price: "$600,000",
     speed: "350 km/h",
     hp: "1001 hp",
-    description:
-      "The successor to the Aventador, maintaining the legendary V12 but pairing it with a cutting-edge plug-in hybrid system.",
+    zeroTo100Mph: "4.8 s",
+    weight: "1,772 kg",
+    vehicleType: "Hybrid",
+    description: "The successor to the Aventador, maintaining the legendary V12 but pairing it with a cutting-edge plug-in hybrid system.",
     images: [
       "https://hips.hearstapps.com/hmg-prod/images/2024-lamborghini-revuelto-122-641a1d50c5283.jpg",
       "https://static0.hotcarsimages.com/wordpress/wp-content/uploads/2023/03/lamborghini-revuelto-rear-quarter-view-studio.jpg?q=50&fit=crop&w=825&dpr=1.5",
@@ -621,8 +693,10 @@ const cars = [
     price: "$200,000",
     speed: "315 km/h",
     hp: "583 hp",
-    description:
-      "A modern homage to the classic 300SL, featuring iconic gullwing doors and a naturally aspirated 6.2L V8.",
+    zeroTo100Mph: "7.2 s",
+    weight: "1,620 kg",
+    vehicleType: "Combustion",
+    description: "A modern homage to the classic 300SL, featuring iconic gullwing doors and a naturally aspirated 6.2L V8.",
     images: [
       "https://www.netcarshow.com/Mercedes-Benz-SLS_AMG_Black_Series-2014-wallpaper.jpg",
       "https://w0.peakpx.com/wallpaper/149/132/HD-wallpaper-mercedes-benz-sls-amg-silver-sports-coupe-supercar-rear-view-tuning-sls-silver-sls-german-sports-cars-mercedes-thumbnail.jpg",
@@ -638,8 +712,10 @@ const cars = [
     price: "$440,000",
     speed: "330 km/h",
     hp: "605 hp",
-    description:
-      "An analog masterpiece featuring a V10 engine originally developed for Le Mans and a notoriously tricky manual transmission.",
+    zeroTo100Mph: "6.8 s",
+    weight: "1,380 kg",
+    vehicleType: "Vintage",
+    description: "An analog masterpiece featuring a V10 engine originally developed for Le Mans and a notoriously tricky manual transmission.",
     images: [
       "https://static0.carbuzzimages.com/wordpress/wp-content/uploads/2025/02/2005-porsche-carrera-gt-exterior-front-view-at-rm-sothebys.jpg",
       "https://c8.alamy.com/comp/ADTD5E/porsche-carrera-gt-rear-view-ADTD5E.jpg",
@@ -655,8 +731,10 @@ const cars = [
     price: "$233,000",
     speed: "330 km/h",
     hp: "671 hp",
-    description:
-      "McLaren's next-generation hybrid supercar, combining a twin-turbo V6 with an electric motor for seamless power delivery.",
+    zeroTo100Mph: "6.9 s",
+    weight: "1,498 kg",
+    vehicleType: "Hybrid",
+    description: "McLaren's next-generation hybrid supercar, combining a twin-turbo V6 with an electric motor for seamless power delivery.",
     images: [
       "https://smart-motoring.com/wp-content/uploads/2026/02/mclaren-artura-mcl39-3-4-front-studio.webp",
       "https://smart-motoring.com/wp-content/uploads/2026/02/mclaren-artura-mcl39-rear-3-4-1024x576.webp",
@@ -672,8 +750,10 @@ const cars = [
     price: "$500,000",
     speed: "262 km/h",
     hp: "273 hp",
-    description:
-      "BMW's original mid-engine supercar from the late 1970s, designed by Giugiaro and built for homologation racing.",
+    zeroTo100Mph: "14.0 s",
+    weight: "1,300 kg",
+    vehicleType: "Vintage",
+    description: "BMW's original mid-engine supercar from the late 1970s, designed by Giugiaro and built for homologation racing.",
     images: [
       "https://media.gq-magazine.co.uk/photos/5d13aa559fa601dcdf839c19/16:9/w_2560%2Cc_limit/gq_bmw_m1_004.jpg",
       "https://static0.carbuzzimages.com/wordpress/wp-content/uploads/2025/07/1978-bmw-m1-2.jpg",

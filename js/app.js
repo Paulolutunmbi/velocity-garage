@@ -96,12 +96,12 @@ function normalizeTopUsers(usersMap = {}) {
   return Object.entries(usersMap)
     .map(([uid, value]) => ({
       uid,
-      count: Math.max(0, Number(value?.count || 0)),
+      count: Math.max(0, Number(value?.favoritesCount ?? value?.favoriteCount ?? value?.count ?? 0)),
       firstName: String(value?.name || "").trim().split(/\s+/)[0] || shortUid(uid),
     }))
     .filter((item) => item.count > 0)
     .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+    .slice(0, 10);
 }
 
 function normalizeIds(value) {
@@ -126,8 +126,17 @@ function getTopUsersFromUsers(users = []) {
   users.forEach((user) => {
     const uid = String(user.id || "");
     if (!uid) return;
+    const favoritesCount = Math.max(
+      0,
+      Number(
+        user.favoritesCount ??
+          user.favoriteCount ??
+          normalizeIds(user.favorites).length
+      )
+    );
+
     usersMap[uid] = {
-      count: normalizeIds(user.favorites).length,
+      favoritesCount,
       name: String(user.firstName || user.name || user.email || "").split(/\s|@/)[0] || shortUid(uid),
     };
   });

@@ -1,84 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Signup | Velocity Garage</title>
+	<meta charset="utf-8"/>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+	<title>JOIN THE GARAGE | VELOCITY GARAGE</title>
 	<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+	<script id="tailwind-config">
+		tailwind.config = {
+			darkMode: "class",
+			theme: {
+				extend: {
+					colors: {
+						"surface-container-highest": "#353534",
+						"on-tertiary-fixed-variant": "#004f51",
+						"primary-fixed-dim": "#ffb3b2",
+						"secondary-fixed": "#e3e2e2",
+						"inverse-surface": "#e5e2e1",
+						"tertiary-fixed-dim": "#6cd7d8",
+						"on-secondary-fixed": "#1a1c1c",
+						"surface": "#131313",
+						"on-secondary-fixed-variant": "#464747",
+						"on-secondary": "#2f3131",
+						"on-surface": "#e5e2e1",
+						"primary-container": "#ff525c",
+						"secondary-fixed-dim": "#c6c6c6",
+						"inverse-primary": "#bf002a",
+						"on-tertiary-fixed": "#002020",
+						"inverse-on-surface": "#313030",
+						"outline-variant": "#5f3e3e",
+						"background": "#131313",
+						"on-primary-fixed": "#410008",
+						"on-error": "#690005",
+						"tertiary-container": "#2aa0a2",
+						"surface-bright": "#3a3939",
+						"tertiary": "#6cd7d8",
+						"error-container": "#93000a",
+						"surface-container-low": "#1c1b1b",
+						"on-primary-fixed-variant": "#92001e",
+						"secondary-container": "#484949",
+						"primary": "#ffb3b2",
+						"surface-container-lowest": "#0e0e0e",
+						"on-error-container": "#ffdad6",
+						"on-secondary-container": "#b8b8b8",
+						"error": "#ffb4ab",
+						"secondary": "#c6c6c6",
+						"outline": "#af8786",
+						"on-primary": "#680012",
+						"on-surface-variant": "#e9bcba",
+						"surface-container": "#201f1f",
+						"surface-tint": "#ffb3b2",
+						"tertiary-fixed": "#8af3f5",
+						"on-primary-container": "#5b000f",
+						"primary-fixed": "#ffdad8",
+						"surface-dim": "#131313",
+						"on-tertiary": "#003738",
+						"surface-variant": "#353534",
+						"surface-container-high": "#2a2a2a",
+						"on-tertiary-container": "#002f30",
+						"on-background": "#e5e2e1"
+					},
+					fontFamily: {
+						"headline": ["Space Grotesk", "sans-serif"],
+						"body": ["Inter", "sans-serif"],
+						"label": ["Inter", "sans-serif"]
+					},
+					borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"}
+				}
+			}
+		};
+	</script>
 	<style>
-		body { font-family: "Plus Jakarta Sans", sans-serif; }
-		.title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+		/* Stitch UI integration: added cinematic background accents */
+		.kinetic-bg {
+			background: radial-gradient(circle at top right, rgba(255, 82, 92, 0.08), transparent 40%),
+						radial-gradient(circle at bottom left, rgba(108, 215, 216, 0.03), transparent 30%);
+		}
 	</style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
-	<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_20%_8%,rgba(255,91,46,0.16),transparent_30%),radial-gradient(circle_at_80%_75%,rgba(59,130,246,0.12),transparent_32%)]"></div>
-
-	<header class="border-b border-slate-800/80 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
-		<div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3">
-			<a href="index.html" class="flex items-center">
-				<img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage" class="h-12 w-auto md:h-14">
-			</a>
-			<div class="flex flex-wrap gap-2">
-				<a href="index.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
-				<a href="login.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Login</a>
-			</div>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+	<!-- Desktop fit tuning: reduced only lg+ vertical spacing to avoid page scroll on desktop -->
+	<main class="flex-grow flex items-center justify-center relative overflow-hidden kinetic-bg pt-10 pb-10 px-4 sm:px-6 lg:min-h-screen lg:pt-4 lg:pb-4">
+		<div class="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden">
+			<div class="absolute top-[-10%] right-[-5%] w-1/2 h-full bg-gradient-to-l from-primary-container/20 to-transparent skew-x-[-12deg]"></div>
 		</div>
-	</header>
 
-	<main class="mx-auto grid min-h-[calc(100vh-92px)] w-full max-w-7xl items-center gap-8 px-4 py-10 sm:px-6 md:grid-cols-2 md:px-8">
-		<section class="hidden md:flex flex-col justify-center items-center">
-			<div class="relative w-full h-96 rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-900">
-				<img id="signup-carousel-img" src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&q=80" alt="Supercar" class="w-full h-full object-cover"/>
-				<div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-			</div>
-			<p class="mt-4 text-sm text-slate-300 text-center">Build your dream garage collection today</p>
-		</section>
-
-		<section class="rounded-3xl border border-slate-700/80 bg-slate-900/80 p-6 shadow-2xl">
-			<h2 class="text-xl font-bold text-white">Create your account</h2>
-			<p class="mt-1 text-sm text-slate-300">Fill in your details or use Google/GitHub.</p>
-
-			<div id="signup-error" class="mt-4 hidden rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
-
-			<form id="signup-form" class="mt-5 space-y-4" novalidate>
-				<div>
-					<label for="signup-name" class="mb-1 block text-sm font-semibold text-slate-200">Full Name</label>
-					<input id="signup-name" name="name" type="text" autocomplete="name" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="Your name">
+		<!-- Stitch UI integration: new responsive auth layout while preserving JS hooks below -->
+		<div class="relative z-10 w-full max-w-[1200px] lg:max-h-[94vh] grid md:grid-cols-2 bg-surface-container-lowest shadow-2xl overflow-hidden ring-1 ring-outline-variant/10">
+			<section class="hidden md:block relative h-full min-h-[520px] lg:min-h-[540px] overflow-hidden">
+				<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
+				<img alt="Performance vehicle details" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtSeAadW-h765d2dxzoTI0QqUIMtahtkuX0sx82QQRAZlXoGot7lgdCr68f1WObN7WQcV_d8XcSc9j2sELR_iUO-9bmS-j0R7Wwbhkre6ei-_2DVve_mvMCw66yQQKvujkNKZt8cj2qrgOz6buYZ6wovfNesr1U7Z1nvVuHESmrbS8Nqnga8IUStzKNoywtuw4Yiox1DDi109I9w_RHjUjWgw4JJDuUTORoz7XMn_j7BwpedMb7bpfMk38mbk-BUqje2_29jMUVg9C"/>
+				<div class="absolute bottom-12 left-12 z-20">
+					<h2 class="font-headline text-5xl font-black tracking-tighter text-white uppercase italic leading-none mb-4">
+						PRECISION<br/>ENGINEERED
+					</h2>
+					<p class="text-secondary-fixed text-sm max-w-[300px] font-light leading-relaxed tracking-wide uppercase">
+						Access the world's most exclusive automotive marketplace. Built for the discerning driver.
+					</p>
 				</div>
-				<div>
-					<label for="signup-email" class="mb-1 block text-sm font-semibold text-slate-200">Email</label>
-					<input id="signup-email" name="email" type="email" autocomplete="email" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="you@example.com">
-				</div>
-				<div>
-					<label for="signup-password" class="mb-1 block text-sm font-semibold text-slate-200">Password</label>
-					<input id="signup-password" name="password" type="password" autocomplete="new-password" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="At least 6 characters">
-				</div>
-				<div>
-					<label for="signup-confirm" class="mb-1 block text-sm font-semibold text-slate-200">Confirm Password</label>
-					<input id="signup-confirm" name="confirmPassword" type="password" autocomplete="new-password" required class="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white outline-none transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/40" placeholder="Repeat password">
-				</div>
-				<button id="signup-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Create Account</button>
-			</form>
+			</section>
 
-			<div class="my-5 flex items-center gap-3">
-				<div class="h-px flex-1 bg-slate-700"></div>
-				<span class="text-xs uppercase tracking-widest text-slate-400">or</span>
-				<div class="h-px flex-1 bg-slate-700"></div>
-			</div>
+			<section class="p-6 sm:p-8 md:p-12 lg:p-10 xl:p-12 flex flex-col justify-center bg-surface-container-low">
+				<div class="mb-8 md:mb-8 lg:mb-6">
+					<div class="text-primary-container font-headline font-black text-2xl tracking-tighter uppercase italic mb-6 md:mb-8">
+						Velocity Garage
+					</div>
+					<h1 class="font-headline text-4xl font-bold tracking-tight text-white mb-2 uppercase">Create Account</h1>
+					<p class="text-secondary text-sm font-label tracking-widest uppercase">Initiate your driving profile</p>
+				</div>
 
-			<div class="grid gap-3 sm:grid-cols-2">
-				<button id="google-signup-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Continue with Google</button>
-				<button id="github-signup-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Continue with GitHub</button>
-			</div>
+				<!-- Preserved #signup-error hook for existing JS error rendering -->
+				<div id="signup-error" class="hidden mb-6 rounded-lg border border-red-500/50 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
 
-			<p class="mt-5 text-sm text-slate-300">Already have an account? <a href="login.html" class="font-semibold text-yellow-400 hover:text-yellow-300">Login here</a>.</p>
-		</section>
+				<!-- Preserved form ID and input names/IDs so js/signup-page.js keeps working -->
+				<form id="signup-form" class="space-y-6 lg:space-y-4" novalidate>
+					<div class="group relative">
+						<label for="signup-name" class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-2 block transition-colors group-focus-within:text-primary-container">
+							Full Name
+						</label>
+						<input id="signup-name" name="name" type="text" autocomplete="name" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide uppercase text-sm" placeholder="DOMINIC TORETTO"/>
+					</div>
+
+					<div class="group relative">
+						<label for="signup-email" class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-2 block transition-colors group-focus-within:text-primary-container">
+							Email Address
+						</label>
+						<input id="signup-email" name="email" type="email" autocomplete="email" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide uppercase text-sm" placeholder="DRIVE@VELOCITY.COM"/>
+					</div>
+
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-4">
+						<div class="group relative">
+							<label for="signup-password" class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-2 block transition-colors group-focus-within:text-primary-container">
+								Password
+							</label>
+							<input id="signup-password" name="password" type="password" autocomplete="new-password" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide text-sm" placeholder="••••••••"/>
+						</div>
+
+						<div class="group relative">
+							<label for="signup-confirm" class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-2 block transition-colors group-focus-within:text-primary-container">
+								Confirm Password
+							</label>
+							<input id="signup-confirm" name="confirmPassword" type="password" autocomplete="new-password" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide text-sm" placeholder="••••••••"/>
+						</div>
+					</div>
+
+					<div class="pt-2 sm:pt-4 lg:pt-2">
+						<!-- Preserved #signup-submit for busy state updates in js/signup-page.js -->
+						<button id="signup-submit" class="w-full bg-primary-container text-on-primary-container font-headline font-black py-4 sm:py-5 lg:py-3 text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:brightness-110 active:scale-[0.98] shadow-lg shadow-primary-container/20" type="submit">
+							Join the Garage
+						</button>
+					</div>
+
+					<div class="flex flex-col gap-3 lg:gap-2 mt-2">
+						<!-- Preserved #google-signup-btn and #github-signup-btn for OAuth click handlers -->
+						<button id="google-signup-btn" class="w-full flex items-center justify-center gap-3 bg-surface border border-outline-variant/30 text-white font-headline font-bold py-4 lg:py-3 text-[11px] tracking-[0.2em] uppercase transition-all duration-300 hover:bg-surface-container-high hover:border-primary-container/50" type="button">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+								<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+								<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+								<path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+							</svg>
+							Continue with Google
+						</button>
+
+						<button id="github-signup-btn" class="w-full flex items-center justify-center gap-3 bg-surface border border-outline-variant/30 text-white font-headline font-bold py-4 lg:py-3 text-[11px] tracking-[0.2em] uppercase transition-all duration-300 hover:bg-surface-container-high hover:border-primary-container/50" type="button">
+							<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+								<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+							</svg>
+							Continue with GitHub
+						</button>
+					</div>
+
+					<div class="flex flex-col items-center gap-4 lg:gap-3 pt-4 sm:pt-6 lg:pt-3">
+						<p class="text-[11px] text-secondary font-label tracking-widest text-center leading-relaxed uppercase">
+							By registering, you agree to our <a class="text-white hover:text-primary-container transition-colors underline underline-offset-4" href="#">terms of service</a> and <a class="text-white hover:text-primary-container transition-colors underline underline-offset-4" href="#">data protocols</a>.
+						</p>
+						<div class="w-12 h-px bg-outline-variant/20"></div>
+						<a class="text-[11px] font-bold tracking-[0.2em] text-secondary-fixed hover:text-white transition-colors uppercase" href="login.html">
+							Already have an account? <span class="text-primary-container ml-1">Login</span>
+						</a>
+					</div>
+				</form>
+			</section>
+		</div>
 	</main>
 
+	<!-- Preserved existing runtime/auth initialization scripts -->
 	<script src="/env.js"></script>
 	<script type="module" src="/js/firebase-config.js"></script>
 	<script type="module" src="/js/signup-page.js"></script>

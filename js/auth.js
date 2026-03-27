@@ -57,6 +57,7 @@ async function ensureUserDocument(user, preferredName = "") {
             wishlist: [],
             compare: [],
             darkMode: true,
+            favoritesCount: 0,
             favoriteCount: 0,
           }
         : {}),

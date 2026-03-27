@@ -137,6 +137,8 @@ async function ensureUserDocument(user) {
             wishlist: [],
             compare: [],
             darkMode: true,
+            favoritesCount: 0,
+            favoriteCount: 0,
             createdAt: serverTimestamp(),
           }
         : {}),
@@ -212,6 +214,7 @@ async function runPersistRemote(patch) {
         wishlist: nextState.wishlist,
         compare: nextState.compare,
         darkMode: nextState.darkMode,
+        favoritesCount: nextState.favorites.length,
         favoriteCount: nextState.favorites.length,
         updatedAt: serverTimestamp(),
       },

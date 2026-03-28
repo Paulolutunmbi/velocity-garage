@@ -1,79 +1,224 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Favorites | Velocity Garage</title>
-<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script>
-tailwind.config = {};
-</script>
-<script src="https://cdn.tailwindcss.com"></script>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EXTREME | My Collection</title>
+<link rel="icon" type="image/svg+xml" href="assets/images/default.svg"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#484949",
+              "on-error-container": "#ffdad6",
+              "on-primary-container": "#5b000f",
+              "error": "#ffb4ab",
+              "on-tertiary": "#003738",
+              "on-surface-variant": "#e9bcba",
+              "secondary-fixed-dim": "#c6c6c6",
+              "surface-container": "#201f1f",
+              "primary-container": "#ff525c",
+              "primary-fixed-dim": "#ffb3b2",
+              "on-secondary": "#2f3131",
+              "primary-fixed": "#ffdad8",
+              "surface-container-lowest": "#0e0e0e",
+              "inverse-primary": "#bf002a",
+              "on-secondary-fixed-variant": "#464747",
+              "on-tertiary-fixed-variant": "#004f51",
+              "surface-container-high": "#2a2a2a",
+              "primary": "#ffb3b2",
+              "surface-variant": "#353534",
+              "on-secondary-container": "#b8b8b8",
+              "on-primary-fixed-variant": "#92001e",
+              "surface": "#131313",
+              "on-surface": "#e5e2e1",
+              "tertiary-container": "#2aa0a2",
+              "on-tertiary-fixed": "#002020",
+              "on-primary-fixed": "#410008",
+              "surface-container-highest": "#353534",
+              "secondary-fixed": "#e3e2e2",
+              "inverse-on-surface": "#313030",
+              "tertiary-fixed-dim": "#6cd7d8",
+              "error-container": "#93000a",
+              "on-primary": "#680012",
+              "on-tertiary-container": "#002f30",
+              "surface-container-low": "#1c1b1b",
+              "inverse-surface": "#e5e2e1",
+              "surface-bright": "#3a3939",
+              "surface-tint": "#ffb3b2",
+              "surface-dim": "#131313",
+              "outline": "#af8786",
+              "tertiary-fixed": "#8af3f5",
+              "secondary": "#c6c6c6",
+              "tertiary": "#6cd7d8",
+              "on-secondary-fixed": "#1a1c1c",
+              "background": "#131313",
+              "on-background": "#e5e2e1",
+              "on-error": "#690005",
+              "outline-variant": "#5f3e3e"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
 <script src="/env.js"></script>
 <script type="module" src="/js/firebase-config.js"></script>
 <style>
-  body { font-family: "Plus Jakarta Sans", sans-serif; }
-  .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
-</style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(53, 53, 52, 0.4);
+            backdrop-filter: blur(20px);
+        }
+    </style>
 </head>
-
-<body class="min-h-screen bg-gray-900 text-white transition-colors duration-300">
-<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_85%_10%,rgba(255,91,46,0.15),transparent_28%),radial-gradient(circle_at_10%_80%,rgba(59,130,246,0.14),transparent_30%)]"></div>
-<div id="page-loading" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90">
-  <div class="flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-5 py-4 text-sm text-slate-200">
-    <span class="h-5 w-5 animate-spin rounded-full border-2 border-orange-400 border-t-transparent"></span>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<div id="page-loading" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-sm">
+  <div class="flex items-center gap-3 rounded-lg border border-outline-variant/40 bg-surface-container px-5 py-4 text-sm text-secondary">
+    <span class="h-5 w-5 animate-spin rounded-full border-2 border-primary-container border-t-transparent"></span>
     Loading favorites...
   </div>
 </div>
-
-<header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
-  <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <a href="index.html" class="flex items-center">
-      <!-- Dark-mode-only logo. -->
-      <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
-    </a>
-    <div class="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
-      <!-- Shared button treatment used across the app. -->
-      <a href="home.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Home</a>
-      <a href="compare.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Compare</a>
-      <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
-    </div>
-  </div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-xl shadow-2xl shadow-black/20">
+<nav class="flex items-center justify-between px-8 py-4 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-12">
+<a href="home.html" class="text-2xl font-bold tracking-tighter text-[#ff525c] uppercase font-['Space_Grotesk']">EXTREME</a>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#c6c6c6] hover:text-white transition-colors font-['Space_Grotesk'] tracking-tight" href="home.html">Home</a>
+<a class="text-[#c6c6c6] hover:text-white transition-colors font-['Space_Grotesk'] tracking-tight" href="home.html">Explore</a>
+<a class="text-[#c6c6c6] hover:text-white transition-colors font-['Space_Grotesk'] tracking-tight" href="compare.html">Compare</a>
+<a class="text-[#ff525c] border-b-2 border-[#ff525c] pb-1 font-['Space_Grotesk'] tracking-tight" href="favorites.html">Favorites</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center bg-surface-container-high px-4 py-2 rounded-lg group">
+<span class="material-symbols-outlined text-secondary text-sm mr-2">search</span>
+<input class="bg-transparent border-none outline-none text-xs tracking-widest text-on-surface placeholder:text-secondary/50 w-48" placeholder="SEARCH MODELS..." type="text"/>
+</div>
+<button class="hover:bg-white/5 transition-all duration-300 p-2 rounded-full scale-95 active:scale-90" aria-label="Profile">
+<span class="material-symbols-outlined text-on-surface" data-icon="person">person</span>
+</button>
+</div>
+</nav>
+<!-- Existing auth logic mount kept but visually hidden to preserve exact Stitch top bar. -->
+<div id="auth-controls" data-vg-responsive-bound="true" class="hidden"></div>
 </header>
+<main class="pt-32 pb-24 min-h-screen">
+<!-- Header Section -->
+<section class="max-w-7xl mx-auto px-8 mb-16">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+<div>
+<span class="text-primary font-label text-sm tracking-[0.2em] uppercase mb-4 block">Personal Vault</span>
+<h1 class="text-6xl md:text-8xl font-headline font-bold tracking-tighter uppercase leading-none">
+                        My Collection
+                    </h1>
+<div class="flex items-center gap-4 mt-6">
+<span id="saved-count" class="bg-primary-container/20 text-primary-container px-3 py-1 text-xs font-bold tracking-widest rounded-full uppercase">0 Saved</span>
+<div class="h-[1px] w-24 bg-outline-variant/30"></div>
+<span id="compare-quick-info" class="text-secondary font-label text-xs tracking-widest uppercase">Verified Assets</span>
+</div>
+</div>
+<!-- Filters -->
+<div class="flex flex-wrap gap-4">
+<div class="group relative">
+<button class="flex items-center gap-3 bg-surface-container-low px-6 py-3 border-b border-outline-variant hover:border-primary transition-all" type="button">
+<span class="text-xs font-label font-bold tracking-widest uppercase text-secondary">Brand</span>
+<span class="material-symbols-outlined text-sm text-secondary">expand_more</span>
+</button>
+</div>
+<div class="group relative">
+<button class="flex items-center gap-3 bg-surface-container-low px-6 py-3 border-b border-outline-variant hover:border-primary transition-all" type="button">
+<span class="text-xs font-label font-bold tracking-widest uppercase text-secondary">Price Range</span>
+<span class="material-symbols-outlined text-sm text-secondary">expand_more</span>
+</button>
+</div>
+<div class="group relative">
+<button class="flex items-center gap-3 bg-surface-container-low px-6 py-3 border-b border-outline-variant hover:border-primary transition-all" type="button">
+<span class="text-xs font-label font-bold tracking-widest uppercase text-secondary">Performance</span>
+<span class="material-symbols-outlined text-sm text-secondary">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+</section>
 
-<main class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 py-8">
-  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-    <h1 class="title-font text-5xl leading-none">Your Favorite Cars</h1>
-    <div id="compare-quick-info" class="rounded-full border border-blue-300/40 bg-blue-500/15 px-4 py-2 text-sm font-semibold text-blue-300"></div>
-  </div>
-
-  <div id="favorites-empty" class="hidden rounded-2xl border border-dashed border-slate-600/70 bg-slate-900/70 p-8 text-center text-sm text-slate-200">
-    No favorites yet. Explore the fleet and add cars you love.
-    <div class="mt-4">
-      <a href="home.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Browse Cars</a>
+<section id="favorites-empty" class="hidden max-w-7xl mx-auto px-8 mb-10">
+  <div class="border border-dashed border-outline-variant bg-surface-container-low p-10 text-center">
+    <p class="text-sm text-secondary">No favorites yet. Explore the fleet and add cars you love.</p>
+    <div class="mt-5">
+      <a href="home.html" class="inline-flex bg-primary px-6 py-3 text-xs font-black tracking-widest uppercase text-on-primary hover:brightness-110 transition-all">Browse Cars</a>
     </div>
   </div>
+</section>
 
-  <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"></div>
+<!-- Favorites Grid -->
+<section class="max-w-7xl mx-auto px-8">
+<div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+</section>
+<!-- Personal Recommendation -->
+<section class="max-w-7xl mx-auto px-8 mt-32">
+<div class="bg-surface-container-low border-l-4 border-primary p-12 relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-1/2 h-full opacity-10 group-hover:opacity-30 transition-opacity pointer-events-none">
+<img class="w-full h-full object-cover" alt="Ferrari 296 GTB abstract lighting detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSMOqYfPXkGmYfffaGOdsEh4y4WiVru5FJCnApnyisA7lbZBqHGiv-P9cIHVGnCdmhPXx0-Tw-w7BRAR7vBWoGiZoY-TBxAAeRvSfOIL739Kp5wwN7PWjipVwqHIRB2yytsqJnG0gx72WMgMuJ3E36k77gUUXQlPM9Zm_0_WtXvIuyEhuqi6AnCaSZn2-SLeyqOuBojX-GFNiPX8YIrQZ6YrDK8IAl9uBUMfdrL6QGqz6Hy6euL72hlWAhMROznMA_WtJnvJf2Jcbn"/>
+</div>
+<div class="relative z-10">
+<span class="text-primary font-label text-xs tracking-[0.4em] uppercase mb-6 block">Recommended for your profile</span>
+<h2 class="text-4xl font-headline font-bold text-white mb-2 uppercase">You might also like...</h2>
+<div class="flex items-center gap-6 mt-8">
+<div>
+<h3 class="text-2xl font-headline font-bold text-secondary-fixed-dim uppercase tracking-tighter">Ferrari 296 GTB</h3>
+<p class="text-secondary text-sm font-body mt-1 max-w-md">Based on your interest in mid-engine performance and Italian design. The first 6-cylinder Ferrari road car with hybrid heart.</p>
+</div>
+<button class="bg-white text-black px-8 py-4 text-xs font-black tracking-widest uppercase hover:bg-primary transition-colors" type="button">Explore Now</button>
+</div>
+</div>
+</div>
+</section>
 </main>
+<!-- Footer -->
+<footer class="bg-[#131313] w-full border-t border-white/5">
+<div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<span class="text-lg font-black text-white font-headline tracking-tighter uppercase">EXTREME</span>
+<p class="font-['Inter'] text-xs tracking-widest uppercase text-[#c6c6c6]">© 2024 KINETIC PRECISION MOTORS. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-['Inter'] text-xs tracking-widest uppercase text-[#c6c6c6] hover:text-[#ff525c] transition-colors" href="#">Privacy Policy</a>
+<a class="font-['Inter'] text-xs tracking-widest uppercase text-[#c6c6c6] hover:text-[#ff525c] transition-colors" href="#">Terms of Service</a>
+<a class="font-['Inter'] text-xs tracking-widest uppercase text-[#c6c6c6] hover:text-[#ff525c] transition-colors" href="#">Cookie Settings</a>
+<a class="font-['Inter'] text-xs tracking-widest uppercase text-[#c6c6c6] hover:text-[#ff525c] transition-colors" href="#">Press Kit</a>
+</div>
+</div>
+</footer>
 
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/65 p-4">
+<!-- Existing modal logic hooks preserved (hidden until opened by JS). -->
+<div id="modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/75 p-4">
   <div class="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-950 p-5 text-slate-100 shadow-2xl">
     <div class="mb-4 flex items-start justify-between gap-4">
-      <h2 id="modal-name" class="title-font text-5xl leading-none"></h2>
-      <button id="modal-close" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Close details">
+      <h2 id="modal-name" class="text-4xl font-headline font-bold leading-none"></h2>
+      <button id="modal-close" class="rounded-lg bg-primary px-4 py-2 text-on-primary transition hover:brightness-110" aria-label="Close details">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <div id="modal-carousel" class="relative mb-4 overflow-hidden rounded-2xl bg-slate-900/50">
       <div id="modal-carousel-track" class="flex h-64 transition-transform duration-500 ease-out"></div>
-      <button id="modal-carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Previous car image">
+      <button id="modal-carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-lg bg-primary px-3 py-2 text-on-primary transition hover:brightness-110" aria-label="Previous car image">
         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <button id="modal-carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Next car image">
+      <button id="modal-carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-primary px-3 py-2 text-on-primary transition hover:brightness-110" aria-label="Next car image">
         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </button>
       <div id="modal-carousel-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
@@ -88,14 +233,14 @@ tailwind.config = {};
     </div>
     <p id="modal-desc" class="text-sm text-slate-300"></p>
     <div class="mt-5 flex flex-wrap gap-3">
-      <button id="modal-compare" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
-      <button id="modal-fav" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
-      <button id="modal-wishlist" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
+      <button id="modal-compare" class="rounded-lg bg-primary px-4 py-2 text-on-primary transition hover:brightness-110"></button>
+      <button id="modal-fav" class="rounded-lg bg-primary px-4 py-2 text-on-primary transition hover:brightness-110"></button>
+      <button id="modal-wishlist" class="rounded-lg bg-primary px-4 py-2 text-on-primary transition hover:brightness-110"></button>
     </div>
   </div>
 </div>
 
-<div id="notification" class="pointer-events-none fixed right-4 top-20 z-50 hidden rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xl"></div>
+<div id="notification" class="pointer-events-none fixed right-4 top-20 z-[65] hidden rounded-xl bg-surface-container-high px-4 py-2 text-sm font-semibold text-white shadow-xl"></div>
 
 <script src="js/cars.js"></script>
 <script type="module">
@@ -112,5 +257,4 @@ checkAuth({ redirectTo: "index.html" })
   })
   .catch(() => {});
 </script>
-</body>
-</html>
+</body></html>

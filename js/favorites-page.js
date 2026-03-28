@@ -20,6 +20,7 @@ const state = {
 const elements = {
   favoritesContainer: document.getElementById("favorites-container"),
   favoritesEmpty: document.getElementById("favorites-empty"),
+  savedCount: document.getElementById("saved-count"),
   compareQuickInfo: document.getElementById("compare-quick-info"),
   notification: document.getElementById("notification"),
   modal: document.getElementById("modal"),
@@ -42,10 +43,11 @@ const elements = {
   pageLoading: document.getElementById("page-loading"),
 };
 
-const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
-const BUTTON_SECONDARY = BUTTON_PRIMARY;
-const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
-const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";
+// Stitch integration: dynamic card and modal actions now use the same visual tokens as the provided Stitch layout.
+const BUTTON_PRIMARY = "flex-1 bg-primary text-on-primary py-3 text-xs font-black tracking-widest uppercase hover:brightness-110 transition-all active:scale-95";
+const BUTTON_SECONDARY = "px-4 bg-surface-container-high text-secondary hover:text-white transition-colors";
+const BUTTON_ACTIVE = "flex-1 bg-primary-container text-white py-3 text-xs font-black tracking-widest uppercase transition-all active:scale-95";
+const MODAL_BUTTON_ACTIVE = "rounded-lg bg-surface-container-high text-white font-semibold px-4 py-2 transition";
 
 function carImage(car) {
   return car.image || car.images?.[0] || CAR_IMAGE_FALLBACK;
@@ -70,8 +72,12 @@ function showNotification(message) {
 
 function updateCompareQuickInfo() {
   if (!elements.compareQuickInfo) return;
-  const count = state.compare.size;
-  elements.compareQuickInfo.textContent = count ? `Compare list: ${count}/3 ready` : "Compare list: 0/3";
+  elements.compareQuickInfo.textContent = "Verified Assets";
+}
+
+function updateSavedCount() {
+  if (!elements.savedCount) return;
+  elements.savedCount.textContent = `${state.favorites.size} Saved`;
 }
 
 async function toggleFavorite(id) {
@@ -124,24 +130,51 @@ async function toggleCompare(id) {
 function favoritesTemplate(car) {
   const isCompare = state.compare.has(car.id);
   const isWishlist = state.wishlist.has(car.id);
+  const classTag =
+    car.vehicleType === "Hybrid"
+      ? "Hybrid Class"
+      : car.speed.includes("420") || car.speed.includes("480") || car.speed.includes("383")
+        ? "Hypercar Class"
+        : "Circuit Ready";
 
   return `
-    <article class="rounded-2xl border border-slate-700/80 bg-slate-800/85 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl">
-      <div class="relative overflow-hidden rounded-xl">
-        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
-        <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">${car.brand}</span>
+    <article class="group bg-surface-container-low overflow-hidden transition-all duration-500 hover:bg-surface-variant hover:scale-[1.02]">
+      <div class="relative aspect-[16/10] overflow-hidden">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" />
+        <div class="absolute top-4 right-4 flex gap-2">
+          <button data-action="favorite" data-id="${car.id}" class="w-10 h-10 glass-card rounded-full flex items-center justify-center text-white hover:text-primary-container transition-colors" aria-label="Toggle favorite">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">heart_minus</span>
+          </button>
+        </div>
+        <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent">
+          <span class="text-primary-container text-[10px] font-black tracking-[0.3em] uppercase">${classTag}</span>
+        </div>
       </div>
-      <h3 class="mt-4 text-xl font-bold text-white">${car.name}</h3>
-      <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-slate-100">
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.hp}</p>
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.speed}</p>
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.price}</p>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
-        <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-        <button data-action="favorite" data-id="${car.id}" class="${BUTTON_ACTIVE}">Unfavorite</button>
-        <button data-action="wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
+      <div class="p-8">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h3 class="text-2xl font-headline font-bold text-white tracking-tight uppercase">${car.name}</h3>
+            <p class="text-secondary text-xs font-label tracking-[0.1em] mt-1 uppercase">${car.maker}</p>
+          </div>
+          <span class="text-white font-headline font-light text-xl">${car.price}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+          <div class="bg-surface-container-lowest p-3 border-l-2 border-primary-container/30">
+            <span class="block text-[10px] text-secondary font-label tracking-widest uppercase mb-1">Top Speed</span>
+            <span class="text-white font-headline font-bold">${car.speed}</span>
+          </div>
+          <div class="bg-surface-container-lowest p-3 border-l-2 border-primary-container/30">
+            <span class="block text-[10px] text-secondary font-label tracking-widest uppercase mb-1">0-60 MPH</span>
+            <span class="text-white font-headline font-bold">${car.zeroTo100Mph || car.hp}</span>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_PRIMARY}">${isCompare ? "Remove Compare" : "Compare"}</button>
+          <button data-action="details" data-id="${car.id}" class="${BUTTON_SECONDARY}" aria-label="Open details">
+            <span class="material-symbols-outlined">share</span>
+          </button>
+          <button data-action="wishlist" data-id="${car.id}" class="hidden">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
+        </button>
       </div>
     </article>
   `;
@@ -155,12 +188,14 @@ function renderFavoritesPage() {
   if (!favoriteCars.length) {
     elements.favoritesContainer.innerHTML = "";
     elements.favoritesEmpty.classList.remove("hidden");
+    updateSavedCount();
     updateCompareQuickInfo();
     return;
   }
 
   elements.favoritesEmpty.classList.add("hidden");
   elements.favoritesContainer.innerHTML = favoriteCars.map(favoritesTemplate).join("");
+  updateSavedCount();
   updateCompareQuickInfo();
 }
 

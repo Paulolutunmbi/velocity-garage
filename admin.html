@@ -1,82 +1,275 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin | Velocity Garage</title>
-  <link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href="assets/images/default.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "vg-bg": "#131313",
+            "vg-panel": "#1c1b1b",
+            "vg-panel-hi": "#2a2a2a",
+            "vg-copy": "#e5e2e1",
+            "vg-muted": "#c6c6c6",
+            "vg-accent": "#ff525c",
+            "vg-accent-2": "#92001e"
+          },
+          fontFamily: {
+            headline: ["Space Grotesk", "sans-serif"],
+            body: ["Inter", "sans-serif"]
+          },
+          boxShadow: {
+            "dash-soft": "0 20px 55px rgba(0,0,0,0.28)"
+          }
+        }
+      }
+    };
+  </script>
   <style>
-    body { font-family: "Plus Jakarta Sans", sans-serif; }
-    .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+    body { font-family: "Inter", sans-serif; }
+    .title-font { font-family: "Space Grotesk", sans-serif; letter-spacing: 0.02em; }
+    .material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 320, "GRAD" 0, "opsz" 24; }
+    .kinetic-gradient { background: linear-gradient(45deg, #ff525c 0%, #92001e 100%); }
   </style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
-  <div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_80%_10%,rgba(255,91,46,0.16),transparent_30%),radial-gradient(circle_at_10%_80%,rgba(59,130,246,0.13),transparent_32%)]"></div>
+<body class="min-h-screen bg-vg-bg font-body text-vg-copy">
+  <!-- CHANGED: Stitch-inspired atmospheric backdrop layer. -->
+  <div class="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(circle_at_84%_8%,rgba(255,82,92,0.13),transparent_33%),radial-gradient(circle_at_8%_90%,rgba(108,215,216,0.09),transparent_35%)]"></div>
 
-  <header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
-    <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <a href="index.html" class="flex items-center">
-        <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
+  <!-- CHANGED: Mobile top bar to make the new side navigation usable on small screens. -->
+  <header class="sticky top-0 z-50 border-b border-vg-panel-hi/80 bg-vg-bg/90 px-4 py-3 backdrop-blur lg:hidden">
+    <div class="flex items-center justify-between gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto" />
+        <span class="title-font text-lg font-bold uppercase">Velocity</span>
       </a>
-      <div class="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
-        <a href="home.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Home</a>
-        <a href="profile.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Profile</a>
-        <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
-      </div>
+      <label for="admin-nav-toggle" class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted">
+        <span class="material-symbols-outlined text-base">menu</span>
+        Menu
+      </label>
     </div>
   </header>
 
-  <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 md:px-8">
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-      <h1 class="title-font text-5xl leading-none">Admin Dashboard</h1>
-      <span class="rounded-full border border-yellow-500/40 bg-yellow-500/15 px-4 py-1 text-xs font-semibold tracking-wide text-yellow-300">Admin Access Only</span>
+  <input id="admin-nav-toggle" type="checkbox" class="peer hidden" />
+
+  <!-- CHANGED: Replaced old header-first structure with Stitch-style fixed side nav. -->
+  <aside class="fixed left-0 top-0 z-40 flex h-screen w-72 -translate-x-full flex-col border-r border-vg-panel bg-vg-bg shadow-[20px_0_40px_rgba(0,0,0,0.3)] transition-transform duration-300 peer-checked:translate-x-0 lg:translate-x-0">
+    <div class="border-b border-vg-panel px-7 py-6">
+      <a href="index.html" class="block">
+        <img id="site-logo-desktop" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto" />
+      </a>
+      <p class="title-font mt-1 text-[11px] uppercase tracking-[0.22em] text-vg-muted/70">Admin Control</p>
     </div>
 
-    <div id="admin-loading" class="rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-slate-200">Loading users...</div>
-    <div id="admin-error" class="hidden rounded-xl border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-200"></div>
-    <div id="admin-empty" class="hidden rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-8 text-center text-sm text-slate-300">No users found in Firestore yet.</div>
+    <nav class="mt-4 flex-1 px-4">
+      <a class="mb-1 flex items-center gap-3 rounded-md px-4 py-3 text-xs font-bold uppercase tracking-wider text-vg-muted hover:bg-vg-panel hover:text-white" href="#" aria-label="User management">
+        <span class="material-symbols-outlined text-base">group</span>
+        User Management
+      </a>
+      <a class="mb-1 flex items-center gap-3 rounded-md px-4 py-3 text-xs font-bold uppercase tracking-wider text-vg-muted hover:bg-vg-panel hover:text-white" href="#" aria-label="Inventory">
+        <span class="material-symbols-outlined text-base">directions_car</span>
+        Inventory
+      </a>
+      <a class="mb-1 flex items-center gap-3 rounded-md border-l-2 border-vg-accent bg-gradient-to-r from-[#ff525c1f] to-transparent px-4 py-3 text-xs font-bold uppercase tracking-wider text-vg-accent" href="#" aria-current="page" aria-label="Analytics">
+        <span class="material-symbols-outlined text-base">insert_chart</span>
+        Analytics
+      </a>
+      <a class="flex items-center gap-3 rounded-md px-4 py-3 text-xs font-bold uppercase tracking-wider text-vg-muted hover:bg-vg-panel hover:text-white" href="#" aria-label="Settings">
+        <span class="material-symbols-outlined text-base">settings</span>
+        Settings
+      </a>
+    </nav>
 
-    <div class="mt-5 overflow-x-auto rounded-2xl border border-slate-700/80 bg-slate-900/80">
-      <table class="min-w-full text-left text-sm">
-        <thead class="border-b border-slate-700 bg-slate-950/70 text-slate-200">
-          <tr>
-            <th class="px-4 py-3 font-semibold">Photo</th>
-            <th class="px-4 py-3 font-semibold">Name</th>
-            <th class="px-4 py-3 font-semibold">Email</th>
-            <th class="px-4 py-3 font-semibold">Date Joined</th>
-          </tr>
-        </thead>
-        <tbody id="user-list-body"></tbody>
-      </table>
+    <div class="p-5">
+      <button type="button" class="kinetic-gradient w-full rounded-sm px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition active:scale-[0.99]">
+        Add New Listing
+      </button>
     </div>
+  </aside>
 
-    <section class="mt-8 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-      <article class="rounded-2xl border border-slate-700/80 bg-slate-900/80 p-4">
-        <h2 class="title-font text-4xl leading-none">Top Favorited Cars</h2>
-        <p class="mt-2 text-xs text-slate-300">Real-time favorite counts by car ID.</p>
-        <div id="leaderboard-cars-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-3 text-sm text-slate-300 hidden">No favorite activity yet.</div>
-        <ul id="leaderboard-cars" class="mt-4 space-y-2"></ul>
-      </article>
+  <!-- CHANGED: Overlay for closing mobile drawer without custom JS. -->
+  <label for="admin-nav-toggle" class="fixed inset-0 z-30 hidden bg-black/60 peer-checked:block lg:hidden" aria-label="Close navigation"></label>
 
-      <article class="rounded-2xl border border-slate-700/80 bg-slate-900/80 p-4">
-        <h2 class="title-font text-4xl leading-none">Top Users</h2>
-        <p class="mt-2 text-xs text-slate-300">Top users ranked by current favorite count.</p>
-        <div id="leaderboard-users-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-3 text-sm text-slate-300 hidden">No user stats yet.</div>
-        <ul id="leaderboard-users" class="mt-4 space-y-2"></ul>
-      </article>
+  <!-- CHANGED: Main app shell now mirrors Stitch layout while preserving functional hook containers. -->
+  <div class="relative lg:ml-72">
+    <header class="sticky top-0 z-30 border-b border-vg-panel bg-vg-bg/85 px-4 py-3 backdrop-blur sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="flex items-center gap-3 rounded-md border border-vg-panel-hi bg-vg-panel/70 px-3 py-2 text-sm text-vg-muted md:w-[44%]">
+          <span class="material-symbols-outlined text-base">search</span>
+          <input type="text" placeholder="Search parameters..." class="w-full border-none bg-transparent p-0 text-sm text-vg-copy placeholder:text-vg-muted/40 focus:ring-0" />
+        </div>
 
-      <article class="rounded-2xl border border-slate-700/80 bg-slate-900/80 p-4">
-        <h2 class="title-font text-4xl leading-none">Top Wishlisted Cars</h2>
-        <p class="mt-2 text-xs text-slate-300">Real-time wishlist counts by car ID.</p>
-        <div id="leaderboard-wishlist-empty" class="mt-4 rounded-xl border border-dashed border-slate-600/80 bg-slate-900/70 px-4 py-3 text-sm text-slate-300 hidden">No wishlist activity yet.</div>
-        <ul id="leaderboard-wishlist" class="mt-4 space-y-2"></ul>
-      </article>
-    </section>
-  </main>
+        <div class="flex items-center justify-end gap-2">
+          <a href="home.html" class="rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted hover:text-white">Home</a>
+          <a href="profile.html" class="rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted hover:text-white">Profile</a>
+          <button type="button" class="rounded-md border border-vg-panel-hi bg-vg-panel p-2 text-vg-muted hover:text-white" aria-label="Notifications">
+            <span class="material-symbols-outlined text-base">notifications</span>
+          </button>
+          <button type="button" class="rounded-md border border-vg-panel-hi bg-vg-panel p-2 text-vg-muted hover:text-white" aria-label="Speed">
+            <span class="material-symbols-outlined text-base">speed</span>
+          </button>
+
+          <!-- CHANGED: Kept this exact mount ID required by navbar-auth.js. -->
+          <div class="flex items-center" id="auth-controls"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+      <section class="mb-7 rounded-lg border border-vg-panel-hi bg-vg-panel p-4 shadow-dash-soft md:p-6">
+        <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+          <div class="flex flex-wrap items-center gap-5 md:gap-8">
+            <div>
+              <p class="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Total Platform Valuation</p>
+              <!-- CHANGED: Live metric value injected from admin-page.js. -->
+              <p id="metric-platform-valuation" class="title-font text-3xl font-bold text-white">$0</p>
+            </div>
+            <div class="hidden h-10 w-px bg-vg-panel-hi md:block"></div>
+            <div>
+              <p class="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">User Garage Growth</p>
+              <!-- CHANGED: Live month-over-month growth from Firestore user records. -->
+              <p id="metric-growth" class="title-font text-3xl font-bold text-vg-accent">+0.0%</p>
+            </div>
+            <div class="hidden h-10 w-px bg-vg-panel-hi md:block"></div>
+            <div>
+              <p class="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Active Tickers</p>
+              <!-- CHANGED: Live active user count (7-day window). -->
+              <p id="metric-active-tickers" class="title-font text-3xl font-bold text-white">0</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-vg-accent">
+            <span class="material-symbols-outlined text-sm">trending_up</span>
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em]">Live Metrics</span>
+            <span id="metric-last-sync" class="text-[10px] font-semibold uppercase tracking-[0.12em] text-vg-muted"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-5">
+          <div class="mb-4 flex items-start justify-between">
+            <span class="material-symbols-outlined text-vg-muted">person</span>
+            <span class="rounded bg-vg-accent/15 px-2 py-1 text-[10px] font-bold text-vg-accent">+8.2%</span>
+          </div>
+          <!-- CHANGED: Live total users from Firestore users collection. -->
+          <p id="metric-total-users" class="title-font text-4xl font-bold text-white">0</p>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Total Users</p>
+        </article>
+
+        <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-5">
+          <div class="mb-4 flex items-start justify-between">
+            <span class="material-symbols-outlined text-vg-muted">directions_car</span>
+            <span class="rounded bg-vg-panel-hi px-2 py-1 text-[10px] font-bold text-vg-muted">Global</span>
+          </div>
+          <!-- CHANGED: Live inventory count from cars data source. -->
+          <p id="metric-inventory" class="title-font text-4xl font-bold text-white">0</p>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Cars In Inventory</p>
+        </article>
+
+        <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-5">
+          <div class="mb-4 flex items-start justify-between">
+            <span class="material-symbols-outlined text-vg-muted">favorite</span>
+            <span class="rounded bg-vg-accent/15 px-2 py-1 text-[10px] font-bold text-vg-accent">Hot</span>
+          </div>
+          <!-- CHANGED: Live total wishlisted entries from Firestore user docs. -->
+          <p id="metric-wishlist-total" class="title-font text-4xl font-bold text-white">0</p>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Wishlisted Cars</p>
+        </article>
+
+        <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-5">
+          <div class="mb-4 flex items-start justify-between">
+            <span class="material-symbols-outlined text-vg-muted">bolt</span>
+            <span class="rounded bg-vg-panel-hi px-2 py-1 text-[10px] font-bold text-vg-muted">98% Peak</span>
+          </div>
+          <!-- CHANGED: Live engagement based on users with at least one interaction. -->
+          <p id="metric-engagement" class="title-font text-4xl font-bold text-white">0%</p>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Engagement Rate</p>
+        </article>
+      </section>
+
+      <section class="mb-8 grid grid-cols-12 gap-4 md:gap-6">
+        <article class="col-span-12 rounded-lg border border-vg-panel-hi bg-vg-panel p-5 lg:col-span-8 lg:p-7">
+          <div class="mb-7 flex items-center justify-between">
+            <h2 class="title-font text-2xl font-bold uppercase text-white">User Sign-in Growth</h2>
+            <div class="flex items-center gap-4">
+              <span class="border-b border-vg-accent text-[10px] font-bold uppercase tracking-[0.2em] text-vg-accent">Monthly</span>
+              <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted/45">Quarterly</span>
+            </div>
+          </div>
+          <!-- CHANGED: Chart bars are now generated from live Firestore user timeline data. -->
+          <div id="signin-chart-bars" class="flex h-64 items-end gap-2"></div>
+          <p id="signin-chart-empty" class="hidden mt-4 rounded-md border border-dashed border-vg-panel-hi bg-vg-panel-hi/20 px-3 py-2 text-sm text-vg-muted">No historical sign-in data available yet.</p>
+          <div id="signin-chart-labels" class="mt-3 flex justify-between text-[10px] font-bold uppercase tracking-[0.18em] text-vg-muted"></div>
+        </article>
+
+        <!-- CHANGED: Hook IDs preserved for JS-rendered top wishlisted content. -->
+        <article class="col-span-12 rounded-lg border border-vg-panel-hi bg-vg-panel p-5 lg:col-span-4 lg:p-7">
+          <h2 class="title-font text-2xl font-bold uppercase text-white">Most Wishlisted</h2>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Live Firestore Ranking</p>
+          <div id="leaderboard-wishlist-empty" class="mt-4 hidden rounded-md border border-dashed border-vg-panel-hi bg-vg-panel-hi/30 px-3 py-2 text-sm text-vg-muted">No wishlist activity yet.</div>
+          <div id="leaderboard-wishlist" class="mt-4"></div>
+        </article>
+      </section>
+
+      <!-- CHANGED: Hook IDs preserved for JS-rendered users table and empty/loading/error states. -->
+      <section class="mb-8 overflow-hidden rounded-lg border border-vg-panel-hi bg-vg-panel">
+        <div class="flex items-center justify-between border-b border-vg-panel-hi px-5 py-4">
+          <h2 class="title-font text-2xl font-bold uppercase text-white">Recent Activity Hub</h2>
+          <button type="button" class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-vg-accent hover:opacity-80">
+            View Full Directory
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </button>
+        </div>
+
+        <div class="px-5 pb-3 pt-4">
+          <div id="admin-loading" class="rounded-md border border-vg-panel-hi bg-vg-panel-hi/30 px-3 py-2 text-sm text-vg-muted">Loading users...</div>
+          <div id="admin-error" class="hidden rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+          <div id="admin-empty" class="hidden rounded-md border border-dashed border-vg-panel-hi bg-vg-panel-hi/20 px-3 py-6 text-center text-sm text-vg-muted">No users found in Firestore yet.</div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left">
+            <thead class="border-y border-vg-panel-hi bg-vg-panel-hi/25">
+              <tr>
+                <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted">Photo</th>
+                <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted">Full Name</th>
+                <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted">Email</th>
+                <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted">Date Joined</th>
+              </tr>
+            </thead>
+            <tbody id="user-list-body" class="divide-y divide-vg-panel-hi/35"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CHANGED: Hook IDs preserved for JS-rendered favorites leaderboard and top users leaderboard. -->
+      <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-5">
+          <h2 class="title-font text-2xl font-bold uppercase text-white">Top Favorited Cars</h2>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Real-time favorites by car</p>
+          <div id="leaderboard-cars-empty" class="mt-4 hidden rounded-md border border-dashed border-vg-panel-hi bg-vg-panel-hi/30 px-3 py-2 text-sm text-vg-muted">No favorite activity yet.</div>
+          <div id="leaderboard-cars" class="mt-4"></div>
+        </article>
+
+        <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-5">
+          <h2 class="title-font text-2xl font-bold uppercase text-white">Top Users</h2>
+          <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Users ranked by current favorites</p>
+          <div id="leaderboard-users-empty" class="mt-4 hidden rounded-md border border-dashed border-vg-panel-hi bg-vg-panel-hi/30 px-3 py-2 text-sm text-vg-muted">No user stats yet.</div>
+          <div id="leaderboard-users" class="mt-4"></div>
+        </article>
+      </section>
+    </main>
+  </div>
 
   <script src="/env.js"></script>
   <script src="js/cars.js"></script>

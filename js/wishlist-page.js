@@ -42,10 +42,11 @@ const elements = {
   pageLoading: document.getElementById("page-loading"),
 };
 
-const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
-const BUTTON_SECONDARY = BUTTON_PRIMARY;
-const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
-const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";
+// Stitch-inspired button system for wishlist actions while keeping existing behavior intact.
+const BUTTON_PRIMARY = "border border-outline-variant/30 bg-primary px-3 py-2 font-label text-[10px] uppercase tracking-[0.18em] text-on-primary transition hover:bg-white";
+const BUTTON_SECONDARY = "border border-outline-variant/30 bg-surface-container px-3 py-2 font-label text-[10px] uppercase tracking-[0.18em] text-primary transition hover:border-outline hover:bg-surface-bright";
+const BUTTON_ACTIVE = "border border-tertiary/60 bg-tertiary/15 px-3 py-2 font-label text-[10px] uppercase tracking-[0.18em] text-tertiary transition hover:bg-tertiary/25";
+const MODAL_BUTTON_ACTIVE = "border border-tertiary/60 bg-tertiary/15 px-4 py-2 text-sm font-semibold text-tertiary transition hover:bg-tertiary/25";
 
 function carImage(car) {
   return car.image || car.images?.[0] || CAR_IMAGE_FALLBACK;
@@ -123,23 +124,45 @@ function wishlistTemplate(car) {
   const isCompare = state.compare.has(car.id);
   const isFav = state.favorites.has(car.id);
 
+  // Stitch-inspired card layout that preserves data-action hooks for existing listeners.
   return `
-    <article class="rounded-2xl border border-slate-700/80 bg-slate-800/85 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl">
-      <div class="relative overflow-hidden rounded-xl">
-        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
-        <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">${car.brand}</span>
+    <article class="group relative overflow-hidden border border-outline-variant/20 bg-surface-container-low transition duration-500 hover:-translate-y-1 hover:border-outline/60">
+      <div class="relative aspect-[4/5] overflow-hidden bg-surface">
+        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0">
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface-dim via-transparent to-transparent opacity-70"></div>
+        <span class="absolute left-3 top-3 border border-outline-variant/40 bg-surface/75 px-2 py-1 font-label text-[9px] uppercase tracking-[0.18em] text-primary">${car.brand}</span>
       </div>
-      <h3 class="mt-4 text-xl font-bold text-white">${car.name}</h3>
-      <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-slate-100">
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.hp}</p>
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.speed}</p>
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.price}</p>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
-        <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-        <button data-action="favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
-        <button data-action="wishlist" data-id="${car.id}" class="${BUTTON_ACTIVE}">Remove Wishlist</button>
+
+      <div class="p-5 md:p-6">
+        <div class="mb-4 flex items-start justify-between gap-3">
+          <div>
+            <span class="mb-1 block font-label text-[9px] uppercase tracking-[0.22em] text-outline">Series</span>
+            <h3 class="font-headline text-3xl italic leading-none text-primary">${car.name}</h3>
+          </div>
+          <span class="font-label text-[10px] uppercase tracking-[0.18em] text-tertiary">Saved</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 border-y border-outline-variant/15 py-3">
+          <p class="text-center">
+            <span class="block font-label text-[9px] uppercase tracking-[0.16em] text-outline-variant">Power</span>
+            <span class="font-label text-[11px] text-on-surface">${car.hp}</span>
+          </p>
+          <p class="text-center">
+            <span class="block font-label text-[9px] uppercase tracking-[0.16em] text-outline-variant">Speed</span>
+            <span class="font-label text-[11px] text-on-surface">${car.speed}</span>
+          </p>
+          <p class="text-center">
+            <span class="block font-label text-[9px] uppercase tracking-[0.16em] text-outline-variant">Value</span>
+            <span class="font-label text-[11px] text-on-surface">${car.price}</span>
+          </p>
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
+          <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
+          <button data-action="favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
+          <button data-action="wishlist" data-id="${car.id}" class="${BUTTON_ACTIVE}">Remove Wishlist</button>
+        </div>
       </div>
     </article>
   `;

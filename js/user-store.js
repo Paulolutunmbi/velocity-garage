@@ -108,10 +108,10 @@ function applyThemeToDom(isDarkMode) {
   injectThemeStyles();
   document.body.classList.toggle("vg-light", !isDarkMode);
 
-  const logo = document.getElementById("site-logo");
-  if (logo) {
-    logo.src = isDarkMode ? "assets/images/default-monochrome-white.svg" : "assets/images/default-monochrome-black.svg";
-  }
+  const logoSrc = isDarkMode ? "assets/images/default-monochrome-white.svg" : "assets/images/default-monochrome-black.svg";
+  document.querySelectorAll("#site-logo, #site-logo-desktop").forEach((logo) => {
+    logo.src = logoSrc;
+  });
 
   const toggle = document.getElementById("theme-toggle");
   if (toggle) {

@@ -1,6 +1,15 @@
 import { checkAdmin } from "./auth-guard.js";
 import { initAuthNavbar } from "./navbar-auth.js";
-import { watchUsers } from "./auth.js";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  setDoc,
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { auth, db } from "./firebase-config.js";
 
 const loadingState = document.getElementById("admin-loading");
 const errorState = document.getElementById("admin-error");
@@ -23,6 +32,34 @@ const metricLastSync = document.getElementById("metric-last-sync");
 const signinChartBars = document.getElementById("signin-chart-bars");
 const signinChartLabels = document.getElementById("signin-chart-labels");
 const signinChartEmpty = document.getElementById("signin-chart-empty");
+const signinToggleMonthly = document.getElementById("signin-toggle-monthly");
+const signinToggleQuarterly = document.getElementById("signin-toggle-quarterly");
+const navUserManagement = document.getElementById("nav-user-management");
+const navAnalytics = document.getElementById("nav-analytics");
+const openUserManagementBtn = document.getElementById("open-user-management-btn");
+const backToDashboardBtn = document.getElementById("back-to-dashboard-btn");
+const userManagementView = document.getElementById("user-management-view");
+const dashboardSections = Array.from(document.querySelectorAll(".dashboard-only"));
+const userManagementTotal = document.getElementById("um-total-users");
+const userManagementActive = document.getElementById("um-active-users");
+const userManagementVerified = document.getElementById("um-verified-users");
+const navToggleInput = document.getElementById("admin-nav-toggle");
+const deleteUserModal = document.getElementById("delete-user-modal");
+const deleteUserTarget = document.getElementById("delete-user-target");
+const deleteUserError = document.getElementById("delete-user-error");
+const deleteUserCancelBtn = document.getElementById("delete-user-cancel");
+const deleteUserConfirmBtn = document.getElementById("delete-user-confirm");
+
+let signInChartMode = "monthly";
+let lastUsersSnapshot = [];
+let activeAdminView = "dashboard";
+let pendingDeleteUser = null;
+let latestBannedSet = new Set();
+
+const ADMIN_EMAIL = "oluwatunmbipaul@gmail.com";
+
+const NAV_ACTIVE_CLASS = "mb-1 flex items-center gap-3 rounded-md border-l-2 border-vg-accent bg-gradient-to-r from-[#ff525c1f] to-transparent px-4 py-3 text-xs font-bold uppercase tracking-wider text-vg-accent";
+const NAV_INACTIVE_CLASS = "mb-1 flex items-center gap-3 rounded-md px-4 py-3 text-xs font-bold uppercase tracking-wider text-vg-muted hover:bg-vg-panel hover:text-white";
 
 function ensureLeaderboardAnimations() {
   if (document.getElementById("vg-admin-anim")) return;
@@ -30,6 +67,23 @@ function ensureLeaderboardAnimations() {
   style.id = "vg-admin-anim";
   style.textContent = "@keyframes riseUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}";
   document.head.appendChild(style);
+}
+
+function isPrivilegedAdmin() {
+  return (auth.currentUser?.email || "").toLowerCase() === ADMIN_EMAIL;
+}
+
+function canManageUsersOrWarn() {
+  if (isPrivilegedAdmin()) return true;
+
+  const message = `Only ${ADMIN_EMAIL} can manage users.`;
+  if (deleteUserError) {
+    deleteUserError.textContent = message;
+    deleteUserError.classList.remove("hidden");
+  } else {
+    alert(message);
+  }
+  return false;
 }
 
 function shortUid(uid = "") {
@@ -65,9 +119,263 @@ function formatJoinDate(value) {
   return `Joined ${days} day${days > 1 ? "s" : ""} ago`;
 }
 
+function formatLastActive(value) {
+  if (!value) return "-";
+
+  const dateValue = toDate(value);
+  if (!dateValue) return "-";
+
+  const diffMs = Date.now() - dateValue.getTime();
+  const hour = 60 * 60 * 1000;
+  const day = 24 * hour;
+
+  if (diffMs < hour) return "Within 1 hour";
+  if (diffMs < day) return `${Math.floor(diffMs / hour)}h ago`;
+  return `${Math.floor(diffMs / day)}d ago`;
+}
+
+function setAdminView(view = "dashboard") {
+  activeAdminView = view;
+  const showUsers = view === "users";
+
+  dashboardSections.forEach((section) => {
+    section.classList.toggle("hidden", showUsers);
+  });
+
+  if (userManagementView) {
+    userManagementView.classList.toggle("hidden", !showUsers);
+  }
+
+  if (navAnalytics) navAnalytics.className = showUsers ? NAV_INACTIVE_CLASS : NAV_ACTIVE_CLASS;
+  if (navUserManagement) navUserManagement.className = showUsers ? NAV_ACTIVE_CLASS : NAV_INACTIVE_CLASS;
+}
+
+function bindInternalViewSwitching() {
+  navAnalytics?.addEventListener("click", (event) => {
+    event.preventDefault();
+    setAdminView("dashboard");
+    if (navToggleInput) navToggleInput.checked = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  navUserManagement?.addEventListener("click", (event) => {
+    event.preventDefault();
+    setAdminView("users");
+    if (navToggleInput) navToggleInput.checked = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  openUserManagementBtn?.addEventListener("click", () => {
+    setAdminView("users");
+    if (navToggleInput) navToggleInput.checked = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  backToDashboardBtn?.addEventListener("click", () => {
+    setAdminView("dashboard");
+    if (navToggleInput) navToggleInput.checked = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  if (window.location.hash === "#user-management-view") {
+    setAdminView("users");
+  } else {
+    setAdminView("dashboard");
+  }
+}
+
+function openDeleteModal(user = null) {
+  if (!deleteUserModal) return;
+
+  pendingDeleteUser = user;
+  deleteUserTarget.textContent = user
+    ? `${user.name || "Velocity Driver"} (${user.email || "No email"})`
+    : "Unknown user";
+  deleteUserError.classList.add("hidden");
+  deleteUserError.textContent = "";
+  deleteUserConfirmBtn.disabled = false;
+  deleteUserConfirmBtn.textContent = "Delete User";
+  deleteUserModal.classList.remove("hidden");
+  deleteUserModal.classList.add("flex");
+}
+
+function closeDeleteModal() {
+  if (!deleteUserModal) return;
+  pendingDeleteUser = null;
+  deleteUserModal.classList.add("hidden");
+  deleteUserModal.classList.remove("flex");
+}
+
+async function confirmDeleteUser() {
+  if (!pendingDeleteUser?.id) return;
+  if (!canManageUsersOrWarn()) return;
+
+  try {
+    deleteUserConfirmBtn.disabled = true;
+    deleteUserConfirmBtn.textContent = "Deleting...";
+    await deleteDoc(doc(db, "users", pendingDeleteUser.id));
+    closeDeleteModal();
+  } catch (error) {
+    deleteUserConfirmBtn.disabled = false;
+    deleteUserConfirmBtn.textContent = "Delete User";
+    deleteUserError.textContent = error.message || "Unable to delete user from Firestore.";
+    deleteUserError.classList.remove("hidden");
+  }
+}
+
+// Keeps /users and /bannedUsers synchronized from one realtime source for the UI.
+function watchUsersWithBanState(onData, onError) {
+  let latestUsers = [];
+
+  const emit = () => {
+    const merged = latestUsers.map((user) => ({
+      ...user,
+      status: latestBannedSet.has(user.id) ? "banned" : (String(user.status || "active").toLowerCase() === "banned" ? "banned" : "active"),
+    }));
+
+    onData(merged);
+  };
+
+  const unsubUsers = onSnapshot(
+    query(collection(db, "users")),
+    (snapshot) => {
+      latestUsers = snapshot.docs.map((snap) => ({ id: snap.id, ...snap.data() }));
+      emit();
+    },
+    onError
+  );
+
+  const unsubBanned = onSnapshot(
+    query(collection(db, "bannedUsers")),
+    (snapshot) => {
+      latestBannedSet = new Set(
+        snapshot.docs
+          .map((snap) => snap.id || snap.data()?.uid)
+          .filter(Boolean)
+      );
+      emit();
+    },
+    onError
+  );
+
+  return () => {
+    unsubUsers?.();
+    unsubBanned?.();
+  };
+}
+
+async function setUserStatus(user, nextStatus) {
+  if (!user?.id) return;
+  if (!canManageUsersOrWarn()) return;
+
+  const uid = user.id;
+  const userRef = doc(db, "users", uid);
+  const bannedRef = doc(db, "bannedUsers", uid);
+
+  if (nextStatus === "banned") {
+    await setDoc(
+      bannedRef,
+      {
+        uid,
+        email: user.email || "",
+        name: user.name || "Velocity Driver",
+        status: "banned",
+        bannedAt: serverTimestamp(),
+        bannedBy: auth.currentUser?.email || ADMIN_EMAIL,
+      },
+      { merge: true }
+    );
+
+    await setDoc(
+      userRef,
+      {
+        status: "banned",
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+    return;
+  }
+
+  await deleteDoc(bannedRef);
+  await setDoc(
+    userRef,
+    {
+      status: "active",
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+}
+
+function bindDeleteControls() {
+  if (tableBody?.dataset.userActionsBound === "true") return;
+  if (!tableBody) return;
+
+  tableBody.dataset.userActionsBound = "true";
+
+  tableBody.addEventListener("click", (event) => {
+    const actionBtn = event.target.closest("button[data-action]");
+    if (!actionBtn) return;
+
+    const userId = actionBtn.getAttribute("data-user-id");
+    if (!userId) return;
+    const user = lastUsersSnapshot.find((item) => item.id === userId);
+    if (!user) return;
+
+    const action = actionBtn.getAttribute("data-action");
+
+    if (action === "ban-user") {
+      setUserStatus(user, "banned").catch((error) => {
+        if (deleteUserError) {
+          deleteUserError.textContent = error.message || "Unable to ban user.";
+          deleteUserError.classList.remove("hidden");
+        }
+      });
+      return;
+    }
+
+    if (action === "unban-user") {
+      setUserStatus(user, "active").catch((error) => {
+        if (deleteUserError) {
+          deleteUserError.textContent = error.message || "Unable to unban user.";
+          deleteUserError.classList.remove("hidden");
+        }
+      });
+      return;
+    }
+
+    const deleteBtn = event.target.closest("[data-action='delete-user']");
+    if (!deleteBtn) return;
+    openDeleteModal(user);
+  });
+
+  deleteUserCancelBtn?.addEventListener("click", closeDeleteModal);
+  deleteUserConfirmBtn?.addEventListener("click", confirmDeleteUser);
+  deleteUserModal?.addEventListener("click", (event) => {
+    if (event.target === deleteUserModal) closeDeleteModal();
+  });
+}
+
 function renderUsers(users) {
+  lastUsersSnapshot = Array.isArray(users) ? users : [];
+
   loadingState.classList.add("hidden");
   errorState.classList.add("hidden");
+
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const activeUsers = users.filter((user) => {
+    const lastActive = toDate(user.updatedAt) || toDate(user.createdAt);
+    return lastActive && lastActive.getTime() >= sevenDaysAgo;
+  }).length;
+  const verifiedUsers = users.filter((user) => {
+    if (typeof user.emailVerified === "boolean") return user.emailVerified;
+    return Boolean(user.email && String(user.email).includes("@"));
+  }).length;
+
+  if (userManagementTotal) userManagementTotal.textContent = String(users.length);
+  if (userManagementActive) userManagementActive.textContent = String(activeUsers);
+  if (userManagementVerified) userManagementVerified.textContent = String(verifiedUsers);
 
   if (!users.length) {
     emptyState.classList.remove("hidden");
@@ -83,6 +391,16 @@ function renderUsers(users) {
       const email = user.email || "No email";
       const photo = user.photo || "https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc";
       const createdAt = formatJoinDate(user.createdAt);
+      const favorites = normalizeIds(user.favorites).length;
+      const wishlist = normalizeIds(user.wishlist).length;
+      const lastActive = formatLastActive(user.updatedAt || user.createdAt);
+      const status = String(user.status || "active").toLowerCase() === "banned" ? "banned" : "active";
+      const statusChip = status === "banned"
+        ? '<span class="inline-flex rounded-full border border-red-500/40 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-200">Banned</span>'
+        : '<span class="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-emerald-200">Active</span>';
+      const statusActionBtn = status === "banned"
+        ? `<button type="button" data-action="unban-user" data-user-id="${user.id}" class="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-200 hover:bg-emerald-500/20">Unban</button>`
+        : `<button type="button" data-action="ban-user" data-user-id="${user.id}" class="rounded-md border border-yellow-500/40 bg-yellow-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-yellow-200 hover:bg-yellow-500/20">Ban</button>`;
 
       return `
         <tr class="border-b border-slate-700/70">
@@ -93,7 +411,24 @@ function renderUsers(users) {
             <span class="font-semibold text-white">${name}</span>
           </td>
           <td class="px-4 py-3 text-slate-200">${email}</td>
+          <td class="px-4 py-3">${statusChip}</td>
+          <td class="px-4 py-3 text-slate-300">${favorites}</td>
+          <td class="px-4 py-3 text-slate-300">${wishlist}</td>
           <td class="px-4 py-3 text-slate-300">${createdAt}</td>
+          <td class="px-4 py-3 text-slate-300">${lastActive}</td>
+          <td class="px-4 py-3 text-slate-200">
+            <div class="flex flex-wrap items-center gap-2">
+              ${statusActionBtn}
+              <button
+                type="button"
+                data-action="delete-user"
+                data-user-id="${user.id}"
+                class="rounded-md border border-red-500/40 bg-red-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-red-200 hover:bg-red-500/20"
+              >
+                Delete
+              </button>
+            </div>
+          </td>
         </tr>
       `;
     })
@@ -233,10 +568,76 @@ function buildMonthlyTimeline(users = [], monthsBack = 8) {
   return points;
 }
 
+function buildQuarterlyTimeline(users = [], quartersBack = 6) {
+  const now = new Date();
+  const currentQuarter = Math.floor(now.getMonth() / 3);
+  const points = [];
+
+  for (let offset = quartersBack - 1; offset >= 0; offset -= 1) {
+    const qIndex = currentQuarter - offset;
+    const year = now.getFullYear() + Math.floor(qIndex / 4);
+    const quarter = ((qIndex % 4) + 4) % 4;
+    points.push({
+      label: `Q${quarter + 1} ${String(year).slice(-2)}`,
+      year,
+      quarter,
+      count: 0,
+    });
+  }
+
+  users.forEach((user) => {
+    const dateValue = toDate(user.createdAt) || toDate(user.updatedAt);
+    if (!dateValue) return;
+    const quarter = Math.floor(dateValue.getMonth() / 3);
+    const year = dateValue.getFullYear();
+    const match = points.find((point) => point.year === year && point.quarter === quarter);
+    if (match) match.count += 1;
+  });
+
+  return points;
+}
+
+function renderChartModeButtons() {
+  if (!signinToggleMonthly || !signinToggleQuarterly) return;
+
+  const monthlyActive = signInChartMode === "monthly";
+  signinToggleMonthly.className = monthlyActive
+    ? "border-b border-vg-accent text-[10px] font-bold uppercase tracking-[0.2em] text-vg-accent"
+    : "text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted/45 hover:text-vg-muted";
+
+  signinToggleQuarterly.className = !monthlyActive
+    ? "border-b border-vg-accent text-[10px] font-bold uppercase tracking-[0.2em] text-vg-accent"
+    : "text-[10px] font-bold uppercase tracking-[0.2em] text-vg-muted/45 hover:text-vg-muted";
+}
+
+function bindChartModeControls() {
+  if (signinToggleMonthly && signinToggleMonthly.dataset.bound !== "true") {
+    signinToggleMonthly.dataset.bound = "true";
+    signinToggleMonthly.addEventListener("click", () => {
+      signInChartMode = "monthly";
+      renderChartModeButtons();
+      renderSignInChart(lastUsersSnapshot);
+    });
+  }
+
+  if (signinToggleQuarterly && signinToggleQuarterly.dataset.bound !== "true") {
+    signinToggleQuarterly.dataset.bound = "true";
+    signinToggleQuarterly.addEventListener("click", () => {
+      signInChartMode = "quarterly";
+      renderChartModeButtons();
+      renderSignInChart(lastUsersSnapshot);
+    });
+  }
+
+  renderChartModeButtons();
+}
+
 function renderSignInChart(users = []) {
   if (!signinChartBars || !signinChartLabels || !signinChartEmpty) return;
 
-  const timeline = buildMonthlyTimeline(users, 8);
+  const timeline = signInChartMode === "quarterly"
+    ? buildQuarterlyTimeline(users, 6)
+    : buildMonthlyTimeline(users, 8);
   const hasData = timeline.some((item) => item.count > 0);
   const max = Math.max(1, ...timeline.map((item) => item.count));
 
@@ -253,13 +654,16 @@ function renderSignInChart(users = []) {
 }
 
 function renderLiveMetrics(users = []) {
+  lastUsersSnapshot = Array.isArray(users) ? users : [];
+
   const totalUsers = users.length;
   const inventoryCount = Array.isArray(window.cars) ? window.cars.length : 0;
   const priceById = getPriceMap();
 
   let wishlistCount = 0;
   let activeTickers = 0;
-  let platformValuation = 0;
+  let wishlistValuation = 0;
+  let favoritesValuation = 0;
   let engagedUsers = 0;
 
   const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -272,7 +676,11 @@ function renderLiveMetrics(users = []) {
     wishlistCount += wishlist.length;
 
     wishlist.forEach((carId) => {
-      platformValuation += priceById.get(Number(carId)) || 0;
+      wishlistValuation += priceById.get(Number(carId)) || 0;
+    });
+
+    favorites.forEach((carId) => {
+      favoritesValuation += priceById.get(Number(carId)) || 0;
     });
 
     if (favorites.length || wishlist.length || compare.length) engagedUsers += 1;
@@ -283,6 +691,9 @@ function renderLiveMetrics(users = []) {
 
   const engagementRate = totalUsers ? (engagedUsers / totalUsers) * 100 : 0;
   const growth = calculateMoMGrowth(users);
+  const inventoryBaseValuation = Array.from(priceById.values()).reduce((sum, value) => sum + value, 0);
+  // Blend inventory base value with observed demand so valuation remains meaningful and live.
+  const platformValuation = inventoryBaseValuation + wishlistValuation + (favoritesValuation * 0.35);
 
   if (metricPlatformValuation) metricPlatformValuation.textContent = formatCurrencyCompact(platformValuation);
   if (metricGrowth) metricGrowth.textContent = formatSignedPercent(growth);
@@ -419,17 +830,21 @@ function renderTopWishlistedCars(topCars = []) {
   }
 
   leaderboardWishlistEmpty.classList.add("hidden");
-  leaderboardWishlist.innerHTML = `<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">${topCars
+  const peak = Math.max(1, ...topCars.map((item) => item.count));
+  leaderboardWishlist.innerHTML = `<div class="grid grid-cols-1 gap-3">${topCars
     .map(
       (item, index) => `
       <article class="animate-[riseUp_.35s_ease] rounded-xl border border-slate-700/80 bg-slate-950/70 p-3 text-sm transition hover:-translate-y-0.5 hover:border-purple-400/40 hover:shadow-lg">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-32 w-full rounded object-cover sm:h-12 sm:w-16" />
+        <div class="flex items-start gap-3">
+          <img src="${getCarImageById(item.carId)}" alt="${getCarNameById(item.carId)}" class="h-12 w-16 shrink-0 rounded object-cover" />
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-semibold text-white md:text-base">${medal(index)} ${getCarNameById(item.carId)}</p>
+            <p class="truncate text-sm font-semibold text-white">${medal(index)} ${getCarNameById(item.carId)}</p>
             <p class="text-xs text-slate-300">Car ID: ${item.carId}</p>
+            <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-700/60">
+              <div class="h-full rounded-full bg-purple-400/80" style="width:${Math.max(8, (item.count / peak) * 100)}%"></div>
+            </div>
           </div>
-          <span class="self-start rounded-full border border-purple-300/40 bg-purple-500/15 px-2 py-0.5 text-xs font-semibold text-purple-200 sm:self-auto">${item.count} ★</span>
+          <span class="rounded-full border border-purple-300/40 bg-purple-500/15 px-2 py-0.5 text-xs font-semibold text-purple-200">${item.count} ★</span>
         </div>
       </article>
       `
@@ -440,11 +855,15 @@ function renderTopWishlistedCars(topCars = []) {
 async function initAdmin() {
   try {
     ensureLeaderboardAnimations();
+    bindInternalViewSwitching();
+    bindDeleteControls();
+    bindChartModeControls();
     await checkAdmin();
     initAuthNavbar();
     window.vgUserStore?.bindThemeToggle?.();
 
-    watchUsers(
+    // Real-time listener combines /users and /bannedUsers so status updates instantly.
+    watchUsersWithBanState(
       (users) => {
         renderUsers(users);
         renderLiveMetrics(users);

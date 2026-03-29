@@ -11,6 +11,11 @@ const state = {
   favorites: new Set(localState.favorites || []),
   wishlist: new Set(localState.wishlist || []),
   compare: new Set(localState.compare || []),
+  filters: {
+    brand: "all",
+    price: "all",
+    performance: "all",
+  },
   currentModalCarId: null,
   modalCarouselImages: [],
   modalCarouselIndex: 0,
@@ -21,6 +26,9 @@ const elements = {
   favoritesContainer: document.getElementById("favorites-container"),
   favoritesEmpty: document.getElementById("favorites-empty"),
   savedCount: document.getElementById("saved-count"),
+  filterBrand: document.getElementById("filter-brand"),
+  filterPrice: document.getElementById("filter-price"),
+  filterPerformance: document.getElementById("filter-performance"),
   compareQuickInfo: document.getElementById("compare-quick-info"),
   notification: document.getElementById("notification"),
   modal: document.getElementById("modal"),
@@ -35,6 +43,8 @@ const elements = {
   modalCountry: document.getElementById("modal-country"),
   modalHp: document.getElementById("modal-hp"),
   modalSpeed: document.getElementById("modal-speed"),
+  modalWeight: document.getElementById("modal-weight"),
+  modalZeroTo100Mph: document.getElementById("modal-zero-to-100-mph"),
   modalPrice: document.getElementById("modal-price"),
   modalDesc: document.getElementById("modal-desc"),
   modalCompare: document.getElementById("modal-compare"),
@@ -43,11 +53,11 @@ const elements = {
   pageLoading: document.getElementById("page-loading"),
 };
 
-// Stitch integration: dynamic card and modal actions now use the same visual tokens as the provided Stitch layout.
-const BUTTON_PRIMARY = "flex-1 bg-primary text-on-primary py-3 text-xs font-black tracking-widest uppercase hover:brightness-110 transition-all active:scale-95";
-const BUTTON_SECONDARY = "px-4 bg-surface-container-high text-secondary hover:text-white transition-colors";
-const BUTTON_ACTIVE = "flex-1 bg-primary-container text-white py-3 text-xs font-black tracking-widest uppercase transition-all active:scale-95";
-const MODAL_BUTTON_ACTIVE = "rounded-lg bg-surface-container-high text-white font-semibold px-4 py-2 transition";
+// Stitch integration: button classes updated to match new favorites page visual language.
+const BUTTON_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
+const BUTTON_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
+const BUTTON_ACTIVE = "rounded-md border border-[#ff5d67] bg-[#2a1216] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#ffb6bb] transition";
+const MODAL_BUTTON_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
 function carImage(car) {
   return car.image || car.images?.[0] || CAR_IMAGE_FALLBACK;
@@ -72,12 +82,106 @@ function showNotification(message) {
 
 function updateCompareQuickInfo() {
   if (!elements.compareQuickInfo) return;
-  elements.compareQuickInfo.textContent = "Verified Assets";
+  const count = state.compare.size;
+  elements.compareQuickInfo.textContent = count ? `Compare list: ${count}/3 ready` : "Compare list: 0/3";
 }
 
 function updateSavedCount() {
   if (!elements.savedCount) return;
   elements.savedCount.textContent = `${state.favorites.size} Saved`;
+}
+
+function parsePriceValue(priceText = "") {
+  const numeric = Number(String(priceText).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function parseHorsepowerValue(hpText = "") {
+  const numeric = Number(String(hpText).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function matchesBrandFilter(car) {
+  if (state.filters.brand === "all") return true;
+  return String(car.brand || "").toLowerCase() === state.filters.brand;
+}
+
+function matchesPriceFilter(car) {
+  if (state.filters.price === "all") return true;
+  const price = parsePriceValue(car.price);
+  if (state.filters.price === "under-300k") return price < 300000;
+  if (state.filters.price === "300k-1m") return price >= 300000 && price <= 1000000;
+  if (state.filters.price === "over-1m") return price > 1000000;
+  return true;
+}
+
+function matchesPerformanceFilter(car) {
+  if (state.filters.performance === "all") return true;
+  const hp = parseHorsepowerValue(car.hp);
+  if (state.filters.performance === "street") return hp < 700;
+  if (state.filters.performance === "track") return hp >= 700 && hp < 1000;
+  if (state.filters.performance === "hyper") return hp >= 1000;
+  return true;
+}
+
+function applyFavoriteFilters(cars) {
+  return cars.filter((car) => matchesBrandFilter(car) && matchesPriceFilter(car) && matchesPerformanceFilter(car));
+}
+
+function getAllCars() {
+  return Array.isArray(window.cars) ? window.cars : [];
+}
+
+function getBrandOptionsFromCarsAndState() {
+  const dedup = new Map();
+
+  // Source 1: full cars catalog from cars.js
+  for (const car of getAllCars()) {
+    const rawBrand = String(car?.brand || "").trim();
+    if (!rawBrand) continue;
+    dedup.set(rawBrand.toLowerCase(), rawBrand);
+  }
+
+  // Source 2: Firestore-synced favorites mapped to cars.js (ensures both sources are used)
+  for (const id of state.favorites) {
+    const car = getCarById(Number(id));
+    const rawBrand = String(car?.brand || "").trim();
+    if (!rawBrand) continue;
+    dedup.set(rawBrand.toLowerCase(), rawBrand);
+  }
+
+  return [...dedup.entries()]
+    .sort((a, b) => a[1].localeCompare(b[1]))
+    .map(([value, label]) => ({ value, label }));
+}
+
+function populateBrandDropdown() {
+  if (!elements.filterBrand) return;
+
+  const previousValue = state.filters.brand;
+  const options = getBrandOptionsFromCarsAndState();
+  const optionMarkup = [
+    '<option value="all">Brand: All</option>',
+    ...options.map((option) => `<option value="${option.value}">${option.label}</option>`),
+  ].join("");
+
+  elements.filterBrand.innerHTML = optionMarkup;
+
+  const stillExists = previousValue === "all" || options.some((option) => option.value === previousValue);
+  state.filters.brand = stillExists ? previousValue : "all";
+  elements.filterBrand.value = state.filters.brand;
+}
+
+function updateFilterButtonLabels() {
+  if (elements.filterBrand) {
+    elements.filterBrand.value = state.filters.brand;
+  }
+  if (elements.filterPrice) {
+    elements.filterPrice.value = state.filters.price;
+  }
+  if (elements.filterPerformance) {
+    elements.filterPerformance.value = state.filters.performance;
+  }
 }
 
 async function toggleFavorite(id) {
@@ -130,51 +234,43 @@ async function toggleCompare(id) {
 function favoritesTemplate(car) {
   const isCompare = state.compare.has(car.id);
   const isWishlist = state.wishlist.has(car.id);
-  const classTag =
-    car.vehicleType === "Hybrid"
-      ? "Hybrid Class"
-      : car.speed.includes("420") || car.speed.includes("480") || car.speed.includes("383")
-        ? "Hypercar Class"
-        : "Circuit Ready";
 
   return `
-    <article class="group bg-surface-container-low overflow-hidden transition-all duration-500 hover:bg-surface-variant hover:scale-[1.02]">
-      <div class="relative aspect-[16/10] overflow-hidden">
-        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" />
-        <div class="absolute top-4 right-4 flex gap-2">
-          <button data-action="favorite" data-id="${car.id}" class="w-10 h-10 glass-card rounded-full flex items-center justify-center text-white hover:text-primary-container transition-colors" aria-label="Toggle favorite">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">heart_minus</span>
-          </button>
-        </div>
-        <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent">
-          <span class="text-primary-container text-[10px] font-black tracking-[0.3em] uppercase">${classTag}</span>
-        </div>
-      </div>
-      <div class="p-8">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h3 class="text-2xl font-headline font-bold text-white tracking-tight uppercase">${car.name}</h3>
-            <p class="text-secondary text-xs font-label tracking-[0.1em] mt-1 uppercase">${car.maker}</p>
-          </div>
-          <span class="text-white font-headline font-light text-xl">${car.price}</span>
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-8">
-          <div class="bg-surface-container-lowest p-3 border-l-2 border-primary-container/30">
-            <span class="block text-[10px] text-secondary font-label tracking-widest uppercase mb-1">Top Speed</span>
-            <span class="text-white font-headline font-bold">${car.speed}</span>
-          </div>
-          <div class="bg-surface-container-lowest p-3 border-l-2 border-primary-container/30">
-            <span class="block text-[10px] text-secondary font-label tracking-widest uppercase mb-1">0-60 MPH</span>
-            <span class="text-white font-headline font-bold">${car.zeroTo100Mph || car.hp}</span>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_PRIMARY}">${isCompare ? "Remove Compare" : "Compare"}</button>
-          <button data-action="details" data-id="${car.id}" class="${BUTTON_SECONDARY}" aria-label="Open details">
-            <span class="material-symbols-outlined">share</span>
-          </button>
-          <button data-action="wishlist" data-id="${car.id}" class="hidden">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
+    <article class="group overflow-hidden border border-[#2a2b34] bg-[#121217] transition duration-300 hover:-translate-y-1 hover:border-[#ff5d67]/70">
+      <div class="relative aspect-[16/10] overflow-hidden bg-black/40">
+        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
+        <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/85 to-transparent"></div>
+        <span class="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#ff5d67]">${car.brand}</span>
+        <button data-action="favorite" data-id="${car.id}" class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:border-[#ff5d67] hover:text-[#ff5d67]" aria-label="Remove from favorites">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.7-4.35-9.14-8.13C.85 9.73 2.02 5.5 5.66 4.3c2.23-.74 4.38.14 5.62 1.77 1.24-1.63 3.4-2.51 5.63-1.77 3.63 1.2 4.8 5.43 2.8 8.57C18.7 16.65 12 21 12 21z"/></svg>
         </button>
+      </div>
+
+      <div class="p-4">
+        <div class="mb-4 flex items-start justify-between gap-3">
+          <div>
+            <h3 class="display-font text-2xl font-bold uppercase leading-tight text-white">${car.name}</h3>
+            <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#aeb3c0]">${car.country}</p>
+          </div>
+          <span class="display-font text-lg font-medium text-[#f8fafc]">${car.price}</span>
+        </div>
+
+        <div class="mb-4 grid grid-cols-2 gap-2">
+          <div class="border border-[#2a2b34] bg-[#0f1015] px-3 py-2">
+            <span class="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8f95a4]">Top Speed</span>
+            <span class="display-font text-lg font-bold text-white">${car.speed}</span>
+          </div>
+          <div class="border border-[#2a2b34] bg-[#0f1015] px-3 py-2">
+            <span class="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8f95a4]">Horsepower</span>
+            <span class="display-font text-lg font-bold text-white">${car.hp}</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_PRIMARY}">${isCompare ? "Remove Compare" : "Compare"}</button>
+          <button data-action="details" data-id="${car.id}" class="${BUTTON_SECONDARY}">Details</button>
+          <button data-action="wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Wishlisted" : "Wishlist"}</button>
+        </div>
       </div>
     </article>
   `;
@@ -183,19 +279,32 @@ function favoritesTemplate(car) {
 function renderFavoritesPage() {
   if (!elements.favoritesContainer || !elements.favoritesEmpty) return;
 
+  populateBrandDropdown();
+
   const favoriteCars = [...state.favorites].map((id) => getCarById(id)).filter(Boolean);
+  const filteredCars = applyFavoriteFilters(favoriteCars);
+
+  updateSavedCount();
+  updateFilterButtonLabels();
 
   if (!favoriteCars.length) {
     elements.favoritesContainer.innerHTML = "";
     elements.favoritesEmpty.classList.remove("hidden");
-    updateSavedCount();
+    elements.favoritesEmpty.querySelector("p")?.replaceChildren("No favorites yet. Explore the fleet and add cars you love.");
+    updateCompareQuickInfo();
+    return;
+  }
+
+  if (!filteredCars.length) {
+    elements.favoritesContainer.innerHTML = "";
+    elements.favoritesEmpty.classList.remove("hidden");
+    elements.favoritesEmpty.querySelector("p")?.replaceChildren("No favorites match your selected filters. Adjust any dropdown to see more cars.");
     updateCompareQuickInfo();
     return;
   }
 
   elements.favoritesEmpty.classList.add("hidden");
-  elements.favoritesContainer.innerHTML = favoriteCars.map(favoritesTemplate).join("");
-  updateSavedCount();
+  elements.favoritesContainer.innerHTML = filteredCars.map(favoritesTemplate).join("");
   updateCompareQuickInfo();
 }
 
@@ -247,11 +356,12 @@ function renderModalCarousel(car) {
   state.modalCarouselImages = getModalImages(car);
   state.modalCarouselIndex = 0;
 
+  // Stitch modal fix: keep slides locked to the full-height hero container.
   elements.modalCarouselTrack.innerHTML = state.modalCarouselImages
     .map(
       (imageUrl, imageIndex) => `
-      <div class="min-w-full">
-        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-64 w-full object-cover">
+      <div class="min-w-full h-full shrink-0">
+        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-contain">
       </div>`
     )
     .join("");
@@ -283,6 +393,8 @@ function openModal(id) {
   elements.modalCountry.textContent = car.country;
   elements.modalHp.textContent = car.hp;
   elements.modalSpeed.textContent = car.speed;
+  elements.modalWeight.textContent = car.weight || "-";
+  elements.modalZeroTo100Mph.textContent = car.zeroTo100Mph || "-";
   elements.modalPrice.textContent = car.price;
   elements.modalDesc.textContent = car.description;
 
@@ -403,6 +515,21 @@ function initEvents() {
 
   elements.modalWishlist?.addEventListener("click", async () => {
     if (state.currentModalCarId !== null) await toggleWishlist(state.currentModalCarId);
+  });
+
+  elements.filterBrand?.addEventListener("change", (event) => {
+    state.filters.brand = event.target.value;
+    renderFavoritesPage();
+  });
+
+  elements.filterPrice?.addEventListener("change", (event) => {
+    state.filters.price = event.target.value;
+    renderFavoritesPage();
+  });
+
+  elements.filterPerformance?.addEventListener("change", (event) => {
+    state.filters.performance = event.target.value;
+    renderFavoritesPage();
   });
 
 }

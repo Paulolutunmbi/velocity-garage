@@ -37,6 +37,8 @@ const elements = {
   modalCountry: document.getElementById("modal-country"),
   modalHp: document.getElementById("modal-hp"),
   modalSpeed: document.getElementById("modal-speed"),
+  modalWeight: document.getElementById("modal-weight"),
+  modalZeroTo100Mph: document.getElementById("modal-zero-to-100-mph"),
   modalPrice: document.getElementById("modal-price"),
   modalDesc: document.getElementById("modal-desc"),
   modalCompare: document.getElementById("modal-compare"),
@@ -419,11 +421,12 @@ function renderModalCarousel(car) {
   state.modalCarouselImages = getModalImages(car);
   state.modalCarouselIndex = 0;
 
+  // Stitch modal fix: keep slides locked to the full-height hero container.
   elements.modalCarouselTrack.innerHTML = state.modalCarouselImages
     .map(
       (imageUrl, imageIndex) => `
-      <div class="min-w-full">
-        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-64 w-full object-cover">
+      <div class="min-w-full h-full shrink-0">
+        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-contain">
       </div>`
     )
     .join("");
@@ -455,6 +458,8 @@ function openModal(id) {
   elements.modalCountry.textContent = car.country;
   elements.modalHp.textContent = car.hp;
   elements.modalSpeed.textContent = car.speed;
+  elements.modalWeight.textContent = car.weight || "-";
+  elements.modalZeroTo100Mph.textContent = car.zeroTo100Mph || "-";
   elements.modalPrice.textContent = car.price;
   elements.modalDesc.textContent = car.description;
 

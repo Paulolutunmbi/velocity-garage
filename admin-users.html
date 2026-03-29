@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Users | Velocity Garage</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/default.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "vg-bg": "#131313",
+            "vg-panel": "#1c1b1b",
+            "vg-panel-hi": "#2a2a2a",
+            "vg-copy": "#e5e2e1",
+            "vg-muted": "#c6c6c6",
+            "vg-accent": "#ff525c"
+          },
+          fontFamily: {
+            headline: ["Space Grotesk", "sans-serif"],
+            body: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: "Inter", sans-serif; }
+    .title-font { font-family: "Space Grotesk", sans-serif; letter-spacing: 0.02em; }
+  </style>
+</head>
+<body class="min-h-screen bg-vg-bg text-vg-copy">
+  <!-- CHANGED: Dedicated admin users directory window opened from Admin dashboard. -->
+  <header class="sticky top-0 z-30 border-b border-vg-panel-hi bg-vg-bg/90 backdrop-blur">
+    <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted">Admin Directory</p>
+        <h1 class="title-font text-3xl font-bold text-white">All Registered Users</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="admin.html" class="rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted hover:text-white">Back To Dashboard</a>
+        <div id="auth-controls" class="flex items-center"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-4">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Total Accounts</p>
+        <p id="users-total" class="title-font mt-1 text-3xl font-bold text-white">0</p>
+      </article>
+      <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-4">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Active (7 Days)</p>
+        <p id="users-active" class="title-font mt-1 text-3xl font-bold text-white">0</p>
+      </article>
+      <article class="rounded-lg border border-vg-panel-hi bg-vg-panel p-4">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-vg-muted">Verified Emails</p>
+        <p id="users-verified" class="title-font mt-1 text-3xl font-bold text-white">0</p>
+      </article>
+    </div>
+
+    <div id="users-loading" class="rounded-md border border-vg-panel-hi bg-vg-panel px-4 py-3 text-sm text-vg-muted">Loading users...</div>
+    <div id="users-error" class="hidden rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200"></div>
+    <div id="users-empty" class="hidden rounded-md border border-dashed border-vg-panel-hi bg-vg-panel px-4 py-8 text-center text-sm text-vg-muted">No users found.</div>
+
+    <section class="mt-4 overflow-x-auto rounded-lg border border-vg-panel-hi bg-vg-panel">
+      <table class="min-w-full text-left text-sm">
+        <thead class="border-b border-vg-panel-hi bg-vg-panel-hi/35 text-vg-muted">
+          <tr>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Photo</th>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Name</th>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Email</th>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Favorites</th>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Wishlist</th>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Joined</th>
+            <th class="px-4 py-3 font-semibold uppercase tracking-[0.12em]">Last Active</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body" class="divide-y divide-vg-panel-hi/40"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/env.js"></script>
+  <script type="module" src="/js/firebase-config.js"></script>
+  <script type="module" src="/js/user-store.js"></script>
+  <script type="module" src="/js/admin-users-page.js"></script>
+</body>
+</html>

@@ -43,18 +43,21 @@ const dashboardSections = Array.from(document.querySelectorAll(".dashboard-only"
 const userManagementTotal = document.getElementById("um-total-users");
 const userManagementActive = document.getElementById("um-active-users");
 const userManagementVerified = document.getElementById("um-verified-users");
+const userManagementBanned = document.getElementById("um-banned-users");
 const navToggleInput = document.getElementById("admin-nav-toggle");
-const deleteUserModal = document.getElementById("delete-user-modal");
-const deleteUserTarget = document.getElementById("delete-user-target");
-const deleteUserError = document.getElementById("delete-user-error");
-const deleteUserCancelBtn = document.getElementById("delete-user-cancel");
-const deleteUserConfirmBtn = document.getElementById("delete-user-confirm");
+const userSearchInput = document.getElementById("user-search-input");
+const userSearchClearBtn = document.getElementById("user-search-clear");
+const userSearchDropdown = document.getElementById("user-search-dropdown");
+const userSearchResults = document.getElementById("user-search-results");
+const userSearchLoading = document.getElementById("user-search-loading");
+const userSearchEmpty = document.getElementById("user-search-empty");
 
 let signInChartMode = "monthly";
 let lastUsersSnapshot = [];
 let activeAdminView = "dashboard";
-let pendingDeleteUser = null;
 let latestBannedSet = new Set();
+let userSearchQuery = "";
+let searchDebounceTimer = null;
 
 const ADMIN_EMAIL = "oluwatunmbipaul@gmail.com";
 
@@ -77,17 +80,148 @@ function canManageUsersOrWarn() {
   if (isPrivilegedAdmin()) return true;
 
   const message = `Only ${ADMIN_EMAIL} can manage users.`;
-  if (deleteUserError) {
-    deleteUserError.textContent = message;
-    deleteUserError.classList.remove("hidden");
-  } else {
-    alert(message);
-  }
+  alert(message);
   return false;
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function shortUid(uid = "") {
   return uid ? `${uid.slice(0, 6)}...` : "Driver";
+}
+
+function getUserStatus(user = {}) {
+  return latestBannedSet.has(user.uid || user.id) || String(user.status || "active").toLowerCase() === "banned"
+    ? "banned"
+    : "active";
+}
+
+function filterUsersByQuery(users = []) {
+  const q = userSearchQuery.trim().toLowerCase();
+  if (!q) return users;
+
+  return users.filter((user) => {
+    const name = String(user.name || "").toLowerCase();
+    const email = String(user.email || "").toLowerCase();
+    const status = getUserStatus(user);
+    return name.includes(q) || email.includes(q) || status.includes(q);
+  });
+}
+
+function showSearchDropdown(show) {
+  if (!userSearchDropdown) return;
+  userSearchDropdown.classList.toggle("hidden", !show);
+}
+
+function updateSearchDropdown(users = []) {
+  if (!userSearchDropdown || !userSearchResults || !userSearchLoading || !userSearchEmpty) return;
+
+  const q = userSearchQuery.trim();
+  if (!q) {
+    showSearchDropdown(false);
+    userSearchResults.innerHTML = "";
+    userSearchLoading.classList.add("hidden");
+    userSearchEmpty.classList.add("hidden");
+    return;
+  }
+
+  showSearchDropdown(true);
+  userSearchLoading.classList.remove("hidden");
+  userSearchEmpty.classList.add("hidden");
+  userSearchResults.innerHTML = "";
+
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => {
+    const matches = filterUsersByQuery(users).slice(0, 8);
+    userSearchLoading.classList.add("hidden");
+
+    if (!matches.length) {
+      userSearchEmpty.classList.remove("hidden");
+      return;
+    }
+
+    userSearchEmpty.classList.add("hidden");
+    userSearchResults.innerHTML = matches
+      .map((user) => {
+        const status = getUserStatus(user);
+        const statusChip = status === "banned"
+          ? '<span class="rounded-full border border-red-500/40 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-200">Banned</span>'
+          : '<span class="rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-emerald-200">Active</span>';
+
+        return `
+          <li>
+            <button type="button" data-user-id="${user.id}" class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left transition hover:bg-vg-panel-hi/35">
+              <span class="min-w-0">
+                <span class="block truncate text-sm font-semibold text-white">${escapeHtml(user.name || "Velocity Driver")}</span>
+                <span class="block truncate text-xs text-vg-muted">${escapeHtml(user.email || "No email")}</span>
+              </span>
+              ${statusChip}
+            </button>
+          </li>
+        `;
+      })
+      .join("");
+  }, 140);
+}
+
+function bindUserSearchControls() {
+  if (!userSearchInput || userSearchInput.dataset.bound === "true") return;
+  userSearchInput.dataset.bound = "true";
+
+  userSearchInput.addEventListener("input", (event) => {
+    userSearchQuery = event.target.value || "";
+    userSearchClearBtn?.classList.toggle("hidden", !userSearchQuery.trim());
+    renderUsers(lastUsersSnapshot);
+    updateSearchDropdown(lastUsersSnapshot);
+  });
+
+  userSearchInput.addEventListener("focus", () => {
+    if (userSearchQuery.trim()) updateSearchDropdown(lastUsersSnapshot);
+  });
+
+  userSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      showSearchDropdown(false);
+      userSearchInput.blur();
+    }
+  });
+
+  userSearchClearBtn?.addEventListener("click", () => {
+    userSearchQuery = "";
+    userSearchInput.value = "";
+    userSearchClearBtn.classList.add("hidden");
+    showSearchDropdown(false);
+    renderUsers(lastUsersSnapshot);
+  });
+
+  userSearchResults?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-user-id]");
+    if (!button) return;
+
+    const selectedId = button.getAttribute("data-user-id");
+    const selectedUser = lastUsersSnapshot.find((item) => item.id === selectedId);
+    if (!selectedUser) return;
+
+    userSearchQuery = selectedUser.name || selectedUser.email || "";
+    userSearchInput.value = userSearchQuery;
+    userSearchClearBtn?.classList.toggle("hidden", !userSearchQuery.trim());
+    showSearchDropdown(false);
+    renderUsers(lastUsersSnapshot);
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!userSearchDropdown || !userSearchInput) return;
+    const container = userSearchDropdown.parentElement;
+    if (!container) return;
+    if (!container.contains(event.target)) showSearchDropdown(false);
+  });
 }
 
 function formatJoinDate(value) {
@@ -184,45 +318,6 @@ function bindInternalViewSwitching() {
   }
 }
 
-function openDeleteModal(user = null) {
-  if (!deleteUserModal) return;
-
-  pendingDeleteUser = user;
-  deleteUserTarget.textContent = user
-    ? `${user.name || "Velocity Driver"} (${user.email || "No email"})`
-    : "Unknown user";
-  deleteUserError.classList.add("hidden");
-  deleteUserError.textContent = "";
-  deleteUserConfirmBtn.disabled = false;
-  deleteUserConfirmBtn.textContent = "Delete User";
-  deleteUserModal.classList.remove("hidden");
-  deleteUserModal.classList.add("flex");
-}
-
-function closeDeleteModal() {
-  if (!deleteUserModal) return;
-  pendingDeleteUser = null;
-  deleteUserModal.classList.add("hidden");
-  deleteUserModal.classList.remove("flex");
-}
-
-async function confirmDeleteUser() {
-  if (!pendingDeleteUser?.id) return;
-  if (!canManageUsersOrWarn()) return;
-
-  try {
-    deleteUserConfirmBtn.disabled = true;
-    deleteUserConfirmBtn.textContent = "Deleting...";
-    await deleteDoc(doc(db, "users", pendingDeleteUser.id));
-    closeDeleteModal();
-  } catch (error) {
-    deleteUserConfirmBtn.disabled = false;
-    deleteUserConfirmBtn.textContent = "Delete User";
-    deleteUserError.textContent = error.message || "Unable to delete user from Firestore.";
-    deleteUserError.classList.remove("hidden");
-  }
-}
-
 // Keeps /users and /bannedUsers synchronized from one realtime source for the UI.
 function watchUsersWithBanState(onData, onError) {
   let latestUsers = [];
@@ -230,7 +325,7 @@ function watchUsersWithBanState(onData, onError) {
   const emit = () => {
     const merged = latestUsers.map((user) => ({
       ...user,
-      status: latestBannedSet.has(user.id) ? "banned" : (String(user.status || "active").toLowerCase() === "banned" ? "banned" : "active"),
+      status: getUserStatus(user),
     }));
 
     onData(merged);
@@ -268,8 +363,10 @@ async function setUserStatus(user, nextStatus) {
   if (!user?.id) return;
   if (!canManageUsersOrWarn()) return;
 
-  const uid = user.id;
-  const userRef = doc(db, "users", uid);
+  // User documents are rendered by doc id, while Firebase Auth UID is stored as user.uid.
+  const userDocId = user.id;
+  const uid = user.uid || user.id;
+  const userRef = doc(db, "users", userDocId);
   const bannedRef = doc(db, "bannedUsers", uid);
 
   if (nextStatus === "banned") {
@@ -327,38 +424,23 @@ function bindDeleteControls() {
 
     if (action === "ban-user") {
       setUserStatus(user, "banned").catch((error) => {
-        if (deleteUserError) {
-          deleteUserError.textContent = error.message || "Unable to ban user.";
-          deleteUserError.classList.remove("hidden");
-        }
+        alert(error.message || "Unable to ban user.");
       });
       return;
     }
 
     if (action === "unban-user") {
       setUserStatus(user, "active").catch((error) => {
-        if (deleteUserError) {
-          deleteUserError.textContent = error.message || "Unable to unban user.";
-          deleteUserError.classList.remove("hidden");
-        }
+        alert(error.message || "Unable to unban user.");
       });
       return;
     }
-
-    const deleteBtn = event.target.closest("[data-action='delete-user']");
-    if (!deleteBtn) return;
-    openDeleteModal(user);
-  });
-
-  deleteUserCancelBtn?.addEventListener("click", closeDeleteModal);
-  deleteUserConfirmBtn?.addEventListener("click", confirmDeleteUser);
-  deleteUserModal?.addEventListener("click", (event) => {
-    if (event.target === deleteUserModal) closeDeleteModal();
   });
 }
 
 function renderUsers(users) {
   lastUsersSnapshot = Array.isArray(users) ? users : [];
+  const filteredUsers = filterUsersByQuery(lastUsersSnapshot);
 
   loadingState.classList.add("hidden");
   errorState.classList.add("hidden");
@@ -376,6 +458,7 @@ function renderUsers(users) {
   if (userManagementTotal) userManagementTotal.textContent = String(users.length);
   if (userManagementActive) userManagementActive.textContent = String(activeUsers);
   if (userManagementVerified) userManagementVerified.textContent = String(verifiedUsers);
+  if (userManagementBanned) userManagementBanned.textContent = String(latestBannedSet.size);
 
   if (!users.length) {
     emptyState.classList.remove("hidden");
@@ -383,9 +466,17 @@ function renderUsers(users) {
     return;
   }
 
-  emptyState.classList.add("hidden");
+  if (!filteredUsers.length) {
+    emptyState.classList.remove("hidden");
+    emptyState.textContent = "No users found for this search.";
+    tableBody.innerHTML = "";
+    return;
+  }
 
-  tableBody.innerHTML = users
+  emptyState.classList.add("hidden");
+  emptyState.textContent = "No users found in Firestore yet.";
+
+  tableBody.innerHTML = filteredUsers
     .map((user) => {
       const name = user.name || "Velocity Driver";
       const email = user.email || "No email";
@@ -394,7 +485,7 @@ function renderUsers(users) {
       const favorites = normalizeIds(user.favorites).length;
       const wishlist = normalizeIds(user.wishlist).length;
       const lastActive = formatLastActive(user.updatedAt || user.createdAt);
-      const status = String(user.status || "active").toLowerCase() === "banned" ? "banned" : "active";
+      const status = getUserStatus(user);
       const statusChip = status === "banned"
         ? '<span class="inline-flex rounded-full border border-red-500/40 bg-red-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-200">Banned</span>'
         : '<span class="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-emerald-200">Active</span>';
@@ -417,22 +508,14 @@ function renderUsers(users) {
           <td class="px-4 py-3 text-slate-300">${createdAt}</td>
           <td class="px-4 py-3 text-slate-300">${lastActive}</td>
           <td class="px-4 py-3 text-slate-200">
-            <div class="flex flex-wrap items-center gap-2">
-              ${statusActionBtn}
-              <button
-                type="button"
-                data-action="delete-user"
-                data-user-id="${user.id}"
-                class="rounded-md border border-red-500/40 bg-red-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-red-200 hover:bg-red-500/20"
-              >
-                Delete
-              </button>
-            </div>
+            <div class="flex flex-wrap items-center gap-2">${statusActionBtn}</div>
           </td>
         </tr>
       `;
     })
     .join("");
+
+  updateSearchDropdown(lastUsersSnapshot);
 }
 
 function getCarNameById(id) {
@@ -857,6 +940,7 @@ async function initAdmin() {
     ensureLeaderboardAnimations();
     bindInternalViewSwitching();
     bindDeleteControls();
+    bindUserSearchControls();
     bindChartModeControls();
     await checkAdmin();
     initAuthNavbar();

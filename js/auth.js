@@ -22,6 +22,40 @@ import {
 import { auth, db, googleProvider, githubProvider, ADMIN_EMAIL } from "./firebase-config.js";
 
 let authReadyPromise = null;
+let bannedListenerUnsub = null;
+let isForcedBanSignout = false;
+
+function bindRealtimeBanMonitor() {
+  onAuthStateChanged(auth, (user) => {
+    bannedListenerUnsub?.();
+    bannedListenerUnsub = null;
+
+    if (!user?.uid) return;
+
+    // Real-time ban monitor: if bannedUsers/{uid} exists, force sign-out immediately.
+    bannedListenerUnsub = onSnapshot(
+      doc(db, "bannedUsers", user.uid),
+      async (snapshot) => {
+        if (!snapshot.exists() || isForcedBanSignout) return;
+
+        try {
+          isForcedBanSignout = true;
+          alert("Your account has been suspended. You have been logged out.");
+          await signOut(auth);
+        } catch (error) {
+          console.error("[Auth] Forced ban sign-out failed:", error);
+        } finally {
+          isForcedBanSignout = false;
+        }
+      },
+      (error) => {
+        console.warn("[Auth] Ban monitor listener error:", error?.message || error);
+      }
+    );
+  });
+}
+
+bindRealtimeBanMonitor();
 
 function ensureAuthReady() {
   if (!authReadyPromise) {

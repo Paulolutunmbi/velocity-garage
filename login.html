@@ -54,7 +54,8 @@
 			<div class="relative z-10 flex h-full w-full flex-col justify-between p-12 xl:p-16">
 				<div>
 					<!-- Responsive logo sizing: larger visual presence while preserving the existing layout behavior. -->
-					<img src="assets/images/screen-removebg-preview.png" alt="Velocity Garage Logo" class="mb-10 h-auto w-48 max-w-full object-contain sm:w-56 xl:w-64">
+					<!-- Breakpoint tuning: keeps desktop logo prominent without crowding medium screens. -->
+					<img src="assets/images/screen-removebg-preview.png" alt="Velocity Garage Logo" class="mb-4 h-auto w-56 max-w-full object-contain xl:w-64 2xl:w-72">
 					<h1 class="font-headline text-6xl italic leading-[0.9] tracking-tight text-onBackground xl:text-7xl">
 						Pilot<br><span class="text-tertiary">Access.</span>
 					</h1>
@@ -80,12 +81,16 @@
 		</section>
 
 		<section class="relative flex flex-1 items-center justify-center p-5 sm:p-8 lg:p-12">
+			<!-- Responsive background fix: show garage imagery on mobile/tablet when the desktop panel is hidden. -->
+			<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcZNbJq-C3V4xPgdIuC_4NwydFOOs6LKgNs-H5V3FQMgjavqxMCKTW4WmLcViuxDwFMOdrPg25I5zeZ6VS0kVKhC5daG3AggE7d15ux2-MOS0nVAwywRP8KgXR-P8L87SZ57w8Dx5AlUPFJDvp81LvmCk6BKcbx6tPLzhTbilC8WIZAHpEAxVRU9HseRGcDX7mkRQ1Aeh1mFfvI_GeTXtQ5v83GgsZSlIqHYRcozJBIe7jQA5eDbXdBorpGWZWj9tmbQ5uXMnZangA" alt="Garage backdrop" class="absolute inset-0 -z-20 h-full w-full object-cover opacity-30 grayscale lg:hidden">
+			<div class="absolute inset-0 -z-10 bg-gradient-to-b from-background/65 via-background/82 to-background/94 lg:hidden"></div>
 			<div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_78%_14%,rgba(255,143,114,0.14),transparent_34%),radial-gradient(circle_at_16%_90%,rgba(115,115,115,0.2),transparent_38%)]"></div>
 			<div class="w-full max-w-md">
 				<!-- Stitch UI Integration: Mobile/tablet hero text and logo for non-desktop layouts. -->
-				<div class="mb-10 lg:hidden">
+				<div class="mb-7 lg:hidden">
 					<!-- Responsive logo sizing: scales cleanly from small mobile to tablet widths. -->
-					<img src="assets/images/screen-removebg-preview.png" alt="Velocity Garage Logo" class="mb-6 h-auto w-40 max-w-full object-contain sm:w-48">
+					<!-- Breakpoint tuning: smaller on compact phones, then scales up on tablets. -->
+					<img src="assets/images/screen-removebg-preview.png" alt="Velocity Garage Logo" class="mb-2 h-auto w-44 max-w-full object-contain sm:w-48 md:w-52">
 					<h1 class="font-headline text-5xl italic leading-tight text-onBackground sm:text-6xl">
 						Access the <br><span class="text-tertiary">Inner Sanctum.</span>
 					</h1>
@@ -118,7 +123,10 @@
 								<div class="relative">
 									<span class="material-symbols-outlined pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-lg text-onMuted/50">lock_open</span>
 									<input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••••••" class="w-full border-0 border-b border-outline bg-transparent py-3 pl-8 pr-8 text-sm text-onBackground placeholder:text-onMuted/30 focus:border-tertiary focus:ring-0">
-									<span class="material-symbols-outlined pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 text-lg text-onMuted/50">visibility_off</span>
+									<!-- Password toggle fix: interactive control for show/hide behavior. -->
+									<button id="login-password-toggle" type="button" class="absolute right-0 top-1/2 -translate-y-1/2 text-onMuted/50 transition-colors hover:text-onBackground" aria-label="Show password" aria-pressed="false">
+										<span id="login-password-toggle-icon" class="material-symbols-outlined text-lg">visibility_off</span>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -167,5 +175,23 @@
 	<script src="/env.js"></script>
 	<script type="module" src="/js/firebase-config.js"></script>
 	<script type="module" src="/js/login-page.js"></script>
+	<script>
+		// Password toggle fix: isolated UI behavior that keeps auth/login logic untouched.
+		(() => {
+			const passwordInput = document.getElementById("login-password");
+			const toggleBtn = document.getElementById("login-password-toggle");
+			const toggleIcon = document.getElementById("login-password-toggle-icon");
+
+			if (!passwordInput || !toggleBtn || !toggleIcon) return;
+
+			toggleBtn.addEventListener("click", () => {
+				const isHidden = passwordInput.type === "password";
+				passwordInput.type = isHidden ? "text" : "password";
+				toggleIcon.textContent = isHidden ? "visibility" : "visibility_off";
+				toggleBtn.setAttribute("aria-pressed", String(isHidden));
+				toggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+			});
+		})();
+	</script>
 </body>
 </html>

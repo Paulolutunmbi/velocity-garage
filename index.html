@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,83 +8,199 @@
 <link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 <script>
+/* CHANGE: Tailwind tokens updated to match Stitch landing UI palette and typography. */
 tailwind.config = {
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         vg: {
-          orange: "#ff5b2e",
-          steel: "#1f2430"
+          bg: "#0b0d12",
+          panel: "#11151f",
+          line: "#232734",
+          text: "#e8ebf0",
+          muted: "#b7bfcc",
+          accent: "#ff4f62",
+          accentSoft: "#ffb3b2",
+          cyan: "#22d3ee"
         }
+      },
+      fontFamily: {
+        headline: ["Space Grotesk", "sans-serif"],
+        body: ["Inter", "sans-serif"]
+      },
+      boxShadow: {
+        accent: "0 12px 32px rgba(255, 79, 98, 0.32)"
       }
     }
   }
 };
 </script>
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
+  /* CHANGE: Replaced old gradient shell with Stitch-style atmosphere and hero treatment. */
   body {
-    font-family: "Plus Jakarta Sans", sans-serif;
-    background-image: radial-gradient(circle at 20% 0%, rgba(255, 91, 46, 0.26) 0%, rgba(255, 91, 46, 0) 34%), linear-gradient(180deg, #0d1117 0%, #111827 100%);
+    font-family: "Inter", sans-serif;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(34, 211, 238, 0.18) 0%, rgba(34, 211, 238, 0) 36%),
+      radial-gradient(circle at 15% 86%, rgba(255, 79, 98, 0.18) 0%, rgba(255, 79, 98, 0) 33%),
+      linear-gradient(180deg, #0b0d12 0%, #0a0c11 100%);
   }
-  .title-font {
-    font-family: "Bebas Neue", sans-serif;
-    letter-spacing: 0.05em;
+
+  .headline-font {
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  .hero-car {
+    background-image:
+      linear-gradient(90deg, rgba(11, 13, 18, 1) 6%, rgba(11, 13, 18, 0.78) 42%, rgba(11, 13, 18, 0.2) 67%, rgba(11, 13, 18, 0.9) 100%),
+      var(--hero-image, url("https://images.unsplash.com/photo-1611651338412-8403fa6e3595?auto=format&fit=crop&w=1800&q=80"));
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .divider-grid {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 112px 100%;
   }
 </style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
-<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_85%_20%,rgba(255,91,46,0.14),transparent_35%),radial-gradient(circle_at_10%_85%,rgba(59,130,246,0.13),transparent_32%)]"></div>
+<body class="min-h-screen bg-vg-bg text-vg-text font-body selection:bg-vg-accent selection:text-white">
+<div class="pointer-events-none fixed inset-0 -z-10 divider-grid"></div>
 
-<header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 backdrop-blur">
-  <nav class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:px-8">
+<header class="sticky top-0 z-50 border-b border-vg-line/80 bg-vg-bg/80 backdrop-blur-xl">
+  <nav class="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 md:px-8">
     <a href="index.html" class="flex items-center">
-      <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
+      <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-10 w-auto sm:h-11 md:h-12">
     </a>
-    <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end sm:gap-3">
-      <a href="login.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Login</a>
-      <a href="signup.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Sign Up</a>
+
+    <!-- CHANGE: Stitch-style nav links for desktop while preserving destination pages. -->
+    <div class="hidden items-center gap-7 md:flex">
+      <a href="index.html" class="headline-font text-xs font-bold uppercase tracking-[0.2em] text-vg-accent">Home</a>
+      <a href="home.html" class="headline-font text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted transition hover:text-white">Explore</a>
+      <a href="compare.html" class="headline-font text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted transition hover:text-white">Compare</a>
+      <a href="favorites.html" class="headline-font text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted transition hover:text-white">Favorites</a>
+    </div>
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      <a href="login.html" class="headline-font rounded-md border border-vg-accent/40 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-vg-accent transition hover:border-vg-accent hover:bg-vg-accent/10">Login</a>
+      <!-- CHANGE: Signup is now visible on mobile instead of hidden. -->
+      <a href="signup.html" class="headline-font inline-block rounded-md bg-vg-accent px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:brightness-110">Sign Up</a>
     </div>
   </nav>
 </header>
 
 <main>
-  <section class="mx-auto grid w-full max-w-7xl gap-6 px-4 pb-8 pt-10 sm:px-6 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-    <div class="space-y-5">
-      <span class="inline-flex rounded-full border border-orange-400/35 bg-orange-500/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-orange-200">Public Preview</span>
-      <h1 class="title-font text-5xl leading-none sm:text-7xl">Drive The Extraordinary</h1>
-      <p class="max-w-xl text-sm text-slate-200 sm:text-base">Explore the fleet preview and discover elite machines before creating your account.</p>
-      <div class="flex flex-wrap gap-3">
-        <a href="login.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Login / Sign Up</a>
-        <button id="scroll-preview" class="rounded-lg border border-slate-500/70 bg-slate-900/60 px-4 py-2 font-semibold text-white transition hover:border-slate-300">View Fleet Preview</button>
+  <!-- CHANGE: Hero section replaced with Stitch layout while keeping CTA hook id="scroll-preview" for existing JS listener. -->
+  <section class="mx-auto w-full max-w-7xl px-4 pb-12 pt-7 sm:px-6 md:px-8 md:pb-16 md:pt-10">
+    <div id="hero-car-frame" class="hero-car relative overflow-hidden rounded-none border border-vg-line bg-vg-panel shadow-2xl">
+      <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-vg-bg to-transparent"></div>
+      <div class="relative z-10 flex min-h-[500px] w-full items-center px-5 py-10 sm:px-8 md:min-h-[560px] md:px-12 lg:px-14">
+        <div class="max-w-3xl space-y-6">
+          <p class="headline-font text-[11px] font-bold uppercase tracking-[0.38em] text-vg-accent">Premium Performance</p>
+          <h1 class="headline-font text-5xl font-black uppercase leading-[0.88] text-white sm:text-6xl md:text-7xl lg:text-8xl">
+            Engineered<br>
+            For The
+            <span class="italic text-vg-accent">Elite.</span>
+          </h1>
+          <p class="max-w-xl text-sm leading-relaxed text-vg-text sm:text-base md:text-lg">
+            The definitive sanctuary for high-performance automotive engineering. Experience the raw power of the world's most exclusive fleet.
+          </p>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <button id="scroll-preview" class="headline-font inline-flex items-center rounded-none bg-vg-accent px-7 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-accent transition hover:brightness-110 active:translate-y-px">
+              Experience The Fleet
+            </button>
+            <a href="login.html" class="headline-font inline-flex items-center rounded-none border border-vg-line bg-black/35 px-7 py-3 text-xs font-bold uppercase tracking-[0.18em] text-vg-text transition hover:border-vg-accent/60 hover:text-white">
+              Member Access
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="rounded-3xl border border-slate-700/80 bg-slate-900/70 p-6 shadow-2xl">
-      <h2 class="title-font text-4xl leading-none">Unlock Full Garage Access</h2>
-      <p class="mt-2 text-sm text-slate-300">Unlock more features like AI Car Match, Favorites, Wishlist, and Compare by logging in.</p>
-      <div class="mt-5 rounded-2xl border border-amber-300/35 bg-amber-500/10 p-4 text-sm text-amber-100">
-        <p class="font-semibold">Member notice</p>
-        <p class="mt-1">This page is a limited showcase. Sign in to access the full interactive dashboard.</p>
+      <div class="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/45">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 overflow-x-auto px-4 py-3 sm:px-6 md:px-8">
+          <span class="headline-font whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.2em] text-vg-text/85">Aerodynamic Precision</span>
+          <span class="headline-font whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.2em] text-vg-accent">Carbon Fiber Chassis</span>
+          <span class="headline-font whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.2em] text-vg-text/85">0-60 In 2.1s</span>
+          <span class="headline-font whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.2em] text-vg-accent">V12 Quad-Turbo</span>
+          <span class="headline-font whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.2em] text-vg-text/85">Active Downforce</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="fleet-preview" class="mx-auto w-full max-w-7xl px-4 pb-12 sm:px-6 md:px-8">
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-      <h2 class="title-font text-5xl leading-none">Fleet Preview</h2>
-      <a href="login.html" class="rounded-lg bg-yellow-500 px-4 py-2 font-semibold text-black transition hover:bg-yellow-600">Login To Unlock Full Features</a>
+  <!-- CHANGE: Fleet preview container kept intact with id="fleet-preview" and id="landing-fleet" required by js/landing-page.js. -->
+  <section id="fleet-preview" class="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6 md:px-8">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="headline-font mb-2 text-[11px] font-bold uppercase tracking-[0.34em] text-vg-accent">Garage Access</p>
+        <h2 class="headline-font text-4xl font-black uppercase tracking-tight text-white sm:text-5xl">Fleet Preview</h2>
+      </div>
+      <a href="login.html" class="headline-font rounded-none bg-vg-accent px-5 py-3 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:brightness-110">Login To Unlock Full Features</a>
     </div>
 
     <div id="landing-fleet" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
   </section>
+
+  <!-- CHANGE: Statement block moved below fleet cards as requested. -->
+  <section class="mx-auto w-full max-w-7xl px-4 pb-14 sm:px-6 md:px-8">
+    <div class="rounded-none border border-vg-line/80 bg-vg-bg/50 px-6 py-14 text-center sm:px-10 md:py-16">
+      <div class="mx-auto max-w-3xl">
+        <svg class="mx-auto h-8 w-8 text-vg-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M14.5 3.5c2.8.7 5.3 3.2 6 6l-4.8 2.6-3.8-3.8 2.6-4.8Z"></path>
+          <path d="m11.9 8.3-5.4 5.4"></path>
+          <path d="M7.8 14.5 5 19l4.5-2.8"></path>
+          <circle cx="17" cy="7" r="1.1" fill="currentColor" stroke="none"></circle>
+        </svg>
+        <h2 class="headline-font mt-4 text-4xl font-black uppercase italic text-white sm:text-5xl">
+          Beyond The <span class="text-vg-accent">Limit.</span>
+        </h2>
+        <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-vg-muted sm:text-base">
+          Velocity Garage isn't just a collection; it's a testament to the pursuit of absolute kinetic perfection. Every curve, every engine note, and every mile is curated for those who demand nothing less than transcendence.
+        </p>
+        <div class="mx-auto mt-7 h-px w-20 bg-vg-line"></div>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer class="border-t border-vg-line/70 bg-vg-bg px-4 py-8 sm:px-6 md:px-8">
+  <div class="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+    <p class="headline-font text-xs font-bold uppercase tracking-[0.22em] text-vg-muted">Velocity Garage</p>
+    <p class="text-xs font-semibold uppercase tracking-[0.12em] text-vg-muted">Public Preview Mode</p>
+  </div>
+</footer>
 
 <script src="/env.js"></script>
 <script type="module" src="/js/firebase-config.js"></script>
 <script src="js/cars.js"></script>
+<script>
+/* CHANGE: Randomize hero car image per visit so different users likely see different hero visuals. */
+(function randomizeHeroCarImage() {
+  const hero = document.getElementById("hero-car-frame");
+  if (!hero) return;
+
+  const fallbackImage = "https://images.unsplash.com/photo-1611651338412-8403fa6e3595?auto=format&fit=crop&w=1800&q=80";
+  // Read cars from global lexical binding (cars.js uses const cars), then fall back to window.cars.
+  const dataset = (typeof cars !== "undefined" && Array.isArray(cars))
+    ? cars
+    : (Array.isArray(window.cars) ? window.cars : []);
+
+  const images = Array.isArray(dataset)
+    ? dataset
+        .flatMap((car) => [car?.image, ...(Array.isArray(car?.images) ? car.images : [])])
+        .filter((src) => typeof src === "string" && src.trim().length > 0)
+    : [];
+
+  const pool = images.length ? images : [fallbackImage];
+  const randomIndex = Math.floor(Math.random() * pool.length);
+  const chosenImage = pool[randomIndex];
+
+  hero.style.setProperty("--hero-image", `url("${chosenImage}")`);
+})();
+</script>
 <script type="module" src="js/landing-page.js"></script>
 </body>
 </html>

@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == "oluwatunmbipaul@gmail.com";
+    }
+
+    // Self check when users collection uses document id equal to auth uid.
+    function isSelfByDocId(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Self check for legacy docs where uid is stored as a field but doc id differs.
+    function isSelfByUidField() {
+      return isSignedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    function isBanned() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/bannedUsers/$(request.auth.uid));
+    }
+
+    function isSelfBannedDoc(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // User profile documents
+    match /users/{userId} {
+      // Admin can read every user; users can read their own record.
+      // Correlates with frontend logic that may rely on doc id or uid field.
+      allow read: if isAdmin() || (!isBanned() && (isSelfByDocId(userId) || isSelfByUidField()));
+
+      // Frontend signup writes users/{uid} with uid field set to auth uid.
+      allow create: if isAdmin() || (
+        !isBanned() &&
+        isSelfByDocId(userId) &&
+        request.resource.data.uid == request.auth.uid
+      );
+
+      // Users can update their own profile; admin can update status fields.
+      // Keep uid tied to signed-in user for non-admin updates.
+      allow update: if isAdmin() || (
+        !isBanned() &&
+        (isSelfByDocId(userId) || isSelfByUidField()) &&
+        request.resource.data.uid == request.auth.uid
+      );
+
+      // Keep delete admin-only (frontend delete is currently removed)
+      allow delete: if isAdmin();
+    }
+
+    // Ban list for admin controls
+    match /bannedUsers/{uid} {
+      // Admin reads all banned docs; each user can read only their own ban marker for forced logout.
+      allow read: if isAdmin() || isSelfBannedDoc(uid);
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Deny everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

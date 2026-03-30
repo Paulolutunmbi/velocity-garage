@@ -12,6 +12,8 @@ const confirmPasswordError = document.getElementById("reset-confirm-password-err
 const submitBtn = document.getElementById("reset-submit");
 const successBox = document.getElementById("reset-success");
 const errorBox = document.getElementById("reset-error");
+const toggleNewPasswordBtn = document.getElementById("toggle-reset-new-password");
+const toggleConfirmPasswordBtn = document.getElementById("toggle-reset-confirm-password");
 
 const auth = getAuth();
 let isResetCodeValid = false;
@@ -59,6 +61,20 @@ function setFormEnabled(isEnabled) {
   if (newPasswordInput) newPasswordInput.disabled = !isEnabled;
   if (confirmPasswordInput) confirmPasswordInput.disabled = !isEnabled;
   if (submitBtn) submitBtn.disabled = !isEnabled;
+  if (toggleNewPasswordBtn) toggleNewPasswordBtn.disabled = !isEnabled;
+  if (toggleConfirmPasswordBtn) toggleConfirmPasswordBtn.disabled = !isEnabled;
+}
+
+function wirePasswordToggle(button, input, fieldName) {
+  if (!button || !input) return;
+
+  button.addEventListener("click", () => {
+    const showing = input.type === "text";
+    input.type = showing ? "password" : "text";
+    button.textContent = showing ? "Show" : "Hide";
+    button.setAttribute("aria-pressed", String(!showing));
+    button.setAttribute("aria-label", `${showing ? "Show" : "Hide"} ${fieldName}`);
+  });
 }
 
 function parseActionParams() {
@@ -145,6 +161,9 @@ if (!new Set(["resetPassword", "action"]).has(action.mode) || !action.oobCode) {
   validateResetCode(action.oobCode);
 }
 
+wirePasswordToggle(toggleNewPasswordBtn, newPasswordInput, "new password");
+wirePasswordToggle(toggleConfirmPasswordBtn, confirmPasswordInput, "confirm password");
+
 // Real-time validation: keep form feedback immediate while users type.
 newPasswordInput?.addEventListener("input", () => {
   clearMessages();
@@ -177,7 +196,7 @@ form?.addEventListener("submit", async (event) => {
     form.reset();
 
     setTimeout(() => {
-      window.location.href = "/login";
+      window.location.href = "/login.html";
     }, 1500);
   } catch (error) {
     const friendly =

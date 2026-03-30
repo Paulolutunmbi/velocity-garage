@@ -36,6 +36,11 @@ let banModalAutoLogoutTimer = null;
 
 const BANNED_MESSAGE = "Your account has been banned for violating our Terms of Service and data protocols. If you believe this is a mistake or need assistance, please contact the admin.";
 
+function redirectToIndexPage() {
+  if (typeof window === "undefined" || !window.location) return;
+  window.location.replace("index.html");
+}
+
 function injectBanModalStyles() {
   if (document.getElementById("vg-ban-modal-style")) return;
 
@@ -162,6 +167,7 @@ async function forceLogoutFromBan() {
   try {
     isForcedBanSignout = true;
     await signOut(auth);
+    redirectToIndexPage();
   } catch (error) {
     console.error("[Auth] Forced ban sign-out failed:", error);
   } finally {
@@ -479,6 +485,7 @@ export async function loginWithGithub() {
 export async function logout() {
   await ensureAuthReady();
   await signOut(auth);
+  redirectToIndexPage();
 }
 
 export function onAuthChange(callback) {

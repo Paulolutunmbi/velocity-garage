@@ -14,6 +14,8 @@ const successBox = document.getElementById("reset-success");
 const errorBox = document.getElementById("reset-error");
 
 const auth = getAuth();
+let isResetCodeValid = false;
+let activeOobCode = "";
 
 function setMessage(target, message = "") {
   if (!target) return;
@@ -53,6 +55,12 @@ function setBusy(isBusy) {
   submitBtn.textContent = isBusy ? "Updating..." : submitBtn.dataset.defaultText || "Update Password";
 }
 
+function setFormEnabled(isEnabled) {
+  if (newPasswordInput) newPasswordInput.disabled = !isEnabled;
+  if (confirmPasswordInput) confirmPasswordInput.disabled = !isEnabled;
+  if (submitBtn) submitBtn.disabled = !isEnabled;
+}
+
 function parseActionParams() {
   const params = new URLSearchParams(window.location.search);
   let mode = params.get("mode") || "";
@@ -84,9 +92,16 @@ function parseActionParams() {
 
 async function validateResetCode(oobCode) {
   try {
+    // Validates that the action code from Firebase email is still active.
     await verifyPasswordResetCode(auth, oobCode);
+    isResetCodeValid = true;
+    activeOobCode = oobCode;
+    setFormEnabled(true);
     return true;
   } catch {
+    isResetCodeValid = false;
+    activeOobCode = "";
+    setFormEnabled(false);
     setMessage(errorBox, "This reset link is invalid or expired. Request a new link.");
     if (form) form.classList.add("hidden");
     return false;
@@ -96,46 +111,73 @@ async function validateResetCode(oobCode) {
 function clearMessages() {
   setMessage(errorBox, "");
   setMessage(successBox, "");
+}
+
+function validatePasswordFields() {
+  const newPassword = newPasswordInput?.value || "";
+  const confirmPassword = confirmPasswordInput?.value || "";
+
   setFieldError(newPasswordInput, newPasswordError, "");
   setFieldError(confirmPasswordInput, confirmPasswordError, "");
+
+  let valid = true;
+  if (!newPassword || newPassword.length < 6) {
+    setFieldError(newPasswordInput, newPasswordError, "Password must be at least 6 characters.");
+    valid = false;
+  }
+
+  // Show mismatch only after user starts typing confirm password.
+  if (confirmPassword && confirmPassword !== newPassword) {
+    setFieldError(confirmPasswordInput, confirmPasswordError, "Passwords do not match.");
+    valid = false;
+  }
+
+  return valid;
 }
 
 const action = parseActionParams();
 if (!new Set(["resetPassword", "action"]).has(action.mode) || !action.oobCode) {
+  setFormEnabled(false);
   setMessage(errorBox, "Invalid password reset link. Please request a new one.");
   if (form) form.classList.add("hidden");
 } else {
+  setFormEnabled(false);
   validateResetCode(action.oobCode);
 }
+
+// Real-time validation: keep form feedback immediate while users type.
+newPasswordInput?.addEventListener("input", () => {
+  clearMessages();
+  validatePasswordFields();
+});
+
+confirmPasswordInput?.addEventListener("input", () => {
+  clearMessages();
+  validatePasswordFields();
+});
 
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
   clearMessages();
 
+  if (!isResetCodeValid || !activeOobCode) {
+    setMessage(errorBox, "This reset link is invalid or expired. Request a new link.");
+    return;
+  }
+
+  if (!validatePasswordFields()) return;
+
   const newPassword = newPasswordInput?.value || "";
-  const confirmPassword = confirmPasswordInput?.value || "";
-
-  let hasError = false;
-  if (!newPassword || newPassword.length < 6) {
-    setFieldError(newPasswordInput, newPasswordError, "Password must be at least 6 characters.");
-    hasError = true;
-  }
-
-  if (confirmPassword !== newPassword) {
-    setFieldError(confirmPasswordInput, confirmPasswordError, "Passwords do not match.");
-    hasError = true;
-  }
-
-  if (hasError) return;
 
   setBusy(true);
   try {
-    await confirmPasswordReset(auth, action.oobCode, newPassword);
+    // Completes password reset using the verified out-of-band code from URL.
+    await confirmPasswordReset(auth, activeOobCode, newPassword);
     setMessage(successBox, "Password reset successful. Redirecting to login...");
     form.reset();
 
     setTimeout(() => {
-      window.location.href = "login.html";
+      window.location.href = "/login";
     }, 1500);
   } catch (error) {
     const friendly =

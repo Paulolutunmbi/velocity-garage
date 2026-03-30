@@ -68,11 +68,20 @@ form?.addEventListener("submit", async (event) => {
   }
 
   setBusy(true);
+  console.info("[ForgotPassword] Submit started", { email });
   try {
     await requestPasswordReset(email);
-    setMessage(successBox, "Reset link sent. Please check your inbox.");
+    console.info("[ForgotPassword] Reset email request succeeded", { email });
+    setMessage(successBox, "Reset link sent. If you don’t see the email, please check Promotions/Spam.");
     form.reset();
   } catch (error) {
+    console.error("[ForgotPassword] Reset email request failed", {
+      email,
+      code: error?.code || null,
+      message: error?.message || "Unknown error",
+      stack: error?.stack || null,
+      raw: error,
+    });
     const friendly =
       error?.code === "permission-denied"
         ? "Reset request is temporarily unavailable. Please contact support."

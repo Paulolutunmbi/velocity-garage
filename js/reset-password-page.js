@@ -7,17 +7,31 @@ import {
 const form = document.getElementById("reset-password-form");
 const newPasswordInput = document.getElementById("reset-new-password");
 const confirmPasswordInput = document.getElementById("reset-confirm-password");
+const newPasswordToggle = document.getElementById("reset-new-password-toggle");
+const newPasswordToggleIcon = document.getElementById("reset-new-password-toggle-icon");
+const confirmPasswordToggle = document.getElementById("reset-confirm-password-toggle");
+const confirmPasswordToggleIcon = document.getElementById("reset-confirm-password-toggle-icon");
 const newPasswordError = document.getElementById("reset-new-password-error");
 const confirmPasswordError = document.getElementById("reset-confirm-password-error");
 const submitBtn = document.getElementById("reset-submit");
 const successBox = document.getElementById("reset-success");
 const errorBox = document.getElementById("reset-error");
-const toggleNewPasswordBtn = document.getElementById("toggle-reset-new-password");
-const toggleConfirmPasswordBtn = document.getElementById("toggle-reset-confirm-password");
 
 const auth = getAuth();
 let isResetCodeValid = false;
 let activeOobCode = "";
+
+function wirePasswordToggle(input, toggleBtn, icon) {
+  if (!input || !toggleBtn || !icon) return;
+
+  toggleBtn.addEventListener("click", () => {
+    const hidden = input.type === "password";
+    input.type = hidden ? "text" : "password";
+    icon.textContent = hidden ? "visibility" : "visibility_off";
+    toggleBtn.setAttribute("aria-pressed", String(hidden));
+    toggleBtn.setAttribute("aria-label", hidden ? "Hide password" : "Show password");
+  });
+}
 
 function setMessage(target, message = "") {
   if (!target) return;
@@ -61,20 +75,6 @@ function setFormEnabled(isEnabled) {
   if (newPasswordInput) newPasswordInput.disabled = !isEnabled;
   if (confirmPasswordInput) confirmPasswordInput.disabled = !isEnabled;
   if (submitBtn) submitBtn.disabled = !isEnabled;
-  if (toggleNewPasswordBtn) toggleNewPasswordBtn.disabled = !isEnabled;
-  if (toggleConfirmPasswordBtn) toggleConfirmPasswordBtn.disabled = !isEnabled;
-}
-
-function wirePasswordToggle(button, input, fieldName) {
-  if (!button || !input) return;
-
-  button.addEventListener("click", () => {
-    const showing = input.type === "text";
-    input.type = showing ? "password" : "text";
-    button.textContent = showing ? "Show" : "Hide";
-    button.setAttribute("aria-pressed", String(!showing));
-    button.setAttribute("aria-label", `${showing ? "Show" : "Hide"} ${fieldName}`);
-  });
 }
 
 function parseActionParams() {
@@ -161,8 +161,8 @@ if (!new Set(["resetPassword", "action"]).has(action.mode) || !action.oobCode) {
   validateResetCode(action.oobCode);
 }
 
-wirePasswordToggle(toggleNewPasswordBtn, newPasswordInput, "new password");
-wirePasswordToggle(toggleConfirmPasswordBtn, confirmPasswordInput, "confirm password");
+wirePasswordToggle(newPasswordInput, newPasswordToggle, newPasswordToggleIcon);
+wirePasswordToggle(confirmPasswordInput, confirmPasswordToggle, confirmPasswordToggleIcon);
 
 // Real-time validation: keep form feedback immediate while users type.
 newPasswordInput?.addEventListener("input", () => {

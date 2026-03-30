@@ -1,4 +1,4 @@
-import { onAuthChange, logout, isAdmin } from "./auth.js";
+import { onAuthChange, isAdmin } from "./auth.js";
 
 const BUTTON = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
 
@@ -93,34 +93,18 @@ export function initAuthNavbar({ mountId = "auth-controls" } = {}) {
       return;
     }
 
-    const name = escapeHtml(user.displayName || user.email || "Driver");
     const photo = escapeHtml(user.photoURL || "https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc");
 
     mount.innerHTML = `
       <a href="wishlist.html" class="${BUTTON}">Wishlist</a>
       <button id="theme-toggle" type="button" class="${BUTTON}">Light Mode</button>
-      <a href="profile.html" class="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-white">
-        <img src="${photo}" alt="${name}" class="h-8 w-8 rounded-full object-cover" referrerpolicy="no-referrer" />
-        <span class="max-w-[10rem] truncate">${name}</span>
+      <a href="profile.html" class="inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-900/80 p-1 text-sm text-white" aria-label="Profile">
+        <img src="${photo}" alt="Profile" class="h-8 w-8 rounded-full object-cover" referrerpolicy="no-referrer" />
       </a>
       ${isAdmin(user) ? `<a href="admin.html" class="${BUTTON}">Admin</a>` : ""}
-      <button id="logout-btn" type="button" class="${BUTTON}">Logout</button>
     `;
 
     window.vgUserStore?.bindThemeToggle?.();
-
-    const logoutBtn = mount.querySelector("#logout-btn");
-    logoutBtn?.addEventListener("click", async () => {
-      logoutBtn.disabled = true;
-      logoutBtn.textContent = "Logging out...";
-      try {
-        await logout();
-      } catch (error) {
-        logoutBtn.disabled = false;
-        logoutBtn.textContent = "Logout";
-        alert(error.message || "Unable to logout right now.");
-      }
-    });
   });
 
   return unsub;

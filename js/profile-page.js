@@ -7,7 +7,7 @@ import {
 import { updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { auth, db } from "./firebase-config.js";
 import { checkAuth } from "./auth-guard.js";
-import { updateCurrentUserPassword } from "./auth.js";
+import { logout, updateCurrentUserPassword } from "./auth.js";
 import { initAuthNavbar } from "./navbar-auth.js";
 
 const profileName = document.getElementById("profile-name");
@@ -34,6 +34,7 @@ const passwordError = document.getElementById("password-change-error");
 const currentPasswordError = document.getElementById("current-password-error");
 const newPasswordError = document.getElementById("new-password-error");
 const confirmPasswordError = document.getElementById("confirm-password-error");
+const profileLogoutBtn = document.getElementById("profile-logout-btn");
 
 let currentUser = null;
 
@@ -293,6 +294,25 @@ function bindFormHandlers() {
   if (passwordForm && passwordForm.dataset.bound !== "true") {
     passwordForm.dataset.bound = "true";
     passwordForm.addEventListener("submit", handlePasswordChange);
+  }
+
+  if (profileLogoutBtn && profileLogoutBtn.dataset.bound !== "true") {
+    profileLogoutBtn.dataset.bound = "true";
+    profileLogoutBtn.addEventListener("click", async () => {
+      profileLogoutBtn.disabled = true;
+      if (!profileLogoutBtn.dataset.defaultText) {
+        profileLogoutBtn.dataset.defaultText = profileLogoutBtn.textContent;
+      }
+      profileLogoutBtn.textContent = "Logging out...";
+
+      try {
+        await logout();
+      } catch (error) {
+        profileLogoutBtn.disabled = false;
+        profileLogoutBtn.textContent = profileLogoutBtn.dataset.defaultText || "Logout";
+        alert(error?.message || "Unable to logout right now.");
+      }
+    });
   }
 }
 

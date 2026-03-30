@@ -34,7 +34,7 @@
   <main class="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 md:px-8">
     <section class="rounded-3xl border border-slate-700/80 bg-slate-900/75 p-6 shadow-2xl sm:p-8">
       <h1 class="title-font text-5xl leading-none">Driver Profile</h1>
-      <p class="mt-2 text-sm text-slate-300">Your account identity and account creation details.</p>
+      <p class="mt-2 text-sm text-slate-300">Manage your account identity and security settings.</p>
 
       <div class="mt-6 grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
         <img id="profile-photo" src="https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc" alt="Profile photo" class="h-24 w-24 rounded-full border border-slate-700 object-cover" referrerpolicy="no-referrer">
@@ -52,6 +52,66 @@
             <p id="profile-joined" class="mt-1 text-sm text-slate-200">Loading...</p>
           </div>
         </div>
+      </div>
+
+      <div class="mt-8 grid gap-6 lg:grid-cols-2">
+        <section class="rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+          <h2 class="text-lg font-semibold">Update Profile</h2>
+          <p class="mt-1 text-sm text-slate-400">Update your display name and profile image URL.</p>
+
+          <div id="profile-update-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"></div>
+          <div id="profile-update-error" class="mt-4 hidden rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+
+          <form id="profile-update-form" class="mt-4 space-y-4" novalidate>
+            <div>
+              <label for="update-name" class="text-sm font-medium text-slate-200">Name</label>
+              <input id="update-name" name="name" type="text" maxlength="80" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="update-name-error">
+              <p id="update-name-error" class="mt-1 hidden text-xs text-red-300"></p>
+            </div>
+
+            <div>
+              <label for="update-photo" class="text-sm font-medium text-slate-200">Profile image URL (optional)</label>
+              <input id="update-photo" name="photo" type="url" placeholder="https://example.com/avatar.jpg" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="update-photo-error">
+              <p id="update-photo-error" class="mt-1 hidden text-xs text-red-300"></p>
+            </div>
+
+            <button id="profile-update-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-70">
+              Save Profile
+            </button>
+          </form>
+        </section>
+
+        <section class="rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+          <h2 class="text-lg font-semibold">Change Password</h2>
+          <p class="mt-1 text-sm text-slate-400">For security, confirm your current password first.</p>
+
+          <div id="password-change-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"></div>
+          <div id="password-change-error" class="mt-4 hidden rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+
+          <form id="password-change-form" class="mt-4 space-y-4" novalidate>
+            <div>
+              <label for="current-password" class="text-sm font-medium text-slate-200">Current password</label>
+              <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="current-password-error">
+              <p id="current-password-error" class="mt-1 hidden text-xs text-red-300"></p>
+            </div>
+
+            <div>
+              <label for="new-password" class="text-sm font-medium text-slate-200">New password</label>
+              <input id="new-password" name="newPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="new-password-error">
+              <p id="new-password-error" class="mt-1 hidden text-xs text-red-300"></p>
+            </div>
+
+            <div>
+              <label for="confirm-password" class="text-sm font-medium text-slate-200">Confirm new password</label>
+              <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="confirm-password-error">
+              <p id="confirm-password-error" class="mt-1 hidden text-xs text-red-300"></p>
+            </div>
+
+            <button id="password-change-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-70">
+              Update Password
+            </button>
+          </form>
+        </section>
       </div>
     </section>
   </main>

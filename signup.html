@@ -7,6 +7,7 @@
 	<link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 	<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300&amp;display=swap" rel="stylesheet"/>
 	<script id="tailwind-config">
 		tailwind.config = {
 			darkMode: "class",
@@ -77,17 +78,20 @@
 			background: radial-gradient(circle at top right, rgba(255, 82, 92, 0.08), transparent 40%),
 						radial-gradient(circle at bottom left, rgba(108, 215, 216, 0.03), transparent 30%);
 		}
+		.material-symbols-outlined {
+			font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+		}
 	</style>
 </head>
 <body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
-	<!-- Desktop fit tuning: reduced only lg+ vertical spacing to avoid page scroll on desktop -->
-	<main class="flex-grow flex items-center justify-center relative overflow-hidden kinetic-bg pt-10 pb-10 px-4 sm:px-6 lg:min-h-screen lg:pt-4 lg:pb-4">
+	<!-- Desktop rendering fix: allow desktop vertical overflow so form content is never clipped -->
+	<main class="flex-grow flex items-center justify-center relative overflow-hidden kinetic-bg pt-10 pb-10 px-4 sm:px-6 lg:min-h-screen lg:overflow-y-auto lg:pt-6 lg:pb-6">
 		<div class="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden">
 			<div class="absolute top-[-10%] right-[-5%] w-1/2 h-full bg-gradient-to-l from-primary-container/20 to-transparent skew-x-[-12deg]"></div>
 		</div>
 
 		<!-- Stitch UI integration: new responsive auth layout while preserving JS hooks below -->
-		<div class="relative z-10 w-full max-w-[1200px] lg:max-h-[94vh] grid md:grid-cols-2 bg-surface-container-lowest shadow-2xl overflow-hidden ring-1 ring-outline-variant/10">
+		<div class="relative z-10 w-full max-w-[1200px] grid md:grid-cols-2 bg-surface-container-lowest shadow-2xl overflow-hidden ring-1 ring-outline-variant/10">
 			<section class="hidden md:block relative h-full min-h-[520px] lg:min-h-[540px] overflow-hidden">
 				<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
 				<img alt="Performance vehicle details" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtSeAadW-h765d2dxzoTI0QqUIMtahtkuX0sx82QQRAZlXoGot7lgdCr68f1WObN7WQcV_d8XcSc9j2sELR_iUO-9bmS-j0R7Wwbhkre6ei-_2DVve_mvMCw66yQQKvujkNKZt8cj2qrgOz6buYZ6wovfNesr1U7Z1nvVuHESmrbS8Nqnga8IUStzKNoywtuw4Yiox1DDi109I9w_RHjUjWgw4JJDuUTORoz7XMn_j7BwpedMb7bpfMk38mbk-BUqje2_29jMUVg9C"/>
@@ -108,6 +112,11 @@
 					</div>
 					<h1 class="font-headline text-4xl font-bold tracking-tight text-white mb-2 uppercase">Create Account</h1>
 					<p class="text-secondary text-sm font-label tracking-widest uppercase">Initiate your driving profile</p>
+					<!-- Added a clear login shortcut near the header as requested -->
+					<p class="mt-3 text-[11px] font-label uppercase tracking-[0.18em] text-secondary">
+						Already registered?
+						<a href="login.html" class="ml-1 text-primary-container transition-colors hover:text-primary">Login</a>
+					</p>
 				</div>
 
 				<!-- Preserved #signup-error hook for existing JS error rendering -->
@@ -134,14 +143,25 @@
 							<label for="signup-password" class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-2 block transition-colors group-focus-within:text-primary-container">
 								Password
 							</label>
-							<input id="signup-password" name="password" type="password" autocomplete="new-password" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide text-sm" placeholder="••••••••"/>
+							<div class="relative">
+								<input id="signup-password" name="password" type="password" autocomplete="new-password" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 pr-10 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide text-sm" placeholder="••••••••"/>
+								<!-- Password toggle integration: mirrors login page behavior without touching auth logic -->
+								<button id="signup-password-toggle" type="button" class="absolute right-0 top-1/2 -translate-y-1/2 text-secondary/70 transition-colors hover:text-on-surface" aria-label="Show password" aria-pressed="false">
+									<span id="signup-password-toggle-icon" class="material-symbols-outlined text-lg">visibility_off</span>
+								</button>
+							</div>
 						</div>
 
 						<div class="group relative">
 							<label for="signup-confirm" class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-2 block transition-colors group-focus-within:text-primary-container">
 								Confirm Password
 							</label>
-							<input id="signup-confirm" name="confirmPassword" type="password" autocomplete="new-password" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide text-sm" placeholder="••••••••"/>
+							<div class="relative">
+								<input id="signup-confirm" name="confirmPassword" type="password" autocomplete="new-password" required class="w-full bg-transparent border-0 border-b border-outline-variant/30 py-3 pr-10 text-white placeholder:text-surface-container-highest focus:ring-0 focus:border-primary-container transition-all font-headline tracking-wide text-sm" placeholder="••••••••"/>
+								<button id="signup-confirm-toggle" type="button" class="absolute right-0 top-1/2 -translate-y-1/2 text-secondary/70 transition-colors hover:text-on-surface" aria-label="Show password" aria-pressed="false">
+									<span id="signup-confirm-toggle-icon" class="material-symbols-outlined text-lg">visibility_off</span>
+								</button>
+							</div>
 						</div>
 					</div>
 
@@ -190,5 +210,28 @@
 	<script src="/env.js"></script>
 	<script type="module" src="/js/firebase-config.js"></script>
 	<script type="module" src="/js/signup-page.js"></script>
+	<script>
+		// Password toggle integration: UI-only behavior to match login page UX.
+		(() => {
+			function wirePasswordToggle(inputId, toggleId, iconId) {
+				const input = document.getElementById(inputId);
+				const toggleBtn = document.getElementById(toggleId);
+				const toggleIcon = document.getElementById(iconId);
+
+				if (!input || !toggleBtn || !toggleIcon) return;
+
+				toggleBtn.addEventListener("click", () => {
+					const isHidden = input.type === "password";
+					input.type = isHidden ? "text" : "password";
+					toggleIcon.textContent = isHidden ? "visibility" : "visibility_off";
+					toggleBtn.setAttribute("aria-pressed", String(isHidden));
+					toggleBtn.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+				});
+			}
+
+			wirePasswordToggle("signup-password", "signup-password-toggle", "signup-password-toggle-icon");
+			wirePasswordToggle("signup-confirm", "signup-confirm-toggle", "signup-confirm-toggle-icon");
+		})();
+	</script>
 </body>
 </html>

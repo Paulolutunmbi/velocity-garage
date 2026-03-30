@@ -15,11 +15,6 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // Self check for legacy docs where uid is stored as a field but doc id differs.
-    function isSelfByUidField() {
-      return isSignedIn() && resource.data.uid == request.auth.uid;
-    }
-
     function isBanned() {
       return isSignedIn() &&
         exists(/databases/$(database)/documents/bannedUsers/$(request.auth.uid));
@@ -31,9 +26,19 @@ service cloud.firestore {
 
     // User profile documents
     match /users/{userId} {
-      // Admin can read every user; users can read their own record.
-      // Correlates with frontend logic that may rely on doc id or uid field.
-      allow read: if isAdmin() || (!isBanned() && (isSelfByDocId(userId) || isSelfByUidField()));
+      // Admin can read every user; signed-in users can read only their own profile.
+      allow get: if isAdmin() || (!isBanned() && isSelfByDocId(userId));
+
+      // Forgot-password flow performs a single-record email lookup.
+      // Keep this tightly constrained to limit=1 list queries only.
+      allow list: if isAdmin() || (
+        (
+          request.auth == null ||
+          (isSignedIn() && !isBanned())
+        ) &&
+        request.query.limit != null &&
+        request.query.limit <= 1
+      );
 
       // Frontend signup writes users/{uid} with uid field set to auth uid.
       allow create: if isAdmin() || (
@@ -43,11 +48,12 @@ service cloud.firestore {
       );
 
       // Users can update their own profile; admin can update status fields.
-      // Keep uid tied to signed-in user for non-admin updates.
+      // Keep uid immutable and tied to the signed-in user for non-admin updates.
       allow update: if isAdmin() || (
         !isBanned() &&
-        (isSelfByDocId(userId) || isSelfByUidField()) &&
-        request.resource.data.uid == request.auth.uid
+        isSelfByDocId(userId) &&
+        resource.data.uid == request.auth.uid &&
+        request.resource.data.uid == resource.data.uid
       );
 
       // Keep delete admin-only (frontend delete is currently removed)
@@ -57,7 +63,9 @@ service cloud.firestore {
     // Ban list for admin controls
     match /bannedUsers/{uid} {
       // Admin reads all banned docs; each user can read only their own ban marker for forced logout.
-      allow read: if isAdmin() || isSelfBannedDoc(uid);
+      // Signed-out get support is used by forgot-password flow after email lookup.
+      allow get: if isAdmin() || isSelfBannedDoc(uid) || request.auth == null;
+      allow list: if isAdmin();
       allow create, update, delete: if isAdmin();
     }
 

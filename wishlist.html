@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="dark scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,94 +7,259 @@
 <link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script>
-tailwind.config = {};
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          vgBg: "#0b0b0d",
+          vgSurface: "#121217",
+          vgSurfaceAlt: "#1a1b22",
+          vgLine: "#2a2b34",
+          vgMuted: "#b0b4c2",
+          vgPrimary: "#ff5d67",
+          vgPrimarySoft: "#f7b2b6",
+          "primary-container": "#ff525c",
+          "on-primary-container": "#5b000f",
+          "background": "#131313",
+          "surface": "#131313",
+          "surface-container": "#201f1f",
+          "on-surface": "#e5e2e1",
+          "tertiary": "#6cd7d8"
+        },
+        fontFamily: {
+          display: ["Space Grotesk", "sans-serif"],
+          body: ["Inter", "sans-serif"]
+        }
+      }
+    }
+  };
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="/env.js"></script>
 <script type="module" src="/js/firebase-config.js"></script>
 <style>
-  body { font-family: "Plus Jakarta Sans", sans-serif; }
-  .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+  body { font-family: "Inter", sans-serif; }
+  .display-font { font-family: "Space Grotesk", sans-serif; }
+  .filter-select {
+    background-color: #1a1b22;
+    color: #e5e7eb;
+  }
+  .filter-select option {
+    background-color: #121217;
+    color: #e5e7eb;
+  }
+  .vg-grid-glow {
+    background-image:
+      radial-gradient(60% 55% at 12% 8%, rgba(255, 93, 103, 0.17), transparent 68%),
+      radial-gradient(50% 50% at 88% 26%, rgba(57, 103, 255, 0.16), transparent 70%),
+      linear-gradient(180deg, #0b0b0d 0%, #111218 65%, #101116 100%);
+  }
+  .vg-noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    background-image: radial-gradient(rgba(255,255,255,0.45) 0.45px, transparent 0.45px);
+    background-size: 3px 3px;
+  }
+  #modal-carousel-track > div { height: 100%; }
+  #modal-carousel-track img { height: 100%; }
 </style>
 </head>
 
-<body class="min-h-screen bg-gray-900 text-white transition-colors duration-300">
-<div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_85%_12%,rgba(255,91,46,0.15),transparent_28%),radial-gradient(circle_at_10%_80%,rgba(59,130,246,0.14),transparent_30%)]"></div>
-<div id="page-loading" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90">
-  <div class="flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-5 py-4 text-sm text-slate-200">
-    <span class="h-5 w-5 animate-spin rounded-full border-2 border-orange-400 border-t-transparent"></span>
+<body class="min-h-screen bg-vgBg text-white vg-grid-glow">
+<div id="page-loading" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+  <div class="flex items-center gap-3 rounded-xl border border-vgLine bg-vgSurface px-5 py-4 text-sm text-vgMuted">
+    <span class="h-5 w-5 animate-spin rounded-full border-2 border-vgPrimary border-t-transparent"></span>
     Loading wishlist...
   </div>
 </div>
 
-<header class="sticky top-0 z-40 border-b border-slate-800/70 bg-slate-950/80 px-4 py-3 backdrop-blur sm:px-6 md:px-8">
-  <div class="mx-auto flex w-full max-w-7xl flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <a href="index.html" class="flex items-center">
-      <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto md:h-14 lg:h-16">
-    </a>
-    <div class="flex w-full flex-col items-stretch gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
-      <a href="home.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Home</a>
-      <a href="favorites.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Favorites</a>
-      <a href="compare.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Compare</a>
+<div class="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:56px_56px]"></div>
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/55 backdrop-blur-xl">
+  <nav class="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 md:px-8">
+    <div class="flex items-center gap-8 md:gap-12">
+      <a href="home.html" class="flex items-center">
+        <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
+      </a>
+      <div class="hidden items-center gap-6 text-sm text-vgMuted md:flex">
+        <a href="home.html" class="transition hover:text-white">Home</a>
+        <a href="compare.html" class="transition hover:text-white">Compare</a>
+        <a href="favorites.html" class="transition hover:text-white">Favorites</a>
+        <a href="wishlist.html" class="border-b border-vgPrimary pb-1 text-vgPrimary">Wishlist</a>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
       <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
     </div>
-  </div>
+  </nav>
 </header>
 
-<main class="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8 py-8">
-  <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-    <h1 class="title-font text-5xl leading-none">Your Wishlist</h1>
-    <div id="wishlist-quick-info" class="rounded-full border border-orange-300/40 bg-orange-500/15 px-4 py-2 text-sm font-semibold text-orange-300"></div>
-  </div>
+<main class="relative mx-auto min-h-screen w-full max-w-7xl px-4 pb-20 pt-28 sm:px-6 md:px-8 md:pt-32">
+  <section class="mb-10">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-vgPrimarySoft">Personal Vault</p>
+        <h1 class="display-font text-5xl font-bold uppercase leading-[0.9] tracking-tight sm:text-6xl md:text-7xl">My Wishlist</h1>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <span id="wishlist-quick-info" class="rounded-full bg-vgPrimary/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-vgPrimary">0 Vehicles | $0</span>
+          <span class="h-px w-16 bg-vgLine"></span>
+          <span class="text-xs font-semibold uppercase tracking-[0.2em] text-vgMuted">Hover a card to inspect live performance stats</span>
+        </div>
+      </div>
 
-  <div id="wishlist-empty" class="hidden rounded-2xl border border-dashed border-slate-600/70 bg-slate-900/70 p-8 text-center text-sm text-slate-200">
-    No wishlist items yet. Add dream cars from the showroom.
-    <div class="mt-4">
-      <a href="home.html" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition">Browse Cars</a>
+      <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto lg:grid-cols-3">
+        <label class="relative w-full min-w-[170px]">
+          <span class="sr-only">Filter by brand</span>
+          <select id="filter-brand" class="filter-select w-full appearance-none rounded-md border border-vgLine px-3 py-2 pr-8 text-xs font-semibold uppercase tracking-[0.14em] transition focus:border-vgPrimary focus:outline-none">
+            <option value="all">Brand: All</option>
+          </select>
+          <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-vgMuted">▾</span>
+        </label>
+
+        <label class="relative w-full min-w-[170px]">
+          <span class="sr-only">Filter by price</span>
+          <select id="filter-price" class="filter-select w-full appearance-none rounded-md border border-vgLine px-3 py-2 pr-8 text-xs font-semibold uppercase tracking-[0.14em] transition focus:border-vgPrimary focus:outline-none">
+            <option value="all">Price: All</option>
+            <option value="under-300k">Under $300k</option>
+            <option value="300k-1m">$300k - $1m</option>
+            <option value="over-1m">Over $1m</option>
+          </select>
+          <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-vgMuted">▾</span>
+        </label>
+
+        <label class="relative w-full min-w-[170px]">
+          <span class="sr-only">Filter by vehicle type</span>
+          <select id="filter-vehicle-type" class="filter-select w-full appearance-none rounded-md border border-vgLine px-3 py-2 pr-8 text-xs font-semibold uppercase tracking-[0.14em] transition focus:border-vgPrimary focus:outline-none">
+            <option value="all">Vehicle Type: All</option>
+          </select>
+          <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-vgMuted">▾</span>
+        </label>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div id="wishlist-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"></div>
+  <section id="wishlist-empty" class="hidden rounded-2xl border border-dashed border-vgLine bg-vgSurface/85 p-8 text-center">
+    <p class="text-sm text-vgMuted">No wishlist items yet. Add dream cars from the showroom.</p>
+    <div class="mt-4">
+      <a href="home.html" class="inline-flex rounded-lg bg-vgPrimary px-4 py-2 text-sm font-semibold text-black transition hover:brightness-110">Browse Cars</a>
+    </div>
+  </section>
+
+  <section id="wishlist-container" class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3"></section>
+
+  <section class="mt-12 grid grid-cols-2 gap-3 rounded-2xl border border-vgLine bg-vgSurface/85 p-4 text-center sm:grid-cols-4 sm:p-6">
+    <article>
+      <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-vgMuted">Total Velocity</p>
+      <p id="stat-total-velocity" class="mt-1 display-font text-3xl font-semibold text-white">--</p>
+    </article>
+    <article>
+      <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-vgMuted">Avg 0-60 MPH</p>
+      <p id="stat-avg-zero-to-sixty" class="mt-1 display-font text-3xl font-semibold text-white">--</p>
+    </article>
+    <article>
+      <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-vgMuted">Global Inventory</p>
+      <p id="stat-global-inventory" class="mt-1 display-font text-3xl font-semibold text-white">0 UNITS</p>
+    </article>
+    <article>
+      <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-vgMuted">Asset Appreciation</p>
+      <p id="stat-asset-appreciation" class="mt-1 display-font text-3xl font-semibold text-vgPrimarySoft">+12.4%</p>
+    </article>
+  </section>
 </main>
 
-<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/65 p-4">
-  <div class="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-950 p-5 text-slate-100 shadow-2xl">
-    <div class="mb-4 flex items-start justify-between gap-4">
-      <h2 id="modal-name" class="title-font text-5xl leading-none"></h2>
-      <button id="modal-close" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Close details">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div id="modal-carousel" class="relative mb-4 overflow-hidden rounded-2xl bg-slate-900/50">
-      <div id="modal-carousel-track" class="flex h-64 transition-transform duration-500 ease-out"></div>
-      <button id="modal-carousel-prev" class="absolute left-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Previous car image">
-        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <button id="modal-carousel-next" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition" aria-label="Next car image">
-        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-      </button>
-      <div id="modal-carousel-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>
-    </div>
-    <div class="mb-4 grid grid-cols-2 gap-3 text-sm text-slate-200 sm:grid-cols-3">
-      <p><span class="text-slate-400">Brand:</span> <span id="modal-brand"></span></p>
-      <p><span class="text-slate-400">Maker:</span> <span id="modal-maker"></span></p>
-      <p><span class="text-slate-400">Country:</span> <span id="modal-country"></span></p>
-      <p><span class="text-slate-400">Horsepower:</span> <span id="modal-hp"></span></p>
-      <p><span class="text-slate-400">Top Speed:</span> <span id="modal-speed"></span></p>
-      <p><span class="text-slate-400">Price:</span> <span id="modal-price"></span></p>
-    </div>
-    <p id="modal-desc" class="text-sm text-slate-300"></p>
-    <div class="mt-5 flex flex-wrap gap-3">
-      <button id="modal-compare" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
-      <button id="modal-fav" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
-      <button id="modal-wishlist" class="rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-4 py-2 transition"></button>
+<div id="modal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+  <div class="vg-noise relative w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/10 bg-[#131313] text-white shadow-2xl lg:overflow-hidden">
+    <button id="modal-close" class="absolute left-4 top-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white transition hover:scale-105" aria-label="Close details">
+      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="grid max-h-[92vh] grid-cols-1 md:grid-cols-12">
+      <section class="px-4 pb-4 pt-14 sm:px-6 sm:pb-6 sm:pt-16 md:col-span-7 md:px-5 md:pb-5 md:pt-9">
+        <div id="modal-carousel" class="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black/60">
+          <div id="modal-carousel-track" class="flex h-full transition-transform duration-500 ease-out"></div>
+          <button id="modal-carousel-prev" class="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/50 px-3 py-2 text-white transition hover:bg-white/10" aria-label="Previous car image">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button id="modal-carousel-next" class="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-black/50 px-3 py-2 text-white transition hover:bg-white/10" aria-label="Next car image">
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+          <div id="modal-carousel-dots" class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 rounded-full bg-black/40 px-3 py-2 backdrop-blur"></div>
+        </div>
+      </section>
+      <section class="border-t border-white/10 bg-[#151515] px-4 py-5 sm:px-6 sm:py-6 md:col-span-5 md:border-l md:border-t-0 md:px-5 md:py-5">
+        <span class="inline-flex items-center rounded-full border border-vgPrimary/40 bg-vgPrimary/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-vgPrimarySoft">Detail Prototype</span>
+        <h2 id="modal-name" class="mt-2 text-3xl font-black italic leading-tight sm:text-4xl"></h2>
+        <p class="mt-2 text-sm text-white/70">The purest expression of performance, engineering, and aerodynamic research.</p>
+        <h3 class="mt-5 text-[0.62rem] font-black uppercase tracking-[0.3em] text-vgPrimary">Technical Specifications</h3>
+        <div class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Brand</p>
+            <p id="modal-brand" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Maker</p>
+            <p id="modal-maker" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Country</p>
+            <p id="modal-country" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Horsepower</p>
+            <p id="modal-hp" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Top Speed</p>
+            <p id="modal-speed" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Weight</p>
+            <p id="modal-weight" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">0-100 MPH</p>
+            <p id="modal-zero-to-100-mph" class="text-lg font-semibold"></p>
+          </div>
+          <div class="bg-black/40 p-3">
+            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Price</p>
+            <p id="modal-price" class="text-lg font-semibold text-vgPrimarySoft"></p>
+          </div>
+        </div>
+        <div class="mt-5">
+          <h4 class="text-[0.62rem] font-black uppercase tracking-[0.3em] text-vgPrimary">Engineering Narrative</h4>
+          <p id="modal-desc" class="mt-2 text-sm leading-relaxed text-white/70"></p>
+        </div>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button id="modal-compare"></button>
+          <button id="modal-fav"></button>
+          <button id="modal-wishlist"></button>
+        </div>
+      </section>
     </div>
   </div>
 </div>
 
-<div id="notification" class="pointer-events-none fixed right-4 top-20 z-50 hidden rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-xl"></div>
+<div id="notification" class="pointer-events-none fixed right-4 top-20 z-[65] hidden rounded-lg border border-vgLine bg-vgSurface px-4 py-2 text-sm font-semibold text-white shadow-lg"></div>
+
+<footer class="border-t border-vgLine bg-black/45 px-4 py-7 sm:px-6 md:px-8">
+  <div class="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <p class="display-font text-lg font-bold uppercase tracking-tight text-vgPrimary">Velocity Garage</p>
+    <nav class="flex flex-wrap items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-vgMuted">
+      <a href="home.html" class="transition hover:text-white">Inventory</a>
+      <a href="favorites.html" class="transition hover:text-white">Favorites</a>
+      <a href="compare.html" class="transition hover:text-white">Compare</a>
+      <a href="privacy-policy.html" class="transition hover:text-white">Privacy Policy</a>
+      <a href="terms-of-service.html" class="transition hover:text-white">Terms Of Service</a>
+    </nav>
+    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-vgMuted">&copy; 2026 Velocity Garage</p>
+  </div>
+</footer>
 
 <script src="js/cars.js"></script>
 <script type="module">

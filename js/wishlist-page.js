@@ -8,28 +8,34 @@ const localState = window.vgUserStore?.getLocalState?.() || {
 };
 
 const state = {
-  favorites: new Set(localState.favorites || []),
-  wishlist: new Set(localState.wishlist || []),
-  compare: new Set(localState.compare || []),
+  favorites: new Set(normalizeIds(localState.favorites || [])),
+  wishlist: new Set(normalizeIds(localState.wishlist || [])),
+  compare: new Set(normalizeIds(localState.compare || [])),
   filters: {
     brand: "all",
     price: "all",
-    performance: "all",
+    vehicleType: "all",
   },
   currentModalCarId: null,
   modalCarouselImages: [],
   modalCarouselIndex: 0,
   modalCarouselTimer: null,
+  hoveredCarId: null,
+  visibleCars: [],
 };
 
 const elements = {
-  favoritesContainer: document.getElementById("favorites-container"),
-  favoritesEmpty: document.getElementById("favorites-empty"),
-  savedCount: document.getElementById("saved-count"),
+  wishlistContainer: document.getElementById("wishlist-container"),
+  wishlistEmpty: document.getElementById("wishlist-empty"),
+  wishlistQuickInfo: document.getElementById("wishlist-quick-info"),
   filterBrand: document.getElementById("filter-brand"),
   filterPrice: document.getElementById("filter-price"),
-  filterPerformance: document.getElementById("filter-performance"),
-  compareQuickInfo: document.getElementById("compare-quick-info"),
+  filterVehicleType: document.getElementById("filter-vehicle-type"),
+  compareSelectionButton: document.getElementById("compare-selection-button"),
+  statTotalVelocity: document.getElementById("stat-total-velocity"),
+  statAvgZeroToSixty: document.getElementById("stat-avg-zero-to-sixty"),
+  statGlobalInventory: document.getElementById("stat-global-inventory"),
+  statAssetAppreciation: document.getElementById("stat-asset-appreciation"),
   notification: document.getElementById("notification"),
   modal: document.getElementById("modal"),
   modalClose: document.getElementById("modal-close"),
@@ -53,14 +59,48 @@ const elements = {
   pageLoading: document.getElementById("page-loading"),
 };
 
-// Stitch integration: button classes updated to match new favorites page visual language.
 const BUTTON_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
 const BUTTON_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
 const BUTTON_ACTIVE = "rounded-md border border-[#ff5d67] bg-[#2a1216] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#ffb6bb] transition";
 const MODAL_BUTTON_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
+let notificationTimer = null;
+
+function normalizeIds(value) {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.map((item) => Number(item)).filter((item) => Number.isFinite(item) && item > 0))];
+}
+
+function parsePriceValue(priceText = "") {
+  const numeric = Number(String(priceText).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function parseHorsepowerValue(hpText = "") {
+  const numeric = Number(String(hpText).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function deriveZeroToSixtyFromZeroTo100(zeroTo100Text = "") {
+  const numeric = Number(String(zeroTo100Text).replace(/[^0-9.]/g, ""));
+  if (!Number.isFinite(numeric) || numeric <= 0) {
+    return String(zeroTo100Text || "--").toUpperCase();
+  }
+
+  const zeroToSixty = (numeric * 0.6).toFixed(1);
+  return `${zeroToSixty} SEC`;
+}
+
 function carImage(car) {
-  return car.image || car.images?.[0] || CAR_IMAGE_FALLBACK;
+  return car.image || car.images?.[0] || window.CAR_IMAGE_FALLBACK;
 }
 
 async function persistSets() {
@@ -77,28 +117,48 @@ function showNotification(message) {
   if (!elements.notification) return;
   elements.notification.textContent = message;
   elements.notification.classList.remove("hidden");
-  setTimeout(() => elements.notification.classList.add("hidden"), 1700);
+
+  if (notificationTimer) clearTimeout(notificationTimer);
+  notificationTimer = setTimeout(() => {
+    elements.notification.classList.add("hidden");
+  }, 1700);
 }
 
-function updateCompareQuickInfo() {
-  if (!elements.compareQuickInfo) return;
+function updateCompareButton() {
+  if (!elements.compareSelectionButton) return;
   const count = state.compare.size;
-  elements.compareQuickInfo.textContent = count ? `Compare list: ${count}/3 ready` : "Compare list: 0/3";
+  elements.compareSelectionButton.textContent = count ? `Compare Selection (${count})` : "Compare Selection";
 }
 
-function updateSavedCount() {
-  if (!elements.savedCount) return;
-  elements.savedCount.textContent = `${state.favorites.size} Saved`;
+function updateQuickInfo() {
+  if (!elements.wishlistQuickInfo) return;
+
+  const wishlistCars = [...state.wishlist].map((id) => getCarById(Number(id))).filter(Boolean);
+  const totalValue = wishlistCars.reduce((sum, car) => sum + parsePriceValue(car.price), 0);
+
+  elements.wishlistQuickInfo.textContent = `${wishlistCars.length} Vehicles | ${formatCurrency(totalValue)}`;
 }
 
-function parsePriceValue(priceText = "") {
-  const numeric = Number(String(priceText).replace(/[^0-9.]/g, ""));
-  return Number.isFinite(numeric) ? numeric : 0;
-}
+function updateStatsStrip() {
+  if (!elements.statTotalVelocity || !elements.statAvgZeroToSixty || !elements.statGlobalInventory) return;
 
-function parseHorsepowerValue(hpText = "") {
-  const numeric = Number(String(hpText).replace(/[^0-9.]/g, ""));
-  return Number.isFinite(numeric) ? numeric : 0;
+  const fallbackCar = state.visibleCars[0] || null;
+  const activeCar = state.visibleCars.find((car) => car.id === state.hoveredCarId) || fallbackCar;
+
+  if (activeCar) {
+    const hp = parseHorsepowerValue(activeCar.hp);
+    elements.statTotalVelocity.textContent = hp ? `${hp.toLocaleString("en-US")} BHP` : String(activeCar.hp || "--").toUpperCase();
+    elements.statAvgZeroToSixty.textContent = deriveZeroToSixtyFromZeroTo100(activeCar.zeroTo100Mph || "--");
+  } else {
+    elements.statTotalVelocity.textContent = "--";
+    elements.statAvgZeroToSixty.textContent = "--";
+  }
+
+  const inventoryCount = getAllCars().length;
+  elements.statGlobalInventory.textContent = `${inventoryCount} UNITS`;
+  if (elements.statAssetAppreciation) {
+    elements.statAssetAppreciation.textContent = "+12.4%";
+  }
 }
 
 function matchesBrandFilter(car) {
@@ -108,24 +168,22 @@ function matchesBrandFilter(car) {
 
 function matchesPriceFilter(car) {
   if (state.filters.price === "all") return true;
+
   const price = parsePriceValue(car.price);
   if (state.filters.price === "under-300k") return price < 300000;
   if (state.filters.price === "300k-1m") return price >= 300000 && price <= 1000000;
   if (state.filters.price === "over-1m") return price > 1000000;
+
   return true;
 }
 
-function matchesPerformanceFilter(car) {
-  if (state.filters.performance === "all") return true;
-  const hp = parseHorsepowerValue(car.hp);
-  if (state.filters.performance === "street") return hp < 700;
-  if (state.filters.performance === "track") return hp >= 700 && hp < 1000;
-  if (state.filters.performance === "hyper") return hp >= 1000;
-  return true;
+function matchesVehicleTypeFilter(car) {
+  if (state.filters.vehicleType === "all") return true;
+  return String(car.vehicleType || "").toLowerCase() === state.filters.vehicleType;
 }
 
-function applyFavoriteFilters(cars) {
-  return cars.filter((car) => matchesBrandFilter(car) && matchesPriceFilter(car) && matchesPerformanceFilter(car));
+function applyWishlistFilters(cars) {
+  return cars.filter((car) => matchesBrandFilter(car) && matchesPriceFilter(car) && matchesVehicleTypeFilter(car));
 }
 
 function getAllCars() {
@@ -135,19 +193,38 @@ function getAllCars() {
 function getBrandOptionsFromCarsAndState() {
   const dedup = new Map();
 
-  // Source 1: full cars catalog from cars.js
   for (const car of getAllCars()) {
     const rawBrand = String(car?.brand || "").trim();
     if (!rawBrand) continue;
     dedup.set(rawBrand.toLowerCase(), rawBrand);
   }
 
-  // Source 2: Firestore-synced favorites mapped to cars.js (ensures both sources are used)
-  for (const id of state.favorites) {
+  for (const id of state.wishlist) {
     const car = getCarById(Number(id));
     const rawBrand = String(car?.brand || "").trim();
     if (!rawBrand) continue;
     dedup.set(rawBrand.toLowerCase(), rawBrand);
+  }
+
+  return [...dedup.entries()]
+    .sort((a, b) => a[1].localeCompare(b[1]))
+    .map(([value, label]) => ({ value, label }));
+}
+
+function getVehicleTypeOptionsFromCarsAndState() {
+  const dedup = new Map();
+
+  for (const car of getAllCars()) {
+    const rawType = String(car?.vehicleType || "").trim();
+    if (!rawType) continue;
+    dedup.set(rawType.toLowerCase(), rawType);
+  }
+
+  for (const id of state.wishlist) {
+    const car = getCarById(Number(id));
+    const rawType = String(car?.vehicleType || "").trim();
+    if (!rawType) continue;
+    dedup.set(rawType.toLowerCase(), rawType);
   }
 
   return [...dedup.entries()]
@@ -172,15 +249,32 @@ function populateBrandDropdown() {
   elements.filterBrand.value = state.filters.brand;
 }
 
-function updateFilterButtonLabels() {
+function populateVehicleTypeDropdown() {
+  if (!elements.filterVehicleType) return;
+
+  const previousValue = state.filters.vehicleType;
+  const options = getVehicleTypeOptionsFromCarsAndState();
+  const optionMarkup = [
+    '<option value="all">Vehicle Type: All</option>',
+    ...options.map((option) => `<option value="${option.value}">${option.label}</option>`),
+  ].join("");
+
+  elements.filterVehicleType.innerHTML = optionMarkup;
+
+  const stillExists = previousValue === "all" || options.some((option) => option.value === previousValue);
+  state.filters.vehicleType = stillExists ? previousValue : "all";
+  elements.filterVehicleType.value = state.filters.vehicleType;
+}
+
+function updateFilterControlValues() {
   if (elements.filterBrand) {
     elements.filterBrand.value = state.filters.brand;
   }
   if (elements.filterPrice) {
     elements.filterPrice.value = state.filters.price;
   }
-  if (elements.filterPerformance) {
-    elements.filterPerformance.value = state.filters.performance;
+  if (elements.filterVehicleType) {
+    elements.filterVehicleType.value = state.filters.vehicleType;
   }
 }
 
@@ -194,7 +288,7 @@ async function toggleFavorite(id) {
   }
 
   await persistSets();
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
@@ -208,7 +302,7 @@ async function toggleWishlist(id) {
   }
 
   await persistSets();
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
@@ -226,21 +320,34 @@ async function toggleCompare(id) {
   }
 
   await persistSets();
-  updateCompareQuickInfo();
-  renderFavoritesPage();
+  renderWishlistPage();
   updateModalButtons();
 }
 
-function favoritesTemplate(car) {
+async function removeWishlistItem(id) {
+  if (!state.wishlist.has(id)) return;
+
+  state.wishlist.delete(id);
+  await persistSets();
+
+  if (state.currentModalCarId === id) {
+    closeModal();
+  }
+
+  renderWishlistPage();
+  showNotification("Item removed from your wishlist.");
+}
+
+function wishlistTemplate(car) {
   const isCompare = state.compare.has(car.id);
 
   return `
-    <article class="group flex h-full flex-col overflow-hidden border border-[#2a2b34] bg-[#121217] transition duration-300 hover:-translate-y-1 hover:border-[#ff5d67]/70">
+    <article data-car-id="${car.id}" class="group flex h-full flex-col overflow-hidden border border-[#2a2b34] bg-[#121217] transition duration-300 hover:-translate-y-1 hover:border-[#ff5d67]/70">
       <div class="relative aspect-[16/10] overflow-hidden bg-black/40">
-        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
+        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
         <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/85 to-transparent"></div>
         <span class="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#ff5d67]">${car.brand}</span>
-        <button data-action="favorite" data-id="${car.id}" class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:border-[#ff5d67] hover:text-[#ff5d67]" aria-label="Remove from favorites">
+        <button data-action="wishlist" data-id="${car.id}" class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:border-[#ff5d67] hover:text-[#ff5d67]" aria-label="Toggle wishlist">
           <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.7-4.35-9.14-8.13C.85 9.73 2.02 5.5 5.66 4.3c2.23-.74 4.38.14 5.62 1.77 1.24-1.63 3.4-2.51 5.63-1.77 3.63 1.2 4.8 5.43 2.8 8.57C18.7 16.65 12 21 12 21z"/></svg>
         </button>
       </div>
@@ -276,36 +383,37 @@ function favoritesTemplate(car) {
   `;
 }
 
-function renderFavoritesPage() {
-  if (!elements.favoritesContainer || !elements.favoritesEmpty) return;
+function renderWishlistPage() {
+  if (!elements.wishlistContainer || !elements.wishlistEmpty) return;
 
   populateBrandDropdown();
+  populateVehicleTypeDropdown();
 
-  const favoriteCars = [...state.favorites].map((id) => getCarById(id)).filter(Boolean);
-  const filteredCars = applyFavoriteFilters(favoriteCars);
+  const wishlistCars = [...state.wishlist].map((id) => getCarById(Number(id))).filter(Boolean);
+  const filteredCars = applyWishlistFilters(wishlistCars);
 
-  updateSavedCount();
-  updateFilterButtonLabels();
+  state.visibleCars = filteredCars;
 
-  if (!favoriteCars.length) {
-    elements.favoritesContainer.innerHTML = "";
-    elements.favoritesEmpty.classList.remove("hidden");
-    elements.favoritesEmpty.querySelector("p")?.replaceChildren("No favorites yet. Explore the fleet and add cars you love.");
-    updateCompareQuickInfo();
+  updateQuickInfo();
+  updateFilterControlValues();
+  updateCompareButton();
+  updateStatsStrip();
+
+  if (!wishlistCars.length) {
+    elements.wishlistContainer.innerHTML = "";
+    elements.wishlistEmpty.classList.remove("hidden");
     return;
   }
 
   if (!filteredCars.length) {
-    elements.favoritesContainer.innerHTML = "";
-    elements.favoritesEmpty.classList.remove("hidden");
-    elements.favoritesEmpty.querySelector("p")?.replaceChildren("No favorites match your selected filters. Adjust any dropdown to see more cars.");
-    updateCompareQuickInfo();
+    elements.wishlistContainer.innerHTML = "";
+    elements.wishlistEmpty.classList.remove("hidden");
+    elements.wishlistEmpty.querySelector("p")?.replaceChildren("No wishlist cars match your selected filters. Adjust any dropdown to see more cars.");
     return;
   }
 
-  elements.favoritesEmpty.classList.add("hidden");
-  elements.favoritesContainer.innerHTML = filteredCars.map(favoritesTemplate).join("");
-  updateCompareQuickInfo();
+  elements.wishlistEmpty.classList.add("hidden");
+  elements.wishlistContainer.innerHTML = filteredCars.map(wishlistTemplate).join("");
 }
 
 function getModalImages(car) {
@@ -356,12 +464,11 @@ function renderModalCarousel(car) {
   state.modalCarouselImages = getModalImages(car);
   state.modalCarouselIndex = 0;
 
-  // Stitch modal fix: keep slides locked to the full-height hero container.
   elements.modalCarouselTrack.innerHTML = state.modalCarouselImages
     .map(
       (imageUrl, imageIndex) => `
       <div class="min-w-full h-full shrink-0">
-        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-contain">
+        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-contain">
       </div>`
     )
     .join("");
@@ -410,6 +517,7 @@ function closeModal() {
   stopModalCarouselTimer();
   state.modalCarouselImages = [];
   state.modalCarouselIndex = 0;
+  state.currentModalCarId = null;
   elements.modal.classList.add("hidden");
   elements.modal.classList.remove("flex");
 }
@@ -434,30 +542,25 @@ function updateModalButtons() {
 }
 
 function syncFromRemote(remote) {
-  state.favorites = new Set(remote.favorites || []);
-  state.wishlist = new Set(remote.wishlist || []);
-  state.compare = new Set(remote.compare || []);
-  renderFavoritesPage();
+  state.favorites = new Set(normalizeIds(remote.favorites || []));
+  state.wishlist = new Set(normalizeIds(remote.wishlist || []));
+  state.compare = new Set(normalizeIds(remote.compare || []).slice(0, MAX_COMPARE));
+  renderWishlistPage();
   updateModalButtons();
-}
-
-async function loadFavorites(uid) {
-  const remote = await window.vgUserStore?.loadUserData?.(uid);
-  console.log("[UI Read] favorites page loadFavorites for uid:", uid, remote?.favorites || []);
-  return new Set(remote?.favorites || []);
 }
 
 async function loadUserState() {
   const user = window.vgUserStore?.getCurrentUser?.();
   const uid = user?.uid || "unknown";
   const remote = await window.vgUserStore?.loadUserData?.(uid);
-  state.favorites = await loadFavorites(uid);
-  state.wishlist = new Set(remote.wishlist || []);
-  state.compare = new Set(remote.compare || []);
+
+  state.favorites = new Set(normalizeIds(remote?.favorites || []));
+  state.wishlist = new Set(normalizeIds(remote?.wishlist || []));
+  state.compare = new Set(normalizeIds(remote?.compare || []).slice(0, MAX_COMPARE));
 }
 
 function initEvents() {
-  elements.favoritesContainer?.addEventListener("click", async (event) => {
+  elements.wishlistContainer?.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-action]");
     if (!button) return;
 
@@ -468,6 +571,31 @@ function initEvents() {
     if (action === "compare") await toggleCompare(id);
     if (action === "favorite") await toggleFavorite(id);
     if (action === "wishlist") await toggleWishlist(id);
+  });
+
+  elements.wishlistContainer?.addEventListener("mouseover", (event) => {
+    const card = event.target.closest("article[data-car-id]");
+    if (!card) return;
+
+    const id = Number(card.dataset.carId);
+    if (!Number.isFinite(id) || state.hoveredCarId === id) return;
+
+    state.hoveredCarId = id;
+    updateStatsStrip();
+  });
+
+  elements.wishlistContainer?.addEventListener("mouseleave", () => {
+    state.hoveredCarId = null;
+    updateStatsStrip();
+  });
+
+  elements.compareSelectionButton?.addEventListener("click", () => {
+    if (!state.compare.size) {
+      showNotification("Select at least one car to compare.");
+      return;
+    }
+
+    window.location.href = "compare.html";
   });
 
   elements.modalClose?.addEventListener("click", closeModal);
@@ -519,26 +647,25 @@ function initEvents() {
 
   elements.filterBrand?.addEventListener("change", (event) => {
     state.filters.brand = event.target.value;
-    renderFavoritesPage();
+    renderWishlistPage();
   });
 
   elements.filterPrice?.addEventListener("change", (event) => {
     state.filters.price = event.target.value;
-    renderFavoritesPage();
+    renderWishlistPage();
   });
 
-  elements.filterPerformance?.addEventListener("change", (event) => {
-    state.filters.performance = event.target.value;
-    renderFavoritesPage();
+  elements.filterVehicleType?.addEventListener("change", (event) => {
+    state.filters.vehicleType = event.target.value;
+    renderWishlistPage();
   });
-
 }
 
 async function init() {
   await window.vgUserStore?.waitForReady?.();
   await loadUserState();
 
-  renderFavoritesPage();
+  renderWishlistPage();
   initEvents();
   elements.pageLoading?.classList.add("hidden");
 
@@ -549,6 +676,6 @@ async function init() {
 }
 
 init().catch((error) => {
-  console.error("[UI Init Error] favorites page failed to initialize", error);
+  console.error("[UI Init Error] wishlist page failed to initialize", error);
   elements.pageLoading?.classList.add("hidden");
 });

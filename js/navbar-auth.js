@@ -96,7 +96,6 @@ export function initAuthNavbar({ mountId = "auth-controls" } = {}) {
     const photo = escapeHtml(user.photoURL || "https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc");
 
     mount.innerHTML = `
-      <a href="wishlist.html" class="${BUTTON}">Wishlist</a>
       <button id="theme-toggle" type="button" class="${BUTTON}">Light Mode</button>
       <a href="profile.html" class="inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-900/80 p-1 text-sm text-white" aria-label="Profile">
         <img src="${photo}" alt="Profile" class="h-8 w-8 rounded-full object-cover" referrerpolicy="no-referrer" />

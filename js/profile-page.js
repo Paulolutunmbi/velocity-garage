@@ -35,6 +35,17 @@ const currentPasswordError = document.getElementById("current-password-error");
 const newPasswordError = document.getElementById("new-password-error");
 const confirmPasswordError = document.getElementById("confirm-password-error");
 const profileLogoutBtn = document.getElementById("profile-logout-btn");
+const accountSettingsTrigger = document.getElementById("account-settings-trigger");
+const accountSettingsModal = document.getElementById("account-settings-modal");
+const accountSettingsOverlay = document.getElementById("account-settings-overlay");
+const accountSettingsClose = document.getElementById("account-settings-close");
+const accountSettingsOptions = document.getElementById("account-settings-options");
+const profileFormPanel = document.getElementById("profile-form-panel");
+const passwordFormPanel = document.getElementById("password-form-panel");
+const openProfileUpdateBtn = document.getElementById("open-profile-update");
+const openPasswordChangeBtn = document.getElementById("open-password-change");
+const profileModalBack = document.getElementById("profile-modal-back");
+const passwordModalBack = document.getElementById("password-modal-back");
 
 let currentUser = null;
 
@@ -179,6 +190,43 @@ function clearPasswordErrors() {
   setMessage(passwordSuccess, "");
 }
 
+function hideAccountSettingsPanels() {
+  accountSettingsOptions?.classList.add("hidden");
+  profileFormPanel?.classList.add("hidden");
+  passwordFormPanel?.classList.add("hidden");
+}
+
+function showAccountOptions() {
+  hideAccountSettingsPanels();
+  accountSettingsOptions?.classList.remove("hidden");
+}
+
+function showProfilePanel() {
+  hideAccountSettingsPanels();
+  profileFormPanel?.classList.remove("hidden");
+}
+
+function showPasswordPanel() {
+  hideAccountSettingsPanels();
+  passwordFormPanel?.classList.remove("hidden");
+}
+
+function openAccountSettingsModal() {
+  if (!accountSettingsModal) return;
+  showAccountOptions();
+  accountSettingsModal.classList.remove("hidden");
+  accountSettingsModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("overflow-hidden");
+}
+
+function closeAccountSettingsModal() {
+  if (!accountSettingsModal) return;
+  accountSettingsModal.classList.add("hidden");
+  accountSettingsModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("overflow-hidden");
+  showAccountOptions();
+}
+
 async function handleProfileUpdate(event) {
   event.preventDefault();
   clearProfileErrors();
@@ -286,6 +334,50 @@ async function handlePasswordChange(event) {
 }
 
 function bindFormHandlers() {
+  if (accountSettingsTrigger && accountSettingsTrigger.dataset.bound !== "true") {
+    accountSettingsTrigger.dataset.bound = "true";
+    accountSettingsTrigger.addEventListener("click", openAccountSettingsModal);
+  }
+
+  if (accountSettingsClose && accountSettingsClose.dataset.bound !== "true") {
+    accountSettingsClose.dataset.bound = "true";
+    accountSettingsClose.addEventListener("click", closeAccountSettingsModal);
+  }
+
+  if (accountSettingsOverlay && accountSettingsOverlay.dataset.bound !== "true") {
+    accountSettingsOverlay.dataset.bound = "true";
+    accountSettingsOverlay.addEventListener("click", closeAccountSettingsModal);
+  }
+
+  if (openProfileUpdateBtn && openProfileUpdateBtn.dataset.bound !== "true") {
+    openProfileUpdateBtn.dataset.bound = "true";
+    openProfileUpdateBtn.addEventListener("click", showProfilePanel);
+  }
+
+  if (openPasswordChangeBtn && openPasswordChangeBtn.dataset.bound !== "true") {
+    openPasswordChangeBtn.dataset.bound = "true";
+    openPasswordChangeBtn.addEventListener("click", showPasswordPanel);
+  }
+
+  if (profileModalBack && profileModalBack.dataset.bound !== "true") {
+    profileModalBack.dataset.bound = "true";
+    profileModalBack.addEventListener("click", showAccountOptions);
+  }
+
+  if (passwordModalBack && passwordModalBack.dataset.bound !== "true") {
+    passwordModalBack.dataset.bound = "true";
+    passwordModalBack.addEventListener("click", showAccountOptions);
+  }
+
+  if (accountSettingsModal && accountSettingsModal.dataset.bound !== "true") {
+    accountSettingsModal.dataset.bound = "true";
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !accountSettingsModal.classList.contains("hidden")) {
+        closeAccountSettingsModal();
+      }
+    });
+  }
+
   if (profileUpdateForm && profileUpdateForm.dataset.bound !== "true") {
     profileUpdateForm.dataset.bound = "true";
     profileUpdateForm.addEventListener("submit", handleProfileUpdate);

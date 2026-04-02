@@ -70,26 +70,32 @@ tailwind.config = {
 <body class="min-h-screen bg-vg-bg text-vg-text font-body selection:bg-vg-accent selection:text-white">
 <div class="pointer-events-none fixed inset-0 -z-10 divider-grid"></div>
 
-<header class="sticky top-0 z-50 border-b border-vg-line/80 bg-vg-bg/80 backdrop-blur-xl">
-  <nav class="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 md:px-8">
+<header class="sticky top-0 z-50 border-b border-white/5 bg-black/55 backdrop-blur-xl">
+  <nav class="mx-auto grid w-full max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 md:px-8">
     <a href="index.html" class="flex items-center">
       <img src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-10 w-auto sm:h-11 md:h-12">
     </a>
 
-    <!-- CHANGE: Stitch-style nav links for desktop while preserving destination pages. -->
-    <div class="hidden items-center gap-7 md:flex">
-      <a href="index.html" class="headline-font text-xs font-bold uppercase tracking-[0.2em] text-vg-accent">Home</a>
-      <a href="compare.html" class="headline-font text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted transition hover:text-white">Compare</a>
-      <a href="favorites.html" class="headline-font text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted transition hover:text-white">Favorites</a>
-      <a href="wishlist.html" class="headline-font text-xs font-semibold uppercase tracking-[0.2em] text-vg-muted transition hover:text-white">Wishlist</a>
+    <div class="hidden items-center justify-center gap-6 text-sm text-[#b0b4c2] md:flex">
+      <a href="index.html" class="headline-font border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
+      <a href="compare.html" class="headline-font transition hover:text-white">Compare</a>
+      <a href="favorites.html" class="headline-font transition hover:text-white">Favorites</a>
+      <a href="wishlist.html" class="headline-font transition hover:text-white">Wishlist</a>
     </div>
 
-    <div class="flex items-center gap-2 sm:gap-3">
+    <div class="flex items-center justify-end gap-2 sm:gap-3">
       <a href="login.html" class="headline-font rounded-md border border-vg-accent/40 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-vg-accent transition hover:border-vg-accent hover:bg-vg-accent/10">Login</a>
       <!-- CHANGE: Signup is now visible on mobile instead of hidden. -->
       <a href="signup.html" class="headline-font inline-block rounded-md bg-vg-accent px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:brightness-110">Sign Up</a>
     </div>
   </nav>
+
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-center gap-5 overflow-x-auto px-4 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#b0b4c2] md:hidden sm:px-6">
+    <a href="index.html" class="headline-font whitespace-nowrap border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
+    <a href="compare.html" class="headline-font whitespace-nowrap transition hover:text-white">Compare</a>
+    <a href="favorites.html" class="headline-font whitespace-nowrap transition hover:text-white">Favorites</a>
+    <a href="wishlist.html" class="headline-font whitespace-nowrap transition hover:text-white">Wishlist</a>
+  </div>
 </header>
 
 <main>
@@ -199,6 +205,43 @@ tailwind.config = {
   const chosenImage = pool[randomIndex];
 
   hero.style.setProperty("--hero-image", `url("${chosenImage}")`);
+})();
+</script>
+<script>
+/* CHANGE: Gate index navigation so all non-login page clicks redirect to login. */
+(function gatePreviewNavigation() {
+  const loginPath = "login.html";
+
+  document.addEventListener(
+    "click",
+    (event) => {
+      const link = event.target.closest("a[href]");
+      if (!link) return;
+
+      const href = link.getAttribute("href")?.trim();
+      if (!href) return;
+
+      if (
+        href.startsWith("#") ||
+        href.startsWith("mailto:") ||
+        href.startsWith("tel:") ||
+        href.startsWith("javascript:")
+      ) {
+        return;
+      }
+
+      const targetUrl = new URL(href, window.location.href);
+      const targetPage = targetUrl.pathname.split("/").pop() || "index.html";
+
+      if (targetPage === "index.html" || targetPage === loginPath) {
+        return;
+      }
+
+      event.preventDefault();
+      window.location.href = loginPath;
+    },
+    true
+  );
 })();
 </script>
 <script type="module" src="js/landing-page.js"></script>

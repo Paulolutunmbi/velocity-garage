@@ -30,6 +30,7 @@ const elements = {
   modal: document.getElementById("modal"),
   modalClose: document.getElementById("modal-close"),
   modalName: document.getElementById("modal-name"),
+  modalCarousel: document.getElementById("modal-carousel"),
   modalCarouselTrack: document.getElementById("modal-carousel-track"),
   modalCarouselDots: document.getElementById("modal-carousel-dots"),
   modalCarouselPrev: document.getElementById("modal-carousel-prev"),
@@ -46,14 +47,15 @@ const elements = {
   modalCompare: document.getElementById("modal-compare"),
   modalFav: document.getElementById("modal-fav"),
   modalWishlist: document.getElementById("modal-wishlist"),
+  modalCancel: document.getElementById("modal-cancel"),
 };
 
 const BUTTON_PRIMARY = "bg-[#ff535d] px-3 py-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#25060a] transition hover:brightness-110";
 const BUTTON_SECONDARY = "border border-white/15 bg-white/5 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-200 transition hover:border-[#ff535d] hover:text-white";
 const BUTTON_ACTIVE = "border border-[#ff535d] bg-[#2b151a] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ffb2b4] transition";
-const MODAL_PRIMARY = "bg-[#ff535d] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#25060a] transition hover:brightness-110";
-const MODAL_SECONDARY = "border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200 transition hover:border-[#ff535d] hover:text-white";
-const MODAL_ACTIVE = "border border-[#ff535d] bg-[#2b151a] px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#ffb2b4] transition";
+const MODAL_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
+const MODAL_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
+const MODAL_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
 let notificationTimer = null;
 
@@ -380,8 +382,8 @@ function renderModalCarousel(car) {
   elements.modalCarouselTrack.innerHTML = state.modalCarouselImages
     .map(
       (imageUrl, imageIndex) => `
-      <div class="min-w-full h-full shrink-0 bg-black/50">
-        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-contain">
+      <div class="min-w-full h-full shrink-0">
+        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover">
       </div>`
     )
     .join("");
@@ -444,13 +446,13 @@ function updateModalButtons() {
   const isWishlist = state.wishlist.has(state.currentModalCarId);
 
   elements.modalCompare.textContent = isCompare ? "Remove from Compare" : "Add to Compare";
-  elements.modalCompare.className = isCompare ? MODAL_ACTIVE : MODAL_PRIMARY;
+  elements.modalCompare.className = `${isCompare ? MODAL_ACTIVE : MODAL_PRIMARY} text-sm`;
 
   elements.modalFav.textContent = isFavorite ? "Remove from Favorites" : "Add to Favorites";
-  elements.modalFav.className = isFavorite ? MODAL_ACTIVE : MODAL_SECONDARY;
+  elements.modalFav.className = `${isFavorite ? MODAL_ACTIVE : MODAL_SECONDARY} text-sm`;
 
   elements.modalWishlist.textContent = isWishlist ? "Remove from Wishlist" : "Add to Wishlist";
-  elements.modalWishlist.className = isWishlist ? MODAL_ACTIVE : MODAL_SECONDARY;
+  elements.modalWishlist.className = `${isWishlist ? MODAL_ACTIVE : MODAL_SECONDARY} text-sm`;
 }
 
 function syncFromRemote(remote) {
@@ -496,9 +498,43 @@ function initEvents() {
   elements.clearCompare?.addEventListener("click", clearCompare);
 
   elements.modalClose?.addEventListener("click", closeModal);
+  elements.modalCancel?.addEventListener("click", closeModal);
   elements.modal?.addEventListener("click", (event) => {
     if (event.target === elements.modal) closeModal();
   });
+
+  const swipeSurface = elements.modalCarousel || elements.modalCarouselTrack;
+  let touchStartX = null;
+  let touchStartY = null;
+
+  swipeSurface?.addEventListener("touchstart", (event) => {
+    if (!state.modalCarouselImages.length) return;
+    const touch = event.touches?.[0];
+    if (!touch) return;
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }, { passive: true });
+
+  swipeSurface?.addEventListener("touchend", (event) => {
+    if (!state.modalCarouselImages.length || touchStartX === null || touchStartY === null) return;
+
+    const touch = event.changedTouches?.[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+    touchStartX = null;
+    touchStartY = null;
+
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+    if (deltaX < 0) {
+      shiftModalCarousel(1);
+    } else {
+      shiftModalCarousel(-1);
+    }
+    startModalCarouselTimer();
+  }, { passive: true });
 
   elements.modalCarouselPrev?.addEventListener("click", () => {
     shiftModalCarousel(-1);

@@ -56,6 +56,7 @@ const elements = {
   modalCompare: document.getElementById("modal-compare"),
   modalFav: document.getElementById("modal-fav"),
   modalWishlist: document.getElementById("modal-wishlist"),
+  modalCancel: document.getElementById("modal-cancel"),
   pageLoading: document.getElementById("page-loading"),
 };
 
@@ -468,7 +469,7 @@ function renderModalCarousel(car) {
     .map(
       (imageUrl, imageIndex) => `
       <div class="min-w-full h-full shrink-0">
-        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-contain">
+        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover">
       </div>`
     )
     .join("");
@@ -502,7 +503,7 @@ function openModal(id) {
   elements.modalSpeed.textContent = car.speed;
   elements.modalWeight.textContent = car.weight || "-";
   elements.modalZeroTo100Mph.textContent = car.zeroTo100Mph || "-";
-  elements.modalPrice.textContent = car.price;
+  if (elements.modalPrice) elements.modalPrice.textContent = car.price || "-";
   elements.modalDesc.textContent = car.description;
 
   renderModalCarousel(car);
@@ -599,6 +600,7 @@ function initEvents() {
   });
 
   elements.modalClose?.addEventListener("click", closeModal);
+  elements.modalCancel?.addEventListener("click", closeModal);
   elements.modal?.addEventListener("click", (event) => {
     if (event.target === elements.modal) closeModal();
   });

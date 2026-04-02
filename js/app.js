@@ -460,7 +460,7 @@ function openModal(id) {
   elements.modalSpeed.textContent = car.speed;
   elements.modalWeight.textContent = car.weight || "-";
   elements.modalZeroTo100Mph.textContent = car.zeroTo100Mph || "-";
-  elements.modalPrice.textContent = car.price;
+  if (elements.modalPrice) elements.modalPrice.textContent = car.price || "-";
   elements.modalDesc.textContent = car.description;
 
   renderModalCarousel(car);

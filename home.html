@@ -72,26 +72,32 @@ tailwind.config = {
   </div>
 </div>
 
-<header class="sticky top-0 z-40 border-b border-white/10 bg-black/55 backdrop-blur-xl">
-  <nav class="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 md:px-8">
-    <div class="flex items-center gap-8 md:gap-12">
-      <a href="home.html" class="flex items-center">
-        <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
-      </a>
-      <div class="hidden items-center gap-6 text-sm text-slate-300 md:flex">
-        <a href="home.html" class="border-b border-orange-400 pb-1 text-orange-300">Home</a>
-        <a href="compare.html" class="transition hover:text-white">Compare</a>
-        <a href="favorites.html" class="transition hover:text-white">Favorites</a>
-        <a href="wishlist.html" class="transition hover:text-white">Wishlist</a>
-      </div>
+<header class="sticky top-0 z-40 border-b border-white/5 bg-black/55 backdrop-blur-xl">
+  <nav class="mx-auto grid w-full max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 md:px-8">
+    <a href="home.html" class="flex items-center">
+      <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
+    </a>
+
+    <div class="hidden items-center justify-center gap-6 text-sm text-[#b0b4c2] md:flex">
+      <a href="home.html" class="border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
+      <a href="compare.html" class="transition hover:text-white">Compare</a>
+      <a href="favorites.html" class="transition hover:text-white">Favorites</a>
+      <a href="wishlist.html" class="transition hover:text-white">Wishlist</a>
     </div>
 
-    <div class="flex items-center gap-2">
-      <button id="scroll-catalog" class="rounded-md border border-slate-700 bg-slate-900/85 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-200 transition hover:border-orange-400 hover:text-white">Explore Fleet</button>
-      <button id="scroll-recommendation" class="rounded-md border border-slate-700 bg-slate-900/85 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-200 transition hover:border-orange-400 hover:text-white">AI Match</button>
-      <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
+    <div class="flex items-center justify-end gap-2">
+      <button id="scroll-catalog" class="hidden rounded-md border border-slate-700 bg-slate-900/85 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-200 transition hover:border-[#ff5d67] hover:text-white sm:inline-flex">Explore Fleet</button>
+      <button id="scroll-recommendation" class="hidden rounded-md border border-slate-700 bg-slate-900/85 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-200 transition hover:border-[#ff5d67] hover:text-white sm:inline-flex">AI Match</button>
+      <div id="auth-controls" class="flex flex-wrap items-center justify-end gap-2"></div>
     </div>
   </nav>
+
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-center gap-5 overflow-x-auto px-4 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#b0b4c2] md:hidden sm:px-6">
+    <a href="home.html" class="whitespace-nowrap border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
+    <a href="compare.html" class="whitespace-nowrap transition hover:text-white">Compare</a>
+    <a href="favorites.html" class="whitespace-nowrap transition hover:text-white">Favorites</a>
+    <a href="wishlist.html" class="whitespace-nowrap transition hover:text-white">Wishlist</a>
+  </div>
 </header>
 
 <section class="mx-auto grid w-full max-w-7xl gap-4 md:gap-6 px-4 sm:px-6 md:px-8 pb-6 pt-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">

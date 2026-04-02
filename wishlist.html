@@ -82,26 +82,32 @@
 <div class="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:56px_56px]"></div>
 
 <header class="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/55 backdrop-blur-xl">
-  <nav class="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 md:px-8">
-    <div class="flex items-center gap-8 md:gap-12">
-      <a href="home.html" class="flex items-center">
-        <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
-      </a>
-      <div class="hidden items-center gap-6 text-sm text-vgMuted md:flex">
-        <a href="home.html" class="transition hover:text-white">Home</a>
-        <a href="compare.html" class="transition hover:text-white">Compare</a>
-        <a href="favorites.html" class="transition hover:text-white">Favorites</a>
-        <a href="wishlist.html" class="border-b border-vgPrimary pb-1 text-vgPrimary">Wishlist</a>
-      </div>
+  <nav class="mx-auto grid w-full max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 md:px-8">
+    <a href="home.html" class="flex items-center">
+      <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
+    </a>
+
+    <div class="hidden items-center justify-center gap-6 text-sm text-[#b0b4c2] md:flex">
+      <a href="home.html" class="transition hover:text-white">Home</a>
+      <a href="compare.html" class="transition hover:text-white">Compare</a>
+      <a href="favorites.html" class="transition hover:text-white">Favorites</a>
+      <a href="wishlist.html" class="border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Wishlist</a>
     </div>
 
-    <div class="flex items-center gap-3">
-      <div id="auth-controls" class="flex flex-wrap items-center gap-2"></div>
+    <div class="flex items-center justify-end gap-3">
+      <div id="auth-controls" class="flex flex-wrap items-center justify-end gap-2"></div>
     </div>
   </nav>
+
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-center gap-5 overflow-x-auto px-4 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#b0b4c2] md:hidden sm:px-6">
+    <a href="home.html" class="whitespace-nowrap transition hover:text-white">Home</a>
+    <a href="compare.html" class="whitespace-nowrap transition hover:text-white">Compare</a>
+    <a href="favorites.html" class="whitespace-nowrap transition hover:text-white">Favorites</a>
+    <a href="wishlist.html" class="whitespace-nowrap border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Wishlist</a>
+  </div>
 </header>
 
-<main class="relative mx-auto min-h-screen w-full max-w-7xl px-4 pb-20 pt-28 sm:px-6 md:px-8 md:pt-32">
+<main class="relative mx-auto min-h-screen w-full max-w-7xl px-4 pb-20 pt-32 sm:px-6 md:px-8 md:pt-32">
   <section class="mb-10">
     <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
       <div>
@@ -193,10 +199,10 @@
         </div>
       </section>
       <section class="border-t border-white/10 bg-[#151515] px-4 py-5 sm:px-6 sm:py-6 md:col-span-5 md:border-l md:border-t-0 md:px-5 md:py-5">
-        <span class="inline-flex items-center rounded-full border border-vgPrimary/40 bg-vgPrimary/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-vgPrimarySoft">Detail Prototype</span>
+        <span class="inline-flex items-center rounded-full border border-[#ff535d]/40 bg-[#ff535d]/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[#ffb2b4]">Detail Prototype</span>
         <h2 id="modal-name" class="mt-2 text-3xl font-black italic leading-tight sm:text-4xl"></h2>
         <p class="mt-2 text-sm text-white/70">The purest expression of performance, engineering, and aerodynamic research.</p>
-        <h3 class="mt-5 text-[0.62rem] font-black uppercase tracking-[0.3em] text-vgPrimary">Technical Specifications</h3>
+        <h3 class="mt-5 text-[0.62rem] font-black uppercase tracking-[0.3em] text-[#ff535d]">Technical Specifications</h3>
         <div class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5">
           <div class="bg-black/40 p-3">
             <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Brand</p>
@@ -232,13 +238,14 @@
           </div>
         </div>
         <div class="mt-5">
-          <h4 class="text-[0.62rem] font-black uppercase tracking-[0.3em] text-vgPrimary">Engineering Narrative</h4>
+          <h4 class="text-[0.62rem] font-black uppercase tracking-[0.3em] text-[#ff535d]">Engineering Narrative</h4>
           <p id="modal-desc" class="mt-2 text-sm leading-relaxed text-white/70"></p>
         </div>
         <div class="mt-5 flex flex-wrap gap-2">
           <button id="modal-compare"></button>
           <button id="modal-fav"></button>
           <button id="modal-wishlist"></button>
+          <button id="modal-cancel" class="rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white">Cancel</button>
         </div>
       </section>
     </div>

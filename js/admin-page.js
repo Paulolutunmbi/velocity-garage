@@ -318,6 +318,28 @@ function bindInternalViewSwitching() {
   }
 }
 
+function normalizeUsersFromSnapshot(snapshot) {
+  const byUid = new Map();
+
+  snapshot.docs.forEach((snap) => {
+    const data = snap.data() || {};
+    const docId = String(snap.id || "").trim();
+    const storedUid = String(data.uid || "").trim();
+
+    if (!docId) return;
+    // Canonical identity is users/{uid}. Skip legacy docs whose id does not match their stored uid.
+    if (storedUid && storedUid !== docId) return;
+
+    byUid.set(docId, {
+      ...data,
+      id: docId,
+      uid: docId,
+    });
+  });
+
+  return Array.from(byUid.values());
+}
+
 // Keeps /users and /bannedUsers synchronized from one realtime source for the UI.
 function watchUsersWithBanState(onData, onError) {
   let latestUsers = [];
@@ -334,7 +356,7 @@ function watchUsersWithBanState(onData, onError) {
   const unsubUsers = onSnapshot(
     query(collection(db, "users")),
     (snapshot) => {
-      latestUsers = snapshot.docs.map((snap) => ({ id: snap.id, ...snap.data() }));
+      latestUsers = normalizeUsersFromSnapshot(snapshot);
       emit();
     },
     onError

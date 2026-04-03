@@ -496,12 +496,33 @@ export function isAdmin(user) {
   return (user?.email || "").toLowerCase() === ADMIN_EMAIL.toLowerCase();
 }
 
+function normalizeUsersFromSnapshot(snapshot) {
+  const byUid = new Map();
+
+  snapshot.docs.forEach((snap) => {
+    const data = snap.data() || {};
+    const docId = String(snap.id || "").trim();
+    const storedUid = String(data.uid || "").trim();
+
+    if (!docId) return;
+    if (storedUid && storedUid !== docId) return;
+
+    byUid.set(docId, {
+      ...data,
+      id: docId,
+      uid: docId,
+    });
+  });
+
+  return Array.from(byUid.values());
+}
+
 export function watchUsers(callback, onError) {
   const usersQuery = query(collection(db, "users"));
   return onSnapshot(
     usersQuery,
     (snapshot) => {
-      const users = snapshot.docs.map((snap) => ({ id: snap.id, ...snap.data() }));
+      const users = normalizeUsersFromSnapshot(snapshot);
       callback(users);
     },
     onError

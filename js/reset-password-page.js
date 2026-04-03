@@ -3,6 +3,7 @@ import {
   getAuth,
   verifyPasswordResetCode,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { notifyPasswordChanged } from "./password-notification.js";
 
 const form = document.getElementById("reset-password-form");
 const newPasswordInput = document.getElementById("reset-new-password");
@@ -20,6 +21,7 @@ const errorBox = document.getElementById("reset-error");
 const auth = getAuth();
 let isResetCodeValid = false;
 let activeOobCode = "";
+let resetEmail = "";
 
 function wirePasswordToggle(input, toggleBtn, icon) {
   if (!input || !toggleBtn || !icon) return;
@@ -109,14 +111,16 @@ function parseActionParams() {
 async function validateResetCode(oobCode) {
   try {
     // Validates that the action code from Firebase email is still active.
-    await verifyPasswordResetCode(auth, oobCode);
+    const verifiedEmail = await verifyPasswordResetCode(auth, oobCode);
     isResetCodeValid = true;
     activeOobCode = oobCode;
+    resetEmail = verifiedEmail || "";
     setFormEnabled(true);
     return true;
   } catch {
     isResetCodeValid = false;
     activeOobCode = "";
+    resetEmail = "";
     setFormEnabled(false);
     setMessage(errorBox, "This reset link is invalid or expired. Request a new link.");
     if (form) form.classList.add("hidden");
@@ -192,7 +196,20 @@ form?.addEventListener("submit", async (event) => {
   try {
     // Completes password reset using the verified out-of-band code from URL.
     await confirmPasswordReset(auth, activeOobCode, newPassword);
-    setMessage(successBox, "Password reset successful. Redirecting to login...");
+
+    let successMessage = "Password reset successful. Confirmation email sent. Redirecting to login...";
+    try {
+      await notifyPasswordChanged({
+        email: resetEmail,
+        source: "password-reset",
+      });
+    } catch (notificationError) {
+      console.error("[Password Notification] Failed after password reset", notificationError);
+      successMessage =
+        "Password reset successful, but confirmation email could not be sent right now. Redirecting to login...";
+    }
+
+    setMessage(successBox, successMessage);
     form.reset();
 
     setTimeout(() => {

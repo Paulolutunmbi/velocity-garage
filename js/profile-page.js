@@ -2,13 +2,19 @@ import {
   doc,
   getDoc,
   serverTimestamp,
-  setDoc,
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { auth, db } from "./firebase-config.js";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+import { auth, db, storage } from "./firebase-config.js";
 import { checkAuth } from "./auth-guard.js";
 import { logout, updateCurrentUserPassword } from "./auth.js";
 import { initAuthNavbar } from "./navbar-auth.js";
+import { notifyPasswordChanged } from "./password-notification.js";
 
 const profileName = document.getElementById("profile-name");
 const profileEmail = document.getElementById("profile-email");
@@ -23,6 +29,7 @@ const profileUpdateSuccess = document.getElementById("profile-update-success");
 const profileUpdateError = document.getElementById("profile-update-error");
 const updateNameError = document.getElementById("update-name-error");
 const updatePhotoError = document.getElementById("update-photo-error");
+const updatePhotoPreview = document.getElementById("update-photo-preview");
 
 const passwordForm = document.getElementById("password-change-form");
 const currentPasswordInput = document.getElementById("current-password");
@@ -48,6 +55,55 @@ const profileModalBack = document.getElementById("profile-modal-back");
 const passwordModalBack = document.getElementById("password-modal-back");
 
 let currentUser = null;
+let pendingPreviewObjectUrl = "";
+let persistedProfilePhotoUrl = "";
+
+const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
+
+function fallbackAvatar(name = "Driver") {
+  const safeName = encodeURIComponent(name || "Driver");
+  return `https://ui-avatars.com/api/?name=${safeName}&background=0f172a&color=f8fafc`;
+}
+
+function resolvePhotoUrl(user, userData = null) {
+  const fromDoc = userData?.profileImage || userData?.photo || "";
+  return fromDoc || user?.photoURL || fallbackAvatar(user?.displayName || "Driver");
+}
+
+function syncProfilePhotoPreview(src) {
+  const nextSrc = src || fallbackAvatar(currentUser?.displayName || "Driver");
+  if (profilePhoto) profilePhoto.src = nextSrc;
+  if (updatePhotoPreview) updatePhotoPreview.src = nextSrc;
+}
+
+function clearObjectPreviewUrl() {
+  if (!pendingPreviewObjectUrl) return;
+  URL.revokeObjectURL(pendingPreviewObjectUrl);
+  pendingPreviewObjectUrl = "";
+}
+
+function validateProfileImageFile(file) {
+  if (!file) return "";
+
+  if (!file.type || !file.type.startsWith("image/")) {
+    return "Please choose a valid image file.";
+  }
+
+  if (file.size > MAX_PROFILE_IMAGE_BYTES) {
+    return "Image size must be 5MB or less.";
+  }
+
+  return "";
+}
+
+async function uploadProfileImage(uid, file) {
+  const imageRef = ref(storage, `users/${uid}/profile.jpg`);
+  await uploadBytes(imageRef, file, {
+    contentType: file.type || "image/jpeg",
+    cacheControl: "public,max-age=3600",
+  });
+  return getDownloadURL(imageRef);
+}
 
 function formatJoinDate(value) {
   if (!value) return "Joined recently";
@@ -86,10 +142,10 @@ async function initProfile() {
 
   profileName.textContent = user.displayName || "Velocity Driver";
   profileEmail.textContent = user.email || "No email";
-  profilePhoto.src = user.photoURL || "https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc";
+  persistedProfilePhotoUrl = resolvePhotoUrl(user);
+  syncProfilePhotoPreview(persistedProfilePhotoUrl);
 
   if (updateNameInput) updateNameInput.value = user.displayName || "";
-  if (updatePhotoInput) updatePhotoInput.value = user.photoURL || "";
 
   const userRef = doc(db, "users", user.uid);
   const userSnap = await getDoc(userRef);
@@ -100,14 +156,20 @@ async function initProfile() {
   }
 
   const data = userSnap.data();
-  if (updateNameInput && data?.name && !updateNameInput.value) updateNameInput.value = data.name;
-  if (updatePhotoInput && data?.photo && !updatePhotoInput.value) updatePhotoInput.value = data.photo;
+  persistedProfilePhotoUrl = resolvePhotoUrl(user, data);
+  syncProfilePhotoPreview(persistedProfilePhotoUrl);
+
+  if (updateNameInput && data?.name && !updateNameInput.value) {
+    updateNameInput.value = data.name;
+  }
+
   profileJoined.textContent = formatJoinDate(data.createdAt);
   bindFormHandlers();
 }
 
 function setMessage(element, message = "") {
   if (!element) return;
+
   if (!message) {
     element.textContent = "";
     element.classList.add("hidden");
@@ -120,6 +182,7 @@ function setMessage(element, message = "") {
 
 function setFieldError(input, errorNode, message = "") {
   if (!errorNode || !input) return;
+
   if (!message) {
     errorNode.textContent = "";
     errorNode.classList.add("hidden");
@@ -132,7 +195,7 @@ function setFieldError(input, errorNode, message = "") {
   input.setAttribute("aria-invalid", "true");
 }
 
-function setProfileLoading(isLoading) {
+function setProfileLoading(isLoading, loadingText = "Saving...") {
   if (!profileUpdateSubmit) return;
 
   if (!profileUpdateSubmit.dataset.defaultText) {
@@ -141,7 +204,7 @@ function setProfileLoading(isLoading) {
 
   profileUpdateSubmit.disabled = isLoading;
   profileUpdateSubmit.textContent = isLoading
-    ? "Saving..."
+    ? loadingText
     : profileUpdateSubmit.dataset.defaultText || "Save Profile";
 }
 
@@ -156,17 +219,6 @@ function setPasswordLoading(isLoading) {
   passwordSubmit.textContent = isLoading
     ? "Updating..."
     : passwordSubmit.dataset.defaultText || "Update Password";
-}
-
-function isValidImageUrl(value) {
-  if (!value) return true;
-
-  try {
-    const parsed = new URL(value);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
 }
 
 function firstNameFromName(value = "") {
@@ -238,7 +290,7 @@ async function handleProfileUpdate(event) {
   }
 
   const name = (updateNameInput?.value || "").trim();
-  const photo = (updatePhotoInput?.value || "").trim();
+  const selectedImage = updatePhotoInput?.files?.[0] || null;
 
   let hasError = false;
   if (!name || name.length < 2) {
@@ -251,36 +303,66 @@ async function handleProfileUpdate(event) {
     hasError = true;
   }
 
-  if (!isValidImageUrl(photo)) {
-    setFieldError(updatePhotoInput, updatePhotoError, "Profile image must be a valid http/https URL.");
+  const imageError = validateProfileImageFile(selectedImage);
+  if (imageError) {
+    setFieldError(updatePhotoInput, updatePhotoError, imageError);
     hasError = true;
   }
 
   if (hasError) return;
 
-  setProfileLoading(true);
+  setProfileLoading(true, selectedImage ? "Uploading image..." : "Saving...");
   try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      throw new Error("User profile record is missing. Please sign out and sign in again.");
+    }
+
+    const existingData = userSnap.data() || {};
+
+    let photoUrl = user.photoURL || "";
+    if (selectedImage) {
+      photoUrl = await uploadProfileImage(user.uid, selectedImage);
+    }
+
+    const nextPhoto = photoUrl || user.photoURL || "";
+
     // Keep Firebase Auth profile and Firestore profile in sync.
     await updateProfile(user, {
       displayName: name,
-      photoURL: photo || user.photoURL || "",
+      photoURL: nextPhoto,
     });
 
-    await setDoc(
-      doc(db, "users", user.uid),
-      {
-        uid: user.uid,
-        name,
-        firstName: firstNameFromName(name),
-        email: user.email || "",
-        photo: photo || user.photoURL || "",
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+    const updates = {
+      updatedAt: serverTimestamp(),
+    };
+
+    if (name !== (existingData.name || "")) {
+      updates.name = name;
+      updates.firstName = firstNameFromName(name);
+    }
+
+    if ((user.email || "") !== (existingData.email || "")) {
+      updates.email = user.email || "";
+    }
+
+    if (nextPhoto !== (existingData.photo || "")) {
+      updates.photo = nextPhoto;
+      updates.profileImage = nextPhoto;
+    }
+
+    await updateDoc(userRef, updates);
 
     profileName.textContent = name;
-    profilePhoto.src = photo || user.photoURL || "https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc";
+    persistedProfilePhotoUrl = nextPhoto || fallbackAvatar(name || "Driver");
+    syncProfilePhotoPreview(persistedProfilePhotoUrl);
+
+    if (selectedImage && updatePhotoInput) {
+      updatePhotoInput.value = "";
+      clearObjectPreviewUrl();
+    }
+
     setMessage(profileUpdateSuccess, "Profile updated successfully.");
   } catch (error) {
     setMessage(profileUpdateError, error?.message || "Unable to update profile. Please try again.");
@@ -324,8 +406,21 @@ async function handlePasswordChange(event) {
   try {
     // Helper enforces re-authentication before password update.
     await updateCurrentUserPassword({ currentPassword, newPassword });
+
+    let notificationMessage = "Password updated successfully. A confirmation email has been sent.";
+    try {
+      await notifyPasswordChanged({
+        email: auth.currentUser?.email || "",
+        source: "profile-password-change",
+      });
+    } catch (notificationError) {
+      console.error("[Password Notification] Failed after in-app password change", notificationError);
+      notificationMessage =
+        "Password updated successfully, but confirmation email could not be sent right now.";
+    }
+
     passwordForm?.reset();
-    setMessage(passwordSuccess, "Password updated successfully.");
+    setMessage(passwordSuccess, notificationMessage);
   } catch (error) {
     setMessage(passwordError, error?.message || "Unable to change password. Please try again.");
   } finally {
@@ -383,6 +478,35 @@ function bindFormHandlers() {
     profileUpdateForm.addEventListener("submit", handleProfileUpdate);
   }
 
+  if (updatePhotoInput && updatePhotoInput.dataset.bound !== "true") {
+    updatePhotoInput.dataset.bound = "true";
+    updatePhotoInput.addEventListener("change", () => {
+      setFieldError(updatePhotoInput, updatePhotoError, "");
+      setMessage(profileUpdateError, "");
+      setMessage(profileUpdateSuccess, "");
+
+      const selectedImage = updatePhotoInput.files?.[0] || null;
+      if (!selectedImage) {
+        clearObjectPreviewUrl();
+        syncProfilePhotoPreview(persistedProfilePhotoUrl || resolvePhotoUrl(currentUser));
+        return;
+      }
+
+      const validationMessage = validateProfileImageFile(selectedImage);
+      if (validationMessage) {
+        setFieldError(updatePhotoInput, updatePhotoError, validationMessage);
+        updatePhotoInput.value = "";
+        clearObjectPreviewUrl();
+        syncProfilePhotoPreview(persistedProfilePhotoUrl || resolvePhotoUrl(currentUser));
+        return;
+      }
+
+      clearObjectPreviewUrl();
+      pendingPreviewObjectUrl = URL.createObjectURL(selectedImage);
+      syncProfilePhotoPreview(pendingPreviewObjectUrl);
+    });
+  }
+
   if (passwordForm && passwordForm.dataset.bound !== "true") {
     passwordForm.dataset.bound = "true";
     passwordForm.addEventListener("submit", handlePasswordChange);
@@ -405,6 +529,11 @@ function bindFormHandlers() {
         alert(error?.message || "Unable to logout right now.");
       }
     });
+  }
+
+  if (document.body && document.body.dataset.profileCleanupBound !== "true") {
+    document.body.dataset.profileCleanupBound = "true";
+    window.addEventListener("beforeunload", clearObjectPreviewUrl);
   }
 }
 

@@ -1,64 +1,71 @@
-import {
-  doc,
-  getDoc,
-  serverTimestamp,
-  updateDoc,
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes,
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-import { auth, db, storage } from "./firebase-config.js";
-import { checkAuth } from "./auth-guard.js";
-import { logout, updateCurrentUserPassword } from "./auth.js";
-import { initAuthNavbar } from "./navbar-auth.js";
-import { notifyPasswordChanged } from "./password-notification.js";
-
-const profileName = document.getElementById("profile-name");
-const profileEmail = document.getElementById("profile-email");
-const profilePhoto = document.getElementById("profile-photo");
-const profileJoined = document.getElementById("profile-joined");
-
-const profileUpdateForm = document.getElementById("profile-update-form");
-const updateNameInput = document.getElementById("update-name");
-const updatePhotoInput = document.getElementById("update-photo");
-const profileUpdateSubmit = document.getElementById("profile-update-submit");
-const profileUpdateSuccess = document.getElementById("profile-update-success");
-const profileUpdateError = document.getElementById("profile-update-error");
-const updateNameError = document.getElementById("update-name-error");
-const updatePhotoError = document.getElementById("update-photo-error");
-const updatePhotoPreview = document.getElementById("update-photo-preview");
-
-const passwordForm = document.getElementById("password-change-form");
-const currentPasswordInput = document.getElementById("current-password");
-const newPasswordInput = document.getElementById("new-password");
-const confirmPasswordInput = document.getElementById("confirm-password");
-const passwordSubmit = document.getElementById("password-change-submit");
-const passwordSuccess = document.getElementById("password-change-success");
-const passwordError = document.getElementById("password-change-error");
-const currentPasswordError = document.getElementById("current-password-error");
-const newPasswordError = document.getElementById("new-password-error");
-const confirmPasswordError = document.getElementById("confirm-password-error");
-const profileLogoutBtn = document.getElementById("profile-logout-btn");
-const accountSettingsTrigger = document.getElementById("account-settings-trigger");
-const accountSettingsModal = document.getElementById("account-settings-modal");
-const accountSettingsOverlay = document.getElementById("account-settings-overlay");
-const accountSettingsClose = document.getElementById("account-settings-close");
-const accountSettingsOptions = document.getElementById("account-settings-options");
-const profileFormPanel = document.getElementById("profile-form-panel");
-const passwordFormPanel = document.getElementById("password-form-panel");
-const openProfileUpdateBtn = document.getElementById("open-profile-update");
-const openPasswordChangeBtn = document.getElementById("open-password-change");
-const profileModalBack = document.getElementById("profile-modal-back");
-const passwordModalBack = document.getElementById("password-modal-back");
-
-let currentUser = null;
-let pendingPreviewObjectUrl = "";
-let persistedProfilePhotoUrl = "";
-
 const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
+
+const localState = window.vgUserStore?.getLocalState?.() || {
+  favorites: [],
+  wishlist: [],
+  compare: [],
+  darkMode: true,
+};
+
+const state = {
+  favorites: new Set(localState.favorites || []),
+  wishlist: new Set(localState.wishlist || []),
+  compare: new Set(localState.compare || []),
+  currentUser: null,
+  pendingPreviewObjectUrl: "",
+  persistedProfilePhotoUrl: "",
+  modules: null,
+};
+
+const elements = {
+  profileName: document.getElementById("profile-name"),
+  profileId: document.getElementById("profile-id"),
+  profileEmail: document.getElementById("profile-email"),
+  profilePhoto: document.getElementById("profile-photo"),
+  profileJoined: document.getElementById("profile-joined"),
+  profileFavoritesCount: document.getElementById("profile-favorites-count"),
+  profileWishlistCount: document.getElementById("profile-wishlist-count"),
+  profileCompareCount: document.getElementById("profile-compare-count"),
+  profileGarageHighlight: document.getElementById("profile-garage-highlight"),
+
+  profileUpdateForm: document.getElementById("profile-update-form"),
+  updateNameInput: document.getElementById("update-name"),
+  updatePhotoInput: document.getElementById("update-photo"),
+  profileUpdateSubmit: document.getElementById("profile-update-submit"),
+  profileUpdateSuccess: document.getElementById("profile-update-success"),
+  profileUpdateError: document.getElementById("profile-update-error"),
+  updateNameError: document.getElementById("update-name-error"),
+  updatePhotoError: document.getElementById("update-photo-error"),
+  updatePhotoPreview: document.getElementById("update-photo-preview"),
+
+  passwordForm: document.getElementById("password-change-form"),
+  currentPasswordInput: document.getElementById("current-password"),
+  newPasswordInput: document.getElementById("new-password"),
+  confirmPasswordInput: document.getElementById("confirm-password"),
+  passwordSubmit: document.getElementById("password-change-submit"),
+  passwordSuccess: document.getElementById("password-change-success"),
+  passwordError: document.getElementById("password-change-error"),
+  currentPasswordError: document.getElementById("current-password-error"),
+  newPasswordError: document.getElementById("new-password-error"),
+  confirmPasswordError: document.getElementById("confirm-password-error"),
+
+  profileLogoutBtn: document.getElementById("profile-logout-btn"),
+  accountSettingsTrigger: document.getElementById("account-settings-trigger"),
+  accountSettingsModal: document.getElementById("account-settings-modal"),
+  accountSettingsOverlay: document.getElementById("account-settings-overlay"),
+  accountSettingsClose: document.getElementById("account-settings-close"),
+  accountSettingsOptions: document.getElementById("account-settings-options"),
+  profileFormPanel: document.getElementById("profile-form-panel"),
+  passwordFormPanel: document.getElementById("password-form-panel"),
+  openProfileUpdateBtn: document.getElementById("open-profile-update"),
+  openPasswordChangeBtn: document.getElementById("open-password-change"),
+  profileModalBack: document.getElementById("profile-modal-back"),
+  passwordModalBack: document.getElementById("password-modal-back"),
+  pageLoading: document.getElementById("page-loading"),
+  notification: document.getElementById("notification"),
+};
+
+let notificationTimer = null;
 
 function fallbackAvatar(name = "Driver") {
   const safeName = encodeURIComponent(name || "Driver");
@@ -71,15 +78,15 @@ function resolvePhotoUrl(user, userData = null) {
 }
 
 function syncProfilePhotoPreview(src) {
-  const nextSrc = src || fallbackAvatar(currentUser?.displayName || "Driver");
-  if (profilePhoto) profilePhoto.src = nextSrc;
-  if (updatePhotoPreview) updatePhotoPreview.src = nextSrc;
+  const nextSrc = src || fallbackAvatar(state.currentUser?.displayName || "Driver");
+  if (elements.profilePhoto) elements.profilePhoto.src = nextSrc;
+  if (elements.updatePhotoPreview) elements.updatePhotoPreview.src = nextSrc;
 }
 
 function clearObjectPreviewUrl() {
-  if (!pendingPreviewObjectUrl) return;
-  URL.revokeObjectURL(pendingPreviewObjectUrl);
-  pendingPreviewObjectUrl = "";
+  if (!state.pendingPreviewObjectUrl) return;
+  URL.revokeObjectURL(state.pendingPreviewObjectUrl);
+  state.pendingPreviewObjectUrl = "";
 }
 
 function validateProfileImageFile(file) {
@@ -94,77 +101,6 @@ function validateProfileImageFile(file) {
   }
 
   return "";
-}
-
-async function uploadProfileImage(uid, file) {
-  const imageRef = ref(storage, `users/${uid}/profile.jpg`);
-  await uploadBytes(imageRef, file, {
-    contentType: file.type || "image/jpeg",
-    cacheControl: "public,max-age=3600",
-  });
-  return getDownloadURL(imageRef);
-}
-
-function formatJoinDate(value) {
-  if (!value) return "Joined recently";
-
-  const rawDate = typeof value.toDate === "function" ? value.toDate() : new Date(value);
-  if (Number.isNaN(rawDate.getTime())) return "Joined recently";
-
-  const diffMs = Date.now() - rawDate.getTime();
-  if (diffMs < 0) return "Joined recently";
-
-  const day = 24 * 60 * 60 * 1000;
-  const month = 30 * day;
-  const year = 365 * day;
-
-  if (diffMs < day) return "Joined today";
-
-  if (diffMs >= year) {
-    const years = Math.floor(diffMs / year);
-    return `Joined ${years} year${years > 1 ? "s" : ""} ago`;
-  }
-
-  if (diffMs >= month) {
-    const months = Math.floor(diffMs / month);
-    return `Joined ${months} month${months > 1 ? "s" : ""} ago`;
-  }
-
-  const days = Math.floor(diffMs / day);
-  return `Joined ${days} day${days > 1 ? "s" : ""} ago`;
-}
-
-async function initProfile() {
-  const user = await checkAuth();
-  currentUser = user;
-  initAuthNavbar();
-  window.vgUserStore?.bindThemeToggle?.();
-
-  profileName.textContent = user.displayName || "Velocity Driver";
-  profileEmail.textContent = user.email || "No email";
-  persistedProfilePhotoUrl = resolvePhotoUrl(user);
-  syncProfilePhotoPreview(persistedProfilePhotoUrl);
-
-  if (updateNameInput) updateNameInput.value = user.displayName || "";
-
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-  if (!userSnap.exists()) {
-    profileJoined.textContent = "Joined recently";
-    bindFormHandlers();
-    return;
-  }
-
-  const data = userSnap.data();
-  persistedProfilePhotoUrl = resolvePhotoUrl(user, data);
-  syncProfilePhotoPreview(persistedProfilePhotoUrl);
-
-  if (updateNameInput && data?.name && !updateNameInput.value) {
-    updateNameInput.value = data.name;
-  }
-
-  profileJoined.textContent = formatJoinDate(data.createdAt);
-  bindFormHandlers();
 }
 
 function setMessage(element, message = "") {
@@ -195,30 +131,170 @@ function setFieldError(input, errorNode, message = "") {
   input.setAttribute("aria-invalid", "true");
 }
 
-function setProfileLoading(isLoading, loadingText = "Saving...") {
-  if (!profileUpdateSubmit) return;
+function showNotification(message, tone = "default") {
+  if (!elements.notification) return;
 
-  if (!profileUpdateSubmit.dataset.defaultText) {
-    profileUpdateSubmit.dataset.defaultText = profileUpdateSubmit.textContent;
+  elements.notification.textContent = message;
+  elements.notification.classList.remove("hidden");
+  elements.notification.classList.remove("border-red-500/60", "border-emerald-500/60", "text-red-200", "text-emerald-200");
+
+  if (tone === "success") {
+    elements.notification.classList.add("border-emerald-500/60", "text-emerald-200");
+  } else if (tone === "error") {
+    elements.notification.classList.add("border-red-500/60", "text-red-200");
   }
 
-  profileUpdateSubmit.disabled = isLoading;
-  profileUpdateSubmit.textContent = isLoading
+  if (notificationTimer) clearTimeout(notificationTimer);
+  notificationTimer = setTimeout(() => {
+    elements.notification?.classList.add("hidden");
+  }, 1900);
+}
+
+function setProfileLoading(isLoading, loadingText = "Saving...") {
+  if (!elements.profileUpdateSubmit) return;
+
+  if (!elements.profileUpdateSubmit.dataset.defaultText) {
+    elements.profileUpdateSubmit.dataset.defaultText = elements.profileUpdateSubmit.textContent;
+  }
+
+  elements.profileUpdateSubmit.disabled = isLoading;
+  elements.profileUpdateSubmit.textContent = isLoading
     ? loadingText
-    : profileUpdateSubmit.dataset.defaultText || "Save Profile";
+    : elements.profileUpdateSubmit.dataset.defaultText || "Save Changes";
 }
 
 function setPasswordLoading(isLoading) {
-  if (!passwordSubmit) return;
+  if (!elements.passwordSubmit) return;
 
-  if (!passwordSubmit.dataset.defaultText) {
-    passwordSubmit.dataset.defaultText = passwordSubmit.textContent;
+  if (!elements.passwordSubmit.dataset.defaultText) {
+    elements.passwordSubmit.dataset.defaultText = elements.passwordSubmit.textContent;
   }
 
-  passwordSubmit.disabled = isLoading;
-  passwordSubmit.textContent = isLoading
+  elements.passwordSubmit.disabled = isLoading;
+  elements.passwordSubmit.textContent = isLoading
     ? "Updating..."
-    : passwordSubmit.dataset.defaultText || "Update Password";
+    : elements.passwordSubmit.dataset.defaultText || "Save Changes";
+}
+
+function formatMemberSince(value) {
+  if (!value) return "MEMBER SINCE RECENTLY";
+
+  const rawDate = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+  if (Number.isNaN(rawDate.getTime())) return "MEMBER SINCE RECENTLY";
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+
+  return `MEMBER SINCE ${formatter.format(rawDate).toUpperCase()}`;
+}
+
+function shortUserId(uid = "") {
+  if (!uid) return "VEL-0000-000";
+  const clean = uid.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  return `VEL-${clean.slice(0, 4) || "0000"}-${clean.slice(4, 8) || "000"}`;
+}
+
+function syncSetsFromRemote(remote = {}) {
+  state.favorites = new Set(remote.favorites || []);
+  state.wishlist = new Set(remote.wishlist || []);
+  state.compare = new Set(remote.compare || []);
+  renderGarageMetrics();
+}
+
+function renderGarageMetrics() {
+  if (elements.profileFavoritesCount) {
+    elements.profileFavoritesCount.textContent = String(state.favorites.size);
+  }
+
+  if (elements.profileWishlistCount) {
+    elements.profileWishlistCount.textContent = String(state.wishlist.size);
+  }
+
+  if (elements.profileCompareCount) {
+    elements.profileCompareCount.textContent = `${state.compare.size}/3`;
+  }
+
+  const candidateIds = [
+    ...state.favorites,
+    ...state.wishlist,
+    ...state.compare,
+  ];
+  const leadCar = candidateIds.map((id) => getCarFromRuntime(id)).find(Boolean);
+
+  if (elements.profileGarageHighlight) {
+    elements.profileGarageHighlight.textContent = leadCar
+      ? `Garage Lead: ${leadCar.brand} ${leadCar.name}`
+      : "Garage Lead: N/A";
+  }
+}
+
+function getCarFromRuntime(id) {
+  const numericId = Number(id);
+  if (!Number.isFinite(numericId)) return null;
+
+  if (typeof window.getCarById === "function") {
+    return window.getCarById(numericId);
+  }
+
+  if (!Array.isArray(window.cars)) return null;
+  return window.cars.find((car) => Number(car?.id) === numericId) || null;
+}
+
+function clearProfileErrors() {
+  setFieldError(elements.updateNameInput, elements.updateNameError, "");
+  setFieldError(elements.updatePhotoInput, elements.updatePhotoError, "");
+  setMessage(elements.profileUpdateError, "");
+  setMessage(elements.profileUpdateSuccess, "");
+}
+
+function clearPasswordErrors() {
+  setFieldError(elements.currentPasswordInput, elements.currentPasswordError, "");
+  setFieldError(elements.newPasswordInput, elements.newPasswordError, "");
+  setFieldError(elements.confirmPasswordInput, elements.confirmPasswordError, "");
+  setMessage(elements.passwordError, "");
+  setMessage(elements.passwordSuccess, "");
+}
+
+function hideAccountSettingsPanels() {
+  elements.accountSettingsOptions?.classList.add("hidden");
+  elements.profileFormPanel?.classList.add("hidden");
+  elements.passwordFormPanel?.classList.add("hidden");
+}
+
+function showAccountOptions() {
+  hideAccountSettingsPanels();
+  elements.accountSettingsOptions?.classList.remove("hidden");
+}
+
+function showProfilePanel() {
+  hideAccountSettingsPanels();
+  elements.profileFormPanel?.classList.remove("hidden");
+}
+
+function showPasswordPanel() {
+  hideAccountSettingsPanels();
+  elements.passwordFormPanel?.classList.remove("hidden");
+}
+
+function openAccountSettingsModal() {
+  if (!elements.accountSettingsModal) return;
+
+  showAccountOptions();
+  elements.accountSettingsModal.classList.remove("hidden");
+  elements.accountSettingsModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("overflow-hidden");
+}
+
+function closeAccountSettingsModal() {
+  if (!elements.accountSettingsModal) return;
+
+  elements.accountSettingsModal.classList.add("hidden");
+  elements.accountSettingsModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("overflow-hidden");
+
+  showAccountOptions();
 }
 
 function firstNameFromName(value = "") {
@@ -227,115 +303,131 @@ function firstNameFromName(value = "") {
   return trimmed.split(/\s+/)[0];
 }
 
-function clearProfileErrors() {
-  setFieldError(updateNameInput, updateNameError, "");
-  setFieldError(updatePhotoInput, updatePhotoError, "");
-  setMessage(profileUpdateError, "");
-  setMessage(profileUpdateSuccess, "");
+async function loadModules() {
+  if (state.modules) return state.modules;
+
+  const [
+    firestoreModule,
+    authSdkModule,
+    storageModule,
+    firebaseConfigModule,
+    authModule,
+    passwordNotificationModule,
+  ] = await Promise.all([
+    import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"),
+    import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"),
+    import("https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"),
+    import("/js/firebase-config.js"),
+    import("/js/auth.js"),
+    import("/js/password-notification.js"),
+  ]);
+
+  state.modules = {
+    firestore: {
+      doc: firestoreModule.doc,
+      getDoc: firestoreModule.getDoc,
+      updateDoc: firestoreModule.updateDoc,
+      serverTimestamp: firestoreModule.serverTimestamp,
+    },
+    authSdk: {
+      updateProfile: authSdkModule.updateProfile,
+    },
+    storageSdk: {
+      getDownloadURL: storageModule.getDownloadURL,
+      ref: storageModule.ref,
+      uploadBytes: storageModule.uploadBytes,
+    },
+    firebase: {
+      auth: firebaseConfigModule.auth,
+      db: firebaseConfigModule.db,
+      storage: firebaseConfigModule.storage,
+    },
+    authModule: {
+      logout: authModule.logout,
+      updateCurrentUserPassword: authModule.updateCurrentUserPassword,
+    },
+    notifications: {
+      notifyPasswordChanged: passwordNotificationModule.notifyPasswordChanged,
+    },
+  };
+
+  return state.modules;
 }
 
-function clearPasswordErrors() {
-  setFieldError(currentPasswordInput, currentPasswordError, "");
-  setFieldError(newPasswordInput, newPasswordError, "");
-  setFieldError(confirmPasswordInput, confirmPasswordError, "");
-  setMessage(passwordError, "");
-  setMessage(passwordSuccess, "");
-}
+async function uploadProfileImage(uid, file) {
+  const modules = await loadModules();
+  const imageRef = modules.storageSdk.ref(modules.firebase.storage, `users/${uid}/profile.jpg`);
 
-function hideAccountSettingsPanels() {
-  accountSettingsOptions?.classList.add("hidden");
-  profileFormPanel?.classList.add("hidden");
-  passwordFormPanel?.classList.add("hidden");
-}
+  await modules.storageSdk.uploadBytes(imageRef, file, {
+    contentType: file.type || "image/jpeg",
+    cacheControl: "public,max-age=3600",
+  });
 
-function showAccountOptions() {
-  hideAccountSettingsPanels();
-  accountSettingsOptions?.classList.remove("hidden");
-}
-
-function showProfilePanel() {
-  hideAccountSettingsPanels();
-  profileFormPanel?.classList.remove("hidden");
-}
-
-function showPasswordPanel() {
-  hideAccountSettingsPanels();
-  passwordFormPanel?.classList.remove("hidden");
-}
-
-function openAccountSettingsModal() {
-  if (!accountSettingsModal) return;
-  showAccountOptions();
-  accountSettingsModal.classList.remove("hidden");
-  accountSettingsModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("overflow-hidden");
-}
-
-function closeAccountSettingsModal() {
-  if (!accountSettingsModal) return;
-  accountSettingsModal.classList.add("hidden");
-  accountSettingsModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("overflow-hidden");
-  showAccountOptions();
+  return modules.storageSdk.getDownloadURL(imageRef);
 }
 
 async function handleProfileUpdate(event) {
   event.preventDefault();
   clearProfileErrors();
 
-  const user = auth.currentUser;
-  if (!user?.uid || !currentUser?.uid || user.uid !== currentUser.uid) {
-    setMessage(profileUpdateError, "Session expired. Please log in again.");
+  const modules = await loadModules();
+  const user = modules.firebase.auth.currentUser;
+
+  if (!user?.uid || !state.currentUser?.uid || user.uid !== state.currentUser.uid) {
+    setMessage(elements.profileUpdateError, "Session expired. Please log in again.");
+    showNotification("Session expired. Please log in again.", "error");
     return;
   }
 
-  const name = (updateNameInput?.value || "").trim();
-  const selectedImage = updatePhotoInput?.files?.[0] || null;
+  const name = (elements.updateNameInput?.value || "").trim();
+  const selectedImage = elements.updatePhotoInput?.files?.[0] || null;
 
   let hasError = false;
+
   if (!name || name.length < 2) {
-    setFieldError(updateNameInput, updateNameError, "Name must be at least 2 characters.");
+    setFieldError(elements.updateNameInput, elements.updateNameError, "Name must be at least 2 characters.");
     hasError = true;
   }
 
   if (name.length > 80) {
-    setFieldError(updateNameInput, updateNameError, "Name cannot exceed 80 characters.");
+    setFieldError(elements.updateNameInput, elements.updateNameError, "Name cannot exceed 80 characters.");
     hasError = true;
   }
 
   const imageError = validateProfileImageFile(selectedImage);
   if (imageError) {
-    setFieldError(updatePhotoInput, updatePhotoError, imageError);
+    setFieldError(elements.updatePhotoInput, elements.updatePhotoError, imageError);
     hasError = true;
   }
 
   if (hasError) return;
 
   setProfileLoading(true, selectedImage ? "Uploading image..." : "Saving...");
+
   try {
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+    const userRef = modules.firestore.doc(modules.firebase.db, "users", user.uid);
+    const userSnap = await modules.firestore.getDoc(userRef);
+
     if (!userSnap.exists()) {
       throw new Error("User profile record is missing. Please sign out and sign in again.");
     }
 
     const existingData = userSnap.data() || {};
-
     let photoUrl = user.photoURL || "";
+
     if (selectedImage) {
       photoUrl = await uploadProfileImage(user.uid, selectedImage);
     }
 
     const nextPhoto = photoUrl || user.photoURL || "";
 
-    // Keep Firebase Auth profile and Firestore profile in sync.
-    await updateProfile(user, {
+    await modules.authSdk.updateProfile(user, {
       displayName: name,
       photoURL: nextPhoto,
     });
 
     const updates = {
-      updatedAt: serverTimestamp(),
+      updatedAt: modules.firestore.serverTimestamp(),
     };
 
     if (name !== (existingData.name || "")) {
@@ -352,20 +444,24 @@ async function handleProfileUpdate(event) {
       updates.profileImage = nextPhoto;
     }
 
-    await updateDoc(userRef, updates);
+    await modules.firestore.updateDoc(userRef, updates);
 
-    profileName.textContent = name;
-    persistedProfilePhotoUrl = nextPhoto || fallbackAvatar(name || "Driver");
-    syncProfilePhotoPreview(persistedProfilePhotoUrl);
+    if (elements.profileName) elements.profileName.textContent = name;
 
-    if (selectedImage && updatePhotoInput) {
-      updatePhotoInput.value = "";
+    state.persistedProfilePhotoUrl = nextPhoto || fallbackAvatar(name || "Driver");
+    syncProfilePhotoPreview(state.persistedProfilePhotoUrl);
+
+    if (selectedImage && elements.updatePhotoInput) {
+      elements.updatePhotoInput.value = "";
       clearObjectPreviewUrl();
     }
 
-    setMessage(profileUpdateSuccess, "Profile updated successfully.");
+    setMessage(elements.profileUpdateSuccess, "Profile updated successfully.");
+    showNotification("Profile updated successfully.", "success");
   } catch (error) {
-    setMessage(profileUpdateError, error?.message || "Unable to update profile. Please try again.");
+    const message = error?.message || "Unable to update profile. Please try again.";
+    setMessage(elements.profileUpdateError, message);
+    showNotification(message, "error");
   } finally {
     setProfileLoading(false);
   }
@@ -375,158 +471,165 @@ async function handlePasswordChange(event) {
   event.preventDefault();
   clearPasswordErrors();
 
-  const currentPassword = currentPasswordInput?.value || "";
-  const newPassword = newPasswordInput?.value || "";
-  const confirmPassword = confirmPasswordInput?.value || "";
+  const modules = await loadModules();
+
+  const currentPassword = elements.currentPasswordInput?.value || "";
+  const newPassword = elements.newPasswordInput?.value || "";
+  const confirmPassword = elements.confirmPasswordInput?.value || "";
 
   let hasError = false;
+
   if (!currentPassword) {
-    setFieldError(currentPasswordInput, currentPasswordError, "Current password is required.");
+    setFieldError(elements.currentPasswordInput, elements.currentPasswordError, "Current password is required.");
     hasError = true;
   }
 
   if (!newPassword || newPassword.length < 6) {
-    setFieldError(newPasswordInput, newPasswordError, "New password must be at least 6 characters.");
+    setFieldError(elements.newPasswordInput, elements.newPasswordError, "New password must be at least 6 characters.");
     hasError = true;
   }
 
   if (confirmPassword !== newPassword) {
-    setFieldError(confirmPasswordInput, confirmPasswordError, "Passwords do not match.");
+    setFieldError(elements.confirmPasswordInput, elements.confirmPasswordError, "Passwords do not match.");
     hasError = true;
   }
 
   if (currentPassword && newPassword && currentPassword === newPassword) {
-    setFieldError(newPasswordInput, newPasswordError, "New password must be different from current password.");
+    setFieldError(elements.newPasswordInput, elements.newPasswordError, "New password must be different from current password.");
     hasError = true;
   }
 
   if (hasError) return;
 
   setPasswordLoading(true);
+
   try {
-    // Helper enforces re-authentication before password update.
-    await updateCurrentUserPassword({ currentPassword, newPassword });
+    await modules.authModule.updateCurrentUserPassword({ currentPassword, newPassword });
 
     let notificationMessage = "Password updated successfully. A confirmation email has been sent.";
     try {
-      await notifyPasswordChanged({
-        email: auth.currentUser?.email || "",
+      await modules.notifications.notifyPasswordChanged({
+        email: modules.firebase.auth.currentUser?.email || "",
         source: "profile-password-change",
       });
     } catch (notificationError) {
       console.error("[Password Notification] Failed after in-app password change", notificationError);
-      notificationMessage =
-        "Password updated successfully, but confirmation email could not be sent right now.";
+      notificationMessage = "Password updated successfully, but confirmation email could not be sent right now.";
     }
 
-    passwordForm?.reset();
-    setMessage(passwordSuccess, notificationMessage);
+    elements.passwordForm?.reset();
+    setMessage(elements.passwordSuccess, notificationMessage);
+    showNotification("Password updated.", "success");
   } catch (error) {
-    setMessage(passwordError, error?.message || "Unable to change password. Please try again.");
+    const message = error?.message || "Unable to change password. Please try again.";
+    setMessage(elements.passwordError, message);
+    showNotification(message, "error");
   } finally {
     setPasswordLoading(false);
   }
 }
 
 function bindFormHandlers() {
-  if (accountSettingsTrigger && accountSettingsTrigger.dataset.bound !== "true") {
-    accountSettingsTrigger.dataset.bound = "true";
-    accountSettingsTrigger.addEventListener("click", openAccountSettingsModal);
+  if (elements.accountSettingsTrigger && elements.accountSettingsTrigger.dataset.bound !== "true") {
+    elements.accountSettingsTrigger.dataset.bound = "true";
+    elements.accountSettingsTrigger.addEventListener("click", openAccountSettingsModal);
   }
 
-  if (accountSettingsClose && accountSettingsClose.dataset.bound !== "true") {
-    accountSettingsClose.dataset.bound = "true";
-    accountSettingsClose.addEventListener("click", closeAccountSettingsModal);
+  if (elements.accountSettingsClose && elements.accountSettingsClose.dataset.bound !== "true") {
+    elements.accountSettingsClose.dataset.bound = "true";
+    elements.accountSettingsClose.addEventListener("click", closeAccountSettingsModal);
   }
 
-  if (accountSettingsOverlay && accountSettingsOverlay.dataset.bound !== "true") {
-    accountSettingsOverlay.dataset.bound = "true";
-    accountSettingsOverlay.addEventListener("click", closeAccountSettingsModal);
+  if (elements.accountSettingsOverlay && elements.accountSettingsOverlay.dataset.bound !== "true") {
+    elements.accountSettingsOverlay.dataset.bound = "true";
+    elements.accountSettingsOverlay.addEventListener("click", closeAccountSettingsModal);
   }
 
-  if (openProfileUpdateBtn && openProfileUpdateBtn.dataset.bound !== "true") {
-    openProfileUpdateBtn.dataset.bound = "true";
-    openProfileUpdateBtn.addEventListener("click", showProfilePanel);
+  if (elements.openProfileUpdateBtn && elements.openProfileUpdateBtn.dataset.bound !== "true") {
+    elements.openProfileUpdateBtn.dataset.bound = "true";
+    elements.openProfileUpdateBtn.addEventListener("click", showProfilePanel);
   }
 
-  if (openPasswordChangeBtn && openPasswordChangeBtn.dataset.bound !== "true") {
-    openPasswordChangeBtn.dataset.bound = "true";
-    openPasswordChangeBtn.addEventListener("click", showPasswordPanel);
+  if (elements.openPasswordChangeBtn && elements.openPasswordChangeBtn.dataset.bound !== "true") {
+    elements.openPasswordChangeBtn.dataset.bound = "true";
+    elements.openPasswordChangeBtn.addEventListener("click", showPasswordPanel);
   }
 
-  if (profileModalBack && profileModalBack.dataset.bound !== "true") {
-    profileModalBack.dataset.bound = "true";
-    profileModalBack.addEventListener("click", showAccountOptions);
+  if (elements.profileModalBack && elements.profileModalBack.dataset.bound !== "true") {
+    elements.profileModalBack.dataset.bound = "true";
+    elements.profileModalBack.addEventListener("click", showAccountOptions);
   }
 
-  if (passwordModalBack && passwordModalBack.dataset.bound !== "true") {
-    passwordModalBack.dataset.bound = "true";
-    passwordModalBack.addEventListener("click", showAccountOptions);
+  if (elements.passwordModalBack && elements.passwordModalBack.dataset.bound !== "true") {
+    elements.passwordModalBack.dataset.bound = "true";
+    elements.passwordModalBack.addEventListener("click", showAccountOptions);
   }
 
-  if (accountSettingsModal && accountSettingsModal.dataset.bound !== "true") {
-    accountSettingsModal.dataset.bound = "true";
+  if (elements.accountSettingsModal && elements.accountSettingsModal.dataset.bound !== "true") {
+    elements.accountSettingsModal.dataset.bound = "true";
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !accountSettingsModal.classList.contains("hidden")) {
+      if (event.key === "Escape" && !elements.accountSettingsModal.classList.contains("hidden")) {
         closeAccountSettingsModal();
       }
     });
   }
 
-  if (profileUpdateForm && profileUpdateForm.dataset.bound !== "true") {
-    profileUpdateForm.dataset.bound = "true";
-    profileUpdateForm.addEventListener("submit", handleProfileUpdate);
+  if (elements.profileUpdateForm && elements.profileUpdateForm.dataset.bound !== "true") {
+    elements.profileUpdateForm.dataset.bound = "true";
+    elements.profileUpdateForm.addEventListener("submit", handleProfileUpdate);
   }
 
-  if (updatePhotoInput && updatePhotoInput.dataset.bound !== "true") {
-    updatePhotoInput.dataset.bound = "true";
-    updatePhotoInput.addEventListener("change", () => {
-      setFieldError(updatePhotoInput, updatePhotoError, "");
-      setMessage(profileUpdateError, "");
-      setMessage(profileUpdateSuccess, "");
+  if (elements.updatePhotoInput && elements.updatePhotoInput.dataset.bound !== "true") {
+    elements.updatePhotoInput.dataset.bound = "true";
+    elements.updatePhotoInput.addEventListener("change", () => {
+      setFieldError(elements.updatePhotoInput, elements.updatePhotoError, "");
+      setMessage(elements.profileUpdateError, "");
+      setMessage(elements.profileUpdateSuccess, "");
 
-      const selectedImage = updatePhotoInput.files?.[0] || null;
+      const selectedImage = elements.updatePhotoInput.files?.[0] || null;
       if (!selectedImage) {
         clearObjectPreviewUrl();
-        syncProfilePhotoPreview(persistedProfilePhotoUrl || resolvePhotoUrl(currentUser));
+        syncProfilePhotoPreview(state.persistedProfilePhotoUrl || resolvePhotoUrl(state.currentUser));
         return;
       }
 
       const validationMessage = validateProfileImageFile(selectedImage);
       if (validationMessage) {
-        setFieldError(updatePhotoInput, updatePhotoError, validationMessage);
-        updatePhotoInput.value = "";
+        setFieldError(elements.updatePhotoInput, elements.updatePhotoError, validationMessage);
+        elements.updatePhotoInput.value = "";
         clearObjectPreviewUrl();
-        syncProfilePhotoPreview(persistedProfilePhotoUrl || resolvePhotoUrl(currentUser));
+        syncProfilePhotoPreview(state.persistedProfilePhotoUrl || resolvePhotoUrl(state.currentUser));
         return;
       }
 
       clearObjectPreviewUrl();
-      pendingPreviewObjectUrl = URL.createObjectURL(selectedImage);
-      syncProfilePhotoPreview(pendingPreviewObjectUrl);
+      state.pendingPreviewObjectUrl = URL.createObjectURL(selectedImage);
+      syncProfilePhotoPreview(state.pendingPreviewObjectUrl);
     });
   }
 
-  if (passwordForm && passwordForm.dataset.bound !== "true") {
-    passwordForm.dataset.bound = "true";
-    passwordForm.addEventListener("submit", handlePasswordChange);
+  if (elements.passwordForm && elements.passwordForm.dataset.bound !== "true") {
+    elements.passwordForm.dataset.bound = "true";
+    elements.passwordForm.addEventListener("submit", handlePasswordChange);
   }
 
-  if (profileLogoutBtn && profileLogoutBtn.dataset.bound !== "true") {
-    profileLogoutBtn.dataset.bound = "true";
-    profileLogoutBtn.addEventListener("click", async () => {
-      profileLogoutBtn.disabled = true;
-      if (!profileLogoutBtn.dataset.defaultText) {
-        profileLogoutBtn.dataset.defaultText = profileLogoutBtn.textContent;
+  if (elements.profileLogoutBtn && elements.profileLogoutBtn.dataset.bound !== "true") {
+    elements.profileLogoutBtn.dataset.bound = "true";
+    elements.profileLogoutBtn.addEventListener("click", async () => {
+      const modules = await loadModules();
+
+      elements.profileLogoutBtn.disabled = true;
+      if (!elements.profileLogoutBtn.dataset.defaultText) {
+        elements.profileLogoutBtn.dataset.defaultText = elements.profileLogoutBtn.textContent;
       }
-      profileLogoutBtn.textContent = "Logging out...";
+      elements.profileLogoutBtn.textContent = "Logging out...";
 
       try {
-        await logout();
+        await modules.authModule.logout();
       } catch (error) {
-        profileLogoutBtn.disabled = false;
-        profileLogoutBtn.textContent = profileLogoutBtn.dataset.defaultText || "Logout";
-        alert(error?.message || "Unable to logout right now.");
+        elements.profileLogoutBtn.disabled = false;
+        elements.profileLogoutBtn.textContent = elements.profileLogoutBtn.dataset.defaultText || "Logout";
+        showNotification(error?.message || "Unable to logout right now.", "error");
       }
     });
   }
@@ -537,6 +640,68 @@ function bindFormHandlers() {
   }
 }
 
-initProfile().catch((error) => {
-  alert(error.message || "Unable to load profile.");
+async function loadUserDetails() {
+  const modules = await loadModules();
+
+  await window.vgUserStore?.waitForReady?.();
+  const user = window.vgUserStore?.getCurrentUser?.() || modules.firebase.auth.currentUser;
+
+  if (!user) {
+    throw new Error("Unable to resolve current user session.");
+  }
+
+  state.currentUser = user;
+
+  if (elements.profileName) elements.profileName.textContent = user.displayName || "Velocity Driver";
+  if (elements.profileId) elements.profileId.textContent = shortUserId(user.uid || "");
+  if (elements.profileEmail) elements.profileEmail.textContent = user.email || "No email";
+
+  state.persistedProfilePhotoUrl = resolvePhotoUrl(user);
+  syncProfilePhotoPreview(state.persistedProfilePhotoUrl);
+
+  if (elements.updateNameInput) {
+    elements.updateNameInput.value = user.displayName || "";
+  }
+
+  const userRef = modules.firestore.doc(modules.firebase.db, "users", user.uid);
+  const userSnap = await modules.firestore.getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    if (elements.profileJoined) elements.profileJoined.textContent = "MEMBER SINCE RECENTLY";
+    return;
+  }
+
+  const data = userSnap.data();
+
+  state.persistedProfilePhotoUrl = resolvePhotoUrl(user, data);
+  syncProfilePhotoPreview(state.persistedProfilePhotoUrl);
+
+  if (elements.updateNameInput && data?.name && !elements.updateNameInput.value) {
+    elements.updateNameInput.value = data.name;
+  }
+
+  if (elements.profileJoined) {
+    elements.profileJoined.textContent = formatMemberSince(data.createdAt);
+  }
+}
+
+async function init() {
+  await loadModules();
+  await loadUserDetails();
+
+  renderGarageMetrics();
+  bindFormHandlers();
+
+  window.vgUserStore?.bindThemeToggle?.();
+  window.vgUserStore?.subscribeUserState?.((remote) => {
+    syncSetsFromRemote(remote || {});
+  });
+
+  elements.pageLoading?.classList.add("hidden");
+}
+
+init().catch((error) => {
+  console.error("[UI Init Error] profile page failed to initialize", error);
+  showNotification(error?.message || "Unable to load profile.", "error");
+  elements.pageLoading?.classList.add("hidden");
 });

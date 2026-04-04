@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,23 +7,163 @@
   <link rel="icon" type="image/svg+xml" href="assets/images/default.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            vgBg: "#0b0b0d",
+            vgSurface: "#131319",
+            vgSurfaceAlt: "#1a1a22",
+            vgLine: "#2a2b35",
+            vgMuted: "#a7aab6",
+            vgPrimary: "#ff535d",
+            vgPrimarySoft: "#ffb3b2",
+            vgCyan: "#6cd7d8"
+          },
+          fontFamily: {
+            display: ["Space Grotesk", "sans-serif"],
+            body: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: "Plus Jakarta Sans", sans-serif; }
-    .title-font { font-family: "Bebas Neue", sans-serif; letter-spacing: .05em; }
+    body {
+      font-family: "Inter", sans-serif;
+      background:
+        radial-gradient(60% 60% at 12% 8%, rgba(255, 83, 93, 0.2), transparent 66%),
+        radial-gradient(45% 40% at 92% 78%, rgba(108, 215, 216, 0.13), transparent 74%),
+        linear-gradient(180deg, #0a0a0d 0%, #101118 68%, #0c0d12 100%);
+    }
+
+    .display-font {
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .vg-grid-overlay {
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+
+    .glass-panel {
+      background: rgba(19, 19, 25, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .theme-aware-primary-btn {
+      background: #ff535d;
+      color: #09090b;
+      transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+    }
+
+    .theme-aware-primary-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 24px rgba(255, 83, 93, 0.28);
+    }
+
+    .account-settings-shell {
+      background: #121217;
+      border-color: rgba(255, 255, 255, 0.1);
+      transition: background-color 220ms ease, border-color 220ms ease;
+    }
+
+    .settings-option-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #2a2b35;
+      background: #1a1a22;
+      transition: border-color 220ms ease, transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+    }
+
+    .settings-option-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -22% -65% auto;
+      width: 150px;
+      height: 150px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 83, 93, 0.24), transparent 70%);
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 220ms ease, transform 220ms ease;
+      pointer-events: none;
+    }
+
+    .settings-option-card:hover {
+      border-color: rgba(255, 83, 93, 0.65);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.38);
+    }
+
+    .settings-option-card:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    body.vg-light .theme-aware-primary-btn {
+      background: #0f172a;
+      color: #f8fafc;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
+    }
+
+    body.vg-light .theme-aware-primary-btn:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.22);
+    }
+
+    body.vg-light .account-settings-shell {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    body.vg-light .settings-option-card {
+      border-color: #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    body.vg-light .settings-option-card:hover {
+      border-color: #0f172a;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .status-ticker {
+      animation: vgPulse 2.6s ease-in-out infinite;
+    }
+
+    @keyframes vgPulse {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 1; }
+    }
   </style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
-  <div class="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(circle_at_10%_8%,rgba(255,91,46,0.18),transparent_30%),radial-gradient(circle_at_90%_75%,rgba(59,130,246,0.13),transparent_32%)]"></div>
+<body class="min-h-screen bg-vgBg text-white">
+  <div id="page-loading" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div class="flex items-center gap-3 rounded-xl border border-vgLine bg-vgSurface px-5 py-4 text-sm text-vgMuted">
+      <span class="h-5 w-5 animate-spin rounded-full border-2 border-vgPrimary border-t-transparent"></span>
+      Loading profile console...
+    </div>
+  </div>
 
-  <header class="sticky top-0 z-40 border-b border-white/5 bg-black/55 backdrop-blur-xl">
+  <div class="pointer-events-none fixed inset-0 -z-10 vg-grid-overlay"></div>
+
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/55 backdrop-blur-xl">
     <nav class="mx-auto grid w-full max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 md:px-8">
-      <a href="index.html" class="flex items-center">
+      <a href="home.html" class="flex items-center">
         <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
       </a>
 
-      <div class="hidden items-center justify-center gap-6 text-sm text-[#b0b4c2] md:flex">
+      <div class="hidden items-center justify-center gap-6 text-sm text-vgMuted md:flex">
         <a href="home.html" class="transition hover:text-white">Home</a>
         <a href="compare.html" class="transition hover:text-white">Compare</a>
         <a href="favorites.html" class="transition hover:text-white">Favorites</a>
@@ -35,7 +175,7 @@
       </div>
     </nav>
 
-    <div class="mx-auto flex w-full max-w-7xl items-center justify-center gap-5 overflow-x-auto px-4 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#b0b4c2] md:hidden sm:px-6">
+    <div class="mx-auto flex w-full max-w-7xl items-center justify-center gap-5 overflow-x-auto px-4 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-vgMuted md:hidden sm:px-6">
       <a href="home.html" class="whitespace-nowrap transition hover:text-white">Home</a>
       <a href="compare.html" class="whitespace-nowrap transition hover:text-white">Compare</a>
       <a href="favorites.html" class="whitespace-nowrap transition hover:text-white">Favorites</a>
@@ -43,113 +183,140 @@
     </div>
   </header>
 
-  <main class="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 md:px-8">
-    <section class="rounded-3xl border border-slate-700/80 bg-slate-900/75 p-6 shadow-2xl sm:p-8">
-      <h1 class="title-font text-5xl leading-none">Driver Profile</h1>
-      <p class="mt-2 text-sm text-slate-300">Manage your account identity and security settings.</p>
+  <main class="mx-auto w-full max-w-5xl px-4 pb-16 pt-32 sm:px-6 md:px-8 md:pt-36">
+    <section class="glass-panel rounded-2xl p-5 sm:p-7 md:p-8">
+      <div class="grid gap-5 md:grid-cols-[auto_1fr] md:items-center md:gap-8">
+        <div class="mx-auto w-full max-w-[180px] rounded-2xl border border-white/10 bg-black/40 p-4 sm:max-w-[220px]">
+          <div class="relative mx-auto w-fit">
+            <span class="absolute -inset-1 rounded-2xl bg-vgPrimary/30 blur-md"></span>
+            <img id="profile-photo" src="https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc" alt="Profile photo" class="relative h-28 w-28 rounded-xl object-cover sm:h-36 sm:w-36" referrerpolicy="no-referrer">
+          </div>
+        </div>
 
-      <div class="mt-6 grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
-        <img id="profile-photo" src="https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc" alt="Profile photo" class="h-24 w-24 rounded-full border border-slate-700 object-cover" referrerpolicy="no-referrer">
-        <div class="space-y-3">
-          <div class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3">
-            <p class="text-xs uppercase tracking-wider text-slate-400">Name</p>
-            <p id="profile-name" class="mt-1 text-lg font-semibold text-white">Loading...</p>
+        <div class="space-y-5">
+          <div>
+            <p class="display-font text-[10px] font-semibold uppercase tracking-[0.35em] text-vgPrimarySoft">Pilot Identification</p>
+            <h1 id="profile-name" class="mt-2 display-font text-4xl font-semibold leading-tight text-white sm:text-5xl">Loading...</h1>
+            <p class="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-vgMuted">ID: <span id="profile-id">VEL-0000-000</span></p>
           </div>
-          <div class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3">
-            <p class="text-xs uppercase tracking-wider text-slate-400">Email</p>
-            <p id="profile-email" class="mt-1 text-sm text-slate-200">Loading...</p>
-          </div>
-          <div class="rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3">
-            <p class="text-xs uppercase tracking-wider text-slate-400">Joined</p>
-            <p id="profile-joined" class="mt-1 text-sm text-slate-200">Loading...</p>
+
+          <div class="grid gap-4 border-t border-white/10 pt-4 sm:grid-cols-2">
+            <article>
+              <p class="display-font text-[10px] font-semibold uppercase tracking-[0.28em] text-vgMuted">Digital Address</p>
+              <p id="profile-email" class="mt-1 text-sm font-semibold text-white">Loading...</p>
+            </article>
+            <article>
+              <p class="display-font text-[10px] font-semibold uppercase tracking-[0.28em] text-vgMuted">Registry Status</p>
+              <p id="profile-joined" class="mt-1 text-lg font-semibold uppercase tracking-wide text-white">Loading...</p>
+            </article>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="mt-8 grid gap-6">
-        <section class="rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
-          <h2 class="text-lg font-semibold">Account Session</h2>
-          <p class="mt-1 text-sm text-slate-400">Use account settings to manage profile details and password, or log out securely.</p>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <button id="account-settings-trigger" type="button" class="rounded-lg bg-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-white">
-              Account Settings
-            </button>
-            <button id="profile-logout-btn" type="button" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-70">
-              Logout
-            </button>
-          </div>
-        </section>
+    <section class="mt-5 glass-panel rounded-2xl p-5 sm:p-7 md:p-8">
+      <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div class="max-w-xl">
+          <h2 class="display-font text-2xl font-semibold uppercase tracking-[0.06em] text-white">Session Control</h2>
+          <p class="mt-2 text-sm text-vgMuted">Manage your pilot profile, security credentials, and account access through the centralized command interface.</p>
+        </div>
+
+        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <button id="account-settings-trigger" type="button" class="theme-aware-primary-btn rounded-md px-5 py-3 text-[11px] font-bold uppercase tracking-[0.18em]">
+            Account Settings
+          </button>
+          <button id="profile-logout-btn" type="button" class="rounded-md border border-vgLine bg-vgSurfaceAlt px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white transition hover:border-vgPrimary hover:text-vgPrimarySoft disabled:cursor-not-allowed disabled:opacity-70">
+            Logout
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="status-ticker mt-5 overflow-hidden rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+      <div class="flex flex-wrap items-center justify-between gap-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-vgMuted">
+        <div class="flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-vgPrimary"></span>
+          <span>System Core: Operational</span>
+        </div>
+        <span>Favorites: <strong id="profile-favorites-count" class="text-white">0</strong></span>
+        <span>Wishlist: <strong id="profile-wishlist-count" class="text-white">0</strong></span>
+        <span>Compare Queue: <strong id="profile-compare-count" class="text-white">0/3</strong></span>
+        <span id="profile-garage-highlight">Garage Lead: N/A</span>
       </div>
     </section>
   </main>
 
-  <div id="account-settings-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="account-settings-title">
-    <div id="account-settings-overlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div id="account-settings-modal" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="account-settings-title">
+    <div id="account-settings-overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
 
-    <div class="absolute inset-x-0 bottom-0 max-h-[90vh] w-full overflow-y-auto rounded-t-3xl border border-slate-700 bg-slate-950 p-5 shadow-2xl sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-[min(100%-2rem,44rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:p-6">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h2 id="account-settings-title" class="text-xl font-semibold text-white">Account Settings</h2>
-          <p class="mt-1 text-sm text-slate-400">Choose what you want to manage.</p>
-        </div>
-        <button id="account-settings-close" type="button" class="rounded-lg border border-slate-700 px-3 py-1.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">
-          Close
-        </button>
+    <div class="account-settings-shell absolute left-1/2 top-1/2 max-h-[92vh] w-[min(100%-1rem,46rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-5 shadow-2xl sm:w-[min(100%-2rem,46rem)] sm:p-6 md:p-7">
+      <button id="account-settings-close" type="button" class="absolute right-4 top-4 rounded-md border border-vgLine bg-vgSurfaceAlt px-2.5 py-1 text-sm font-semibold text-vgMuted transition hover:text-white" aria-label="Close account settings">
+        ×
+      </button>
+
+      <div>
+        <h2 id="account-settings-title" class="display-font text-3xl font-semibold uppercase tracking-tight text-white sm:text-4xl">Configuration Options</h2>
+        <div class="mt-2 h-px w-24 bg-vgPrimary"></div>
       </div>
 
       <section id="account-settings-options" class="mt-6 grid gap-3 sm:grid-cols-2">
-        <button id="open-profile-update" type="button" class="rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-4 text-left transition hover:border-slate-500 hover:bg-slate-900">
-          <span class="block text-sm font-semibold text-white">Update Profile</span>
-          <span class="mt-1 block text-xs text-slate-400">Update your display name and profile image URL.</span>
+        <button id="open-profile-update" type="button" class="settings-option-card group rounded-xl p-4 text-left">
+          <div class="space-y-2">
+            <span class="display-font text-sm font-semibold uppercase tracking-[0.18em] text-white">Update Profile</span>
+            <p class="text-xs leading-relaxed text-vgMuted">Modify your display name and profile photo.</p>
+          </div>
+          <span class="mt-3 inline-flex items-center text-[10px] font-bold uppercase tracking-[0.18em] text-vgPrimarySoft">Execute</span>
         </button>
-        <button id="open-password-change" type="button" class="rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-4 text-left transition hover:border-slate-500 hover:bg-slate-900">
-          <span class="block text-sm font-semibold text-white">Change Password</span>
-          <span class="mt-1 block text-xs text-slate-400">Confirm your current password before changing it.</span>
+
+        <button id="open-password-change" type="button" class="settings-option-card group rounded-xl p-4 text-left">
+          <div class="space-y-2">
+            <span class="display-font text-sm font-semibold uppercase tracking-[0.18em] text-white">Change Password</span>
+            <p class="text-xs leading-relaxed text-vgMuted">Rotate credentials using secure verification.</p>
+          </div>
+          <span class="mt-3 inline-flex items-center text-[10px] font-bold uppercase tracking-[0.18em] text-vgPrimarySoft">Execute</span>
         </button>
       </section>
 
       <section id="profile-form-panel" class="mt-6 hidden">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <h3 class="text-lg font-semibold text-white">Update Profile</h3>
-            <p class="mt-1 text-sm text-slate-400">Update your display name and profile image URL.</p>
+            <h3 class="display-font text-2xl font-semibold uppercase tracking-[0.08em] text-white">Update Profile</h3>
+            <p class="mt-1 text-sm text-vgMuted">Update your identity details.</p>
           </div>
-          <button id="profile-modal-back" type="button" class="rounded-lg border border-slate-700 px-3 py-1.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">
-            Back
-          </button>
+          <button id="profile-modal-back" type="button" class="rounded-md border border-vgLine bg-vgSurfaceAlt px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-vgMuted transition hover:text-white">Back</button>
         </div>
 
-        <div id="profile-update-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"></div>
-        <div id="profile-update-error" class="mt-4 hidden rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+        <div id="profile-update-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/15 px-3 py-2 text-sm text-emerald-200"></div>
+        <div id="profile-update-error" class="mt-4 hidden rounded-md border border-red-500/60 bg-red-500/15 px-3 py-2 text-sm text-red-200"></div>
 
         <form id="profile-update-form" class="mt-4 space-y-4" novalidate>
           <div>
             <label for="update-name" class="text-sm font-medium text-slate-200">Name</label>
-            <input id="update-name" name="name" type="text" maxlength="80" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="update-name-error">
+            <input id="update-name" name="name" type="text" maxlength="80" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="update-name-error">
             <p id="update-name-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
           <div>
             <label for="update-photo" class="text-sm font-medium text-slate-200">Profile image (optional)</label>
-            <input id="update-photo" name="photo" type="file" accept="image/*" class="mt-1 block w-full cursor-pointer rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-slate-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-900 hover:file:bg-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="update-photo-help update-photo-error">
-            <p id="update-photo-help" class="mt-1 text-xs text-slate-400">Choose an image from your device. External image links are not allowed.</p>
+            <input id="update-photo" name="photo" type="file" accept="image/*" class="mt-1 block w-full cursor-pointer rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-slate-100 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-slate-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-900 hover:file:bg-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="update-photo-help update-photo-error">
+            <p id="update-photo-help" class="mt-1 text-xs text-vgMuted">Choose an image from your device. External image links are disabled.</p>
             <p id="update-photo-error" class="mt-1 hidden text-xs text-red-300"></p>
 
-            <div class="mt-3 rounded-xl border border-slate-700 bg-slate-950/70 p-3">
-              <p class="text-xs uppercase tracking-wider text-slate-400">Preview</p>
-              <img id="update-photo-preview" src="https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc" alt="Selected profile preview" class="mt-2 h-16 w-16 rounded-full border border-slate-700 object-cover" referrerpolicy="no-referrer">
+            <div class="mt-3 rounded-xl border border-vgLine bg-black/30 p-3">
+              <p class="text-xs uppercase tracking-wider text-vgMuted">Preview</p>
+              <img id="update-photo-preview" src="https://ui-avatars.com/api/?name=Driver&background=0f172a&color=f8fafc" alt="Selected profile preview" class="mt-2 h-16 w-16 rounded-full border border-vgLine object-cover" referrerpolicy="no-referrer">
             </div>
           </div>
 
-          <button id="profile-update-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-70">
-            Save Profile
+          <button id="profile-update-submit" type="submit" class="w-full rounded-md bg-vgPrimary px-4 py-2 text-sm font-semibold uppercase tracking-[0.14em] text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">
+            Save Changes
           </button>
 
-          <p class="text-center text-[11px] leading-relaxed text-slate-400">
+          <p class="text-center text-[11px] leading-relaxed text-vgMuted">
             By using this service, you agree to our
-            <a href="terms-of-service.html" target="_blank" rel="noopener noreferrer" class="text-orange-300 underline underline-offset-2 transition-colors hover:text-orange-200">Terms of Service</a>
+            <a href="terms-of-service.html" target="_blank" rel="noopener noreferrer" class="text-vgPrimarySoft underline underline-offset-2 transition-colors hover:text-white">Terms of Service</a>
             and acknowledge our
-            <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer" class="text-orange-300 underline underline-offset-2 transition-colors hover:text-orange-200">Privacy Policy</a>.
+            <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer" class="text-vgPrimarySoft underline underline-offset-2 transition-colors hover:text-white">Privacy Policy</a>.
           </p>
         </form>
       </section>
@@ -157,54 +324,80 @@
       <section id="password-form-panel" class="mt-6 hidden">
         <div class="flex items-center justify-between gap-3">
           <div>
-            <h3 class="text-lg font-semibold text-white">Change Password</h3>
-            <p class="mt-1 text-sm text-slate-400">For security, confirm your current password first.</p>
+            <h3 class="display-font text-2xl font-semibold uppercase tracking-[0.08em] text-white">Change Password</h3>
+            <p class="mt-1 text-sm text-vgMuted">Confirm your current password to continue.</p>
           </div>
-          <button id="password-modal-back" type="button" class="rounded-lg border border-slate-700 px-3 py-1.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">
-            Back
-          </button>
+          <button id="password-modal-back" type="button" class="rounded-md border border-vgLine bg-vgSurfaceAlt px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-vgMuted transition hover:text-white">Back</button>
         </div>
 
-        <div id="password-change-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200"></div>
-        <div id="password-change-error" class="mt-4 hidden rounded-md border border-red-500/60 bg-red-500/10 px-3 py-2 text-sm text-red-200"></div>
+        <div id="password-change-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/15 px-3 py-2 text-sm text-emerald-200"></div>
+        <div id="password-change-error" class="mt-4 hidden rounded-md border border-red-500/60 bg-red-500/15 px-3 py-2 text-sm text-red-200"></div>
 
         <form id="password-change-form" class="mt-4 space-y-4" novalidate>
           <div>
             <label for="current-password" class="text-sm font-medium text-slate-200">Current password</label>
-            <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="current-password-error">
+            <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="current-password-error">
             <p id="current-password-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
           <div>
             <label for="new-password" class="text-sm font-medium text-slate-200">New password</label>
-            <input id="new-password" name="newPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="new-password-error">
+            <input id="new-password" name="newPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="new-password-error">
             <p id="new-password-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
           <div>
             <label for="confirm-password" class="text-sm font-medium text-slate-200">Confirm new password</label>
-            <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30" aria-describedby="confirm-password-error">
+            <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="confirm-password-error">
             <p id="confirm-password-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
-          <button id="password-change-submit" type="submit" class="w-full rounded-lg bg-yellow-500 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-70">
-            Update Password
+          <button id="password-change-submit" type="submit" class="w-full rounded-md bg-vgPrimary px-4 py-2 text-sm font-semibold uppercase tracking-[0.14em] text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">
+            Save Changes
           </button>
 
-          <p class="text-center text-[11px] leading-relaxed text-slate-400">
+          <p class="text-center text-[11px] leading-relaxed text-vgMuted">
             By using this service, you agree to our
-            <a href="terms-of-service.html" target="_blank" rel="noopener noreferrer" class="text-orange-300 underline underline-offset-2 transition-colors hover:text-orange-200">Terms of Service</a>
+            <a href="terms-of-service.html" target="_blank" rel="noopener noreferrer" class="text-vgPrimarySoft underline underline-offset-2 transition-colors hover:text-white">Terms of Service</a>
             and acknowledge our
-            <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer" class="text-orange-300 underline underline-offset-2 transition-colors hover:text-orange-200">Privacy Policy</a>.
+            <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer" class="text-vgPrimarySoft underline underline-offset-2 transition-colors hover:text-white">Privacy Policy</a>.
           </p>
         </form>
       </section>
     </div>
   </div>
 
+  <div id="notification" class="pointer-events-none fixed right-4 top-20 z-[75] hidden rounded-lg border border-vgLine bg-vgSurface px-4 py-2 text-sm font-semibold text-white shadow-lg"></div>
+
+  <footer class="border-t border-vgLine/80 bg-black/45 px-4 py-7 sm:px-6 md:px-8">
+    <div class="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+      <p class="display-font text-lg font-bold uppercase tracking-tight text-vgPrimary">Velocity Garage</p>
+      <nav class="flex flex-wrap items-center gap-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-vgMuted">
+        <a href="privacy-policy.html" class="transition hover:text-white">Privacy Policy</a>
+        <a href="terms-of-service.html" class="transition hover:text-white">Terms Of Service</a>
+        <a href="home.html" class="transition hover:text-white">Inventory</a>
+        <a href="favorites.html" class="transition hover:text-white">Favorites</a>
+      </nav>
+      <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-vgMuted">&copy; 2026 Velocity Garage</p>
+    </div>
+  </footer>
+
   <script src="/env.js"></script>
   <script type="module" src="/js/firebase-config.js"></script>
-  <script type="module" src="/js/user-store.js"></script>
-  <script type="module" src="/js/profile-page.js"></script>
+  <script src="js/cars.js"></script>
+  <script type="module">
+    import { checkAuth } from "./js/auth-guard.js";
+    import { initAuthNavbar } from "./js/navbar-auth.js";
+    import "./js/user-store.js";
+
+    checkAuth({ redirectTo: "index.html" })
+      .then(() => {
+        initAuthNavbar();
+        const pageScript = document.createElement("script");
+        pageScript.src = "js/profile-page.js";
+        document.body.appendChild(pageScript);
+      })
+      .catch(() => {});
+  </script>
 </body>
 </html>

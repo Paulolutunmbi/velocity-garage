@@ -167,84 +167,14 @@ tailwind.config = {};
   </div>
 </div>
 
-<div id="modal" class="fixed inset-0 z-[70] hidden items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-  <div class="relative w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/10 bg-[#131313] text-white shadow-2xl lg:overflow-hidden">
-    <button id="modal-close" class="absolute left-4 top-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/60 text-white transition hover:scale-105" aria-label="Close details modal">
-      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-
-    <div class="grid max-h-[92vh] grid-cols-1 md:grid-cols-12">
-      <section class="px-4 pb-4 pt-14 sm:px-6 sm:pb-6 sm:pt-16 md:col-span-7 md:px-5 md:pb-5 md:pt-9">
-        <div id="modal-carousel" class="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-black/60">
-          <div id="modal-carousel-track" class="flex h-full transition-transform duration-500 ease-out"></div>
-          <button id="modal-carousel-prev" class="absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 rounded-full border border-white/20 bg-black/50 px-3 py-2 text-white transition hover:bg-white/10" aria-label="Previous image">
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <button id="modal-carousel-next" class="absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 rounded-full border border-white/20 bg-black/50 px-3 py-2 text-white transition hover:bg-white/10" aria-label="Next image">
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-          <div id="modal-carousel-dots" class="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-2 rounded-full bg-black/40 px-3 py-2 backdrop-blur"></div>
-        </div>
-      </section>
-
-      <section class="border-t border-white/10 bg-[#151515] px-4 py-5 sm:px-6 sm:py-6 md:col-span-5 md:border-l md:border-t-0 md:px-5 md:py-5">
-        <span class="inline-flex items-center rounded-full border border-[#ff535d]/40 bg-[#ff535d]/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[#ffb2b4]">Detail Prototype</span>
-        <h2 id="modal-name" class="mt-2 text-3xl font-black italic leading-tight sm:text-4xl">Car Name</h2>
-        <p class="mt-2 text-sm text-white/70">The purest expression of performance, engineering, and aerodynamic research.</p>
-
-        <h3 class="mt-5 text-[0.62rem] font-black uppercase tracking-[0.3em] text-[#ff535d]">Technical Specifications</h3>
-        <div class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Brand</p>
-            <p id="modal-brand" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Maker</p>
-            <p id="modal-maker" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Country</p>
-            <p id="modal-country" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Horsepower</p>
-            <p id="modal-hp" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Top Speed</p>
-            <p id="modal-speed" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Weight</p>
-            <p id="modal-weight" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">0-100 MPH</p>
-            <p id="modal-zero-to-100-mph" class="text-lg font-semibold">-</p>
-          </div>
-          <div class="bg-black/40 p-3">
-            <p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Price</p>
-            <p id="modal-price" class="text-lg font-semibold text-[#f7b2b6]">-</p>
-          </div>
-        </div>
-
-        <div class="mt-5">
-          <h4 class="text-[0.62rem] font-black uppercase tracking-[0.3em] text-[#ff535d]">Engineering Narrative</h4>
-          <p id="modal-desc" class="mt-2 text-sm leading-relaxed text-white/70">-</p>
-        </div>
-
-        <div class="mt-5 flex flex-wrap gap-2">
-          <button id="modal-compare"></button>
-          <button id="modal-fav"></button>
-          <button id="modal-wishlist"></button>
-          <button id="modal-cancel" class="rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white">Cancel</button>
-        </div>
-      </section>
-    </div>
-  </div>
-</div>
+<div id="modal-root"></div>
 
 <script src="js/cars.js"></script>
+<script src="utils/helpers.js"></script>
+<script src="utils/firebase.js"></script>
+<script src="components/Button.js"></script>
+<script src="components/Card.js"></script>
+<script src="components/Modal.js"></script>
 <script type="module">
 import { checkAuth } from "./js/auth-guard.js";
 import { initAuthNavbar } from "./js/navbar-auth.js";

@@ -1,4 +1,9 @@
-const MAX_COMPARE = 3;
+const MAX_COMPARE = window.VGFirebase?.MAX_COMPARE || 3;
+
+window.VGModal?.ensureCarModal({
+  showCancel: true,
+  zIndexClass: "z-[70]",
+});
 
 const localState = window.vgUserStore?.getLocalState?.() || {
   favorites: [],
@@ -8,13 +13,9 @@ const localState = window.vgUserStore?.getLocalState?.() || {
 };
 
 const state = {
-  favorites: new Set(normalizeIds(localState.favorites || [])),
-  wishlist: new Set(normalizeIds(localState.wishlist || [])),
-  compare: new Set(normalizeIds(localState.compare || []).slice(0, MAX_COMPARE)),
-  currentModalCarId: null,
-  modalCarouselImages: [],
-  modalCarouselIndex: 0,
-  modalCarouselTimer: null,
+  favorites: new Set(window.VGHelpers?.normalizeIds(localState.favorites || [])),
+  wishlist: new Set(window.VGHelpers?.normalizeIds(localState.wishlist || [])),
+  compare: new Set(window.VGHelpers?.normalizeIds(localState.compare || []).slice(0, MAX_COMPARE)),
 };
 
 const elements = {
@@ -25,29 +26,7 @@ const elements = {
   emptyState: document.getElementById("compare-empty"),
   clearCompare: document.getElementById("clear-compare"),
   notification: document.getElementById("notification"),
-  notificationText: document.getElementById("notification-text"),
   pageLoading: document.getElementById("page-loading"),
-  modal: document.getElementById("modal"),
-  modalClose: document.getElementById("modal-close"),
-  modalName: document.getElementById("modal-name"),
-  modalCarousel: document.getElementById("modal-carousel"),
-  modalCarouselTrack: document.getElementById("modal-carousel-track"),
-  modalCarouselDots: document.getElementById("modal-carousel-dots"),
-  modalCarouselPrev: document.getElementById("modal-carousel-prev"),
-  modalCarouselNext: document.getElementById("modal-carousel-next"),
-  modalBrand: document.getElementById("modal-brand"),
-  modalMaker: document.getElementById("modal-maker"),
-  modalCountry: document.getElementById("modal-country"),
-  modalHp: document.getElementById("modal-hp"),
-  modalSpeed: document.getElementById("modal-speed"),
-  modalWeight: document.getElementById("modal-weight"),
-  modalZeroTo100Mph: document.getElementById("modal-zero-to-100-mph"),
-  modalPrice: document.getElementById("modal-price"),
-  modalDesc: document.getElementById("modal-desc"),
-  modalCompare: document.getElementById("modal-compare"),
-  modalFav: document.getElementById("modal-fav"),
-  modalWishlist: document.getElementById("modal-wishlist"),
-  modalCancel: document.getElementById("modal-cancel"),
 };
 
 const BUTTON_PRIMARY = "bg-[#ff535d] px-3 py-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#25060a] transition hover:brightness-110";
@@ -55,19 +34,57 @@ const BUTTON_SECONDARY = "border border-white/15 bg-white/5 px-3 py-2 text-[10px
 const BUTTON_ACTIVE = "border border-[#ff535d] bg-[#2b151a] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ffb2b4] transition";
 const MODAL_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
 const MODAL_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
-const MODAL_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
+const MODAL_ACTIVE = "rounded-lg border border-[#ff535d] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
-let notificationTimer = null;
+const showNotification = window.VGHelpers.createNotifier(elements.notification, {
+  duration: 1700,
+  textSelector: "#notification-text",
+});
 
-function normalizeIds(value) {
-  if (!Array.isArray(value)) return [];
-  // Store IDs as unique positive numbers so remote/local sync cannot introduce duplicates.
-  return [...new Set(value.map((item) => Number(item)).filter((item) => Number.isFinite(item) && item > 0))];
+let modalController = null;
+
+async function onAfterToggle({ type, id }) {
+  if (type === "compare") {
+    const activeModalId = modalController?.getCurrentCarId?.();
+    if (activeModalId && !state.compare.has(activeModalId)) {
+      modalController?.close?.();
+    }
+  }
+
+  renderComparePage();
+  modalController?.updateButtons();
 }
 
+const { toggleFavorite, toggleWishlist, toggleCompare, persistCollections } = window.VGFirebase.createCollectionActions({
+  state,
+  notify: showNotification,
+  maxCompare: MAX_COMPARE,
+  afterToggle: onAfterToggle,
+});
+
+modalController = window.VGModal.createCarModalController({
+  getCarById: (id) => getCarById(id),
+  onToggleCompare: toggleCompare,
+  onToggleFavorite: toggleFavorite,
+  onToggleWishlist: toggleWishlist,
+  getButtonState: (id) => ({
+    isCompare: state.compare.has(id),
+    isFavorite: state.favorites.has(id),
+    isWishlist: state.wishlist.has(id),
+  }),
+  modalPrimaryClass: MODAL_PRIMARY,
+  modalSecondaryClass: MODAL_SECONDARY,
+  modalActiveClass: MODAL_ACTIVE,
+  dotActiveClass: "bg-[#ff535d]",
+  dotIdleClass: "bg-white/50",
+  imageFitClass: "object-cover",
+  autoAdvanceMs: 3600,
+  clearCurrentOnClose: true,
+  enableSwipe: true,
+});
+
 function parseFloatFromText(value = "") {
-  const numeric = Number(String(value).replace(/[^0-9.]/g, ""));
-  return Number.isFinite(numeric) ? numeric : 0;
+  return window.VGHelpers.parseNumericValue(value);
 }
 
 function deriveZeroToSixty(zeroTo100Text = "") {
@@ -77,7 +94,7 @@ function deriveZeroToSixty(zeroTo100Text = "") {
 }
 
 function carImage(car) {
-  return car.image || car.images?.[0] || window.CAR_IMAGE_FALLBACK;
+  return window.VGHelpers.carImage(car, window.CAR_IMAGE_FALLBACK);
 }
 
 function getSelectedCars() {
@@ -85,33 +102,6 @@ function getSelectedCars() {
     .map((id) => getCarById(Number(id)))
     .filter(Boolean)
     .slice(0, MAX_COMPARE);
-}
-
-async function persistSets() {
-  const payload = {
-    favorites: [...state.favorites],
-    wishlist: [...state.wishlist],
-    compare: [...state.compare].slice(0, MAX_COMPARE),
-  };
-
-  await window.vgUserStore?.updateUserState?.(payload);
-}
-
-function showNotification(message) {
-  if (!elements.notification) return;
-
-  if (elements.notificationText) {
-    elements.notificationText.textContent = message;
-  } else {
-    elements.notification.textContent = message;
-  }
-
-  elements.notification.classList.remove("hidden");
-  if (notificationTimer) clearTimeout(notificationTimer);
-
-  notificationTimer = setTimeout(() => {
-    elements.notification.classList.add("hidden");
-  }, 1700);
 }
 
 function getButtonLabelState(carId) {
@@ -122,67 +112,17 @@ function getButtonLabelState(carId) {
   };
 }
 
-async function toggleFavorite(id) {
-  if (state.favorites.has(id)) {
-    state.favorites.delete(id);
-    showNotification("Removed from Favorites");
-  } else {
-    state.favorites.add(id);
-    showNotification("Added to Favorites");
-  }
-
-  await persistSets();
-  renderComparePage();
-  updateModalButtons();
-}
-
-async function toggleWishlist(id) {
-  if (state.wishlist.has(id)) {
-    state.wishlist.delete(id);
-    showNotification("Removed from Wishlist");
-  } else {
-    state.wishlist.add(id);
-    showNotification("Added to Wishlist");
-  }
-
-  await persistSets();
-  renderComparePage();
-  updateModalButtons();
-}
-
-async function toggleCompare(id) {
-  if (state.compare.has(id)) {
-    state.compare.delete(id);
-    showNotification("Removed from Compare");
-  } else {
-    if (state.compare.size >= MAX_COMPARE) {
-      showNotification("You can compare up to 3 cars only");
-      return;
-    }
-
-    state.compare.add(id);
-    showNotification("Added to Compare");
-  }
-
-  if (state.currentModalCarId && !state.compare.has(state.currentModalCarId)) {
-    closeModal();
-  }
-
-  await persistSets();
-  renderComparePage();
-  updateModalButtons();
-}
-
 async function removeCompare(id) {
   if (!state.compare.has(id)) return;
   state.compare.delete(id);
 
-  if (state.currentModalCarId === id) {
-    closeModal();
+  if (modalController?.getCurrentCarId?.() === id) {
+    modalController.close();
   }
 
-  await persistSets();
+  await persistCollections();
   renderComparePage();
+  modalController.updateButtons();
   showNotification("Removed from Compare");
 }
 
@@ -193,10 +133,11 @@ async function clearCompare() {
   }
 
   state.compare.clear();
-  closeModal();
+  modalController.close();
 
-  await persistSets();
+  await persistCollections();
   renderComparePage();
+  modalController.updateButtons();
   showNotification("Compare list cleared");
 }
 
@@ -329,154 +270,27 @@ function renderComparePage() {
   renderCompareTable(selectedCars);
 }
 
-function getModalImages(car) {
-  const images = Array.isArray(car.images) ? car.images.filter(Boolean) : [];
-  if (images.length) return images;
-  return [carImage(car)];
-}
-
-function stopModalCarouselTimer() {
-  if (state.modalCarouselTimer) {
-    clearInterval(state.modalCarouselTimer);
-    state.modalCarouselTimer = null;
-  }
-}
-
-function setModalCarouselSlide(index) {
-  const count = state.modalCarouselImages.length;
-  if (!count || !elements.modalCarouselTrack) return;
-
-  state.modalCarouselIndex = (index + count) % count;
-  elements.modalCarouselTrack.style.transform = `translateX(-${state.modalCarouselIndex * 100}%)`;
-
-  if (elements.modalCarouselDots) {
-    const dots = [...elements.modalCarouselDots.querySelectorAll("button[data-modal-dot]")];
-    dots.forEach((dot, dotIndex) => {
-      dot.classList.toggle("w-6", dotIndex === state.modalCarouselIndex);
-      dot.classList.toggle("bg-[#ff535d]", dotIndex === state.modalCarouselIndex);
-      dot.classList.toggle("bg-white/50", dotIndex !== state.modalCarouselIndex);
-    });
-  }
-}
-
-function shiftModalCarousel(step) {
-  setModalCarouselSlide(state.modalCarouselIndex + step);
-}
-
-function startModalCarouselTimer() {
-  stopModalCarouselTimer();
-  if (state.modalCarouselImages.length <= 1) return;
-
-  // Auto-advance only when multiple images exist, then reset on any manual navigation.
-  state.modalCarouselTimer = setInterval(() => {
-    shiftModalCarousel(1);
-  }, 3600);
-}
-
-function renderModalCarousel(car) {
-  if (!elements.modalCarouselTrack || !elements.modalCarouselDots || !elements.modalCarouselPrev || !elements.modalCarouselNext) return;
-
-  state.modalCarouselImages = getModalImages(car);
-  state.modalCarouselIndex = 0;
-
-  elements.modalCarouselTrack.innerHTML = state.modalCarouselImages
-    .map(
-      (imageUrl, imageIndex) => `
-      <div class="min-w-full h-full shrink-0">
-        <img src="${imageUrl}" alt="${car.name} image ${imageIndex + 1}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover">
-      </div>`
-    )
-    .join("");
-
-  elements.modalCarouselDots.innerHTML = state.modalCarouselImages
-    .map(
-      (_, imageIndex) =>
-        `<button data-modal-dot="${imageIndex}" class="h-2.5 w-2.5 rounded-full bg-white/50 transition-all" aria-label="Show image ${imageIndex + 1}"></button>`
-    )
-    .join("");
-
-  const showControls = state.modalCarouselImages.length > 1;
-  elements.modalCarouselPrev.classList.toggle("hidden", !showControls);
-  elements.modalCarouselNext.classList.toggle("hidden", !showControls);
-  elements.modalCarouselDots.classList.toggle("hidden", !showControls);
-  elements.modalCarouselDots.classList.toggle("flex", showControls);
-
-  setModalCarouselSlide(0);
-  startModalCarouselTimer();
-}
-
 function openModal(id) {
-  const car = getCarById(id);
-  if (!car || !elements.modal) return;
-
-  state.currentModalCarId = id;
-  if (elements.modalName) elements.modalName.textContent = car.name;
-  if (elements.modalBrand) elements.modalBrand.textContent = car.brand || "-";
-  if (elements.modalMaker) elements.modalMaker.textContent = car.maker || "-";
-  if (elements.modalCountry) elements.modalCountry.textContent = car.country || "-";
-  if (elements.modalHp) elements.modalHp.textContent = car.hp || "-";
-  if (elements.modalSpeed) elements.modalSpeed.textContent = car.speed || "-";
-  if (elements.modalWeight) elements.modalWeight.textContent = car.weight || "-";
-  if (elements.modalZeroTo100Mph) elements.modalZeroTo100Mph.textContent = car.zeroTo100Mph || "-";
-  if (elements.modalPrice) elements.modalPrice.textContent = car.price || "-";
-  if (elements.modalDesc) elements.modalDesc.textContent = car.description || "-";
-
-  renderModalCarousel(car);
-  updateModalButtons();
-
-  elements.modal.classList.remove("hidden");
-  elements.modal.classList.add("flex");
-}
-
-function closeModal() {
-  if (!elements.modal) return;
-  stopModalCarouselTimer();
-  state.currentModalCarId = null;
-  state.modalCarouselImages = [];
-  state.modalCarouselIndex = 0;
-  elements.modal.classList.add("hidden");
-  elements.modal.classList.remove("flex");
-}
-
-function updateModalButtons() {
-  if (state.currentModalCarId === null || !elements.modalCompare || !elements.modalFav || !elements.modalWishlist) return;
-
-  const isCompare = state.compare.has(state.currentModalCarId);
-  const isFavorite = state.favorites.has(state.currentModalCarId);
-  const isWishlist = state.wishlist.has(state.currentModalCarId);
-
-  elements.modalCompare.textContent = isCompare ? "Remove from Compare" : "Add to Compare";
-  elements.modalCompare.className = `${isCompare ? MODAL_ACTIVE : MODAL_PRIMARY} text-sm`;
-
-  elements.modalFav.textContent = isFavorite ? "Remove from Favorites" : "Add to Favorites";
-  elements.modalFav.className = `${isFavorite ? MODAL_ACTIVE : MODAL_SECONDARY} text-sm`;
-
-  elements.modalWishlist.textContent = isWishlist ? "Remove from Wishlist" : "Add to Wishlist";
-  elements.modalWishlist.className = `${isWishlist ? MODAL_ACTIVE : MODAL_SECONDARY} text-sm`;
+  modalController.open(id);
 }
 
 function syncFromRemote(remote) {
-  state.favorites = new Set(normalizeIds(remote.favorites || []));
-  state.wishlist = new Set(normalizeIds(remote.wishlist || []));
-  // Compare is capped server-side and client-side for consistent UX across all pages.
-  state.compare = new Set(normalizeIds(remote.compare || []).slice(0, MAX_COMPARE));
+  window.VGFirebase.applyRemoteCollections(state, remote, MAX_COMPARE);
 
-  if (state.currentModalCarId && !state.compare.has(state.currentModalCarId)) {
-    closeModal();
+  const activeModalId = modalController.getCurrentCarId();
+  if (activeModalId && !state.compare.has(activeModalId)) {
+    modalController.close();
   }
 
   renderComparePage();
-  updateModalButtons();
+  modalController.updateButtons();
 }
 
 async function loadUserState() {
-  const user = window.vgUserStore?.getCurrentUser?.();
-  const uid = user?.uid || "unknown";
-  const remote = await window.vgUserStore?.loadUserData?.(uid);
-
-  state.favorites = new Set(normalizeIds(remote?.favorites || []));
-  state.wishlist = new Set(normalizeIds(remote?.wishlist || []));
-  state.compare = new Set(normalizeIds(remote?.compare || []).slice(0, MAX_COMPARE));
+  const remote = await window.VGFirebase.loadCollectionsForCurrentUser(MAX_COMPARE);
+  state.favorites = new Set(remote.favorites);
+  state.wishlist = new Set(remote.wishlist);
+  state.compare = new Set(remote.compare);
 }
 
 function initEvents() {
@@ -496,104 +310,15 @@ function initEvents() {
   });
 
   elements.clearCompare?.addEventListener("click", clearCompare);
-
-  elements.modalClose?.addEventListener("click", closeModal);
-  elements.modalCancel?.addEventListener("click", closeModal);
-  elements.modal?.addEventListener("click", (event) => {
-    if (event.target === elements.modal) closeModal();
-  });
-
-  const swipeSurface = elements.modalCarousel || elements.modalCarouselTrack;
-  let touchStartX = null;
-  let touchStartY = null;
-
-  swipeSurface?.addEventListener("touchstart", (event) => {
-    if (!state.modalCarouselImages.length) return;
-    const touch = event.touches?.[0];
-    if (!touch) return;
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-  }, { passive: true });
-
-  swipeSurface?.addEventListener("touchend", (event) => {
-    if (!state.modalCarouselImages.length || touchStartX === null || touchStartY === null) return;
-
-    const touch = event.changedTouches?.[0];
-    if (!touch) return;
-
-    const deltaX = touch.clientX - touchStartX;
-    const deltaY = touch.clientY - touchStartY;
-    touchStartX = null;
-    touchStartY = null;
-
-    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-
-    if (deltaX < 0) {
-      shiftModalCarousel(1);
-    } else {
-      shiftModalCarousel(-1);
-    }
-    startModalCarouselTimer();
-  }, { passive: true });
-
-  elements.modalCarouselPrev?.addEventListener("click", () => {
-    shiftModalCarousel(-1);
-    startModalCarouselTimer();
-  });
-
-  elements.modalCarouselNext?.addEventListener("click", () => {
-    shiftModalCarousel(1);
-    startModalCarouselTimer();
-  });
-
-  elements.modalCarouselDots?.addEventListener("click", (event) => {
-    const dot = event.target.closest("button[data-modal-dot]");
-    if (!dot) return;
-    setModalCarouselSlide(Number(dot.dataset.modalDot));
-    startModalCarouselTimer();
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeModal();
-    if (elements.modal?.classList.contains("hidden")) return;
-
-    if (event.key === "ArrowLeft") {
-      shiftModalCarousel(-1);
-      startModalCarouselTimer();
-    }
-
-    if (event.key === "ArrowRight") {
-      shiftModalCarousel(1);
-      startModalCarouselTimer();
-    }
-  });
-
-  elements.modalCompare?.addEventListener("click", async () => {
-    if (state.currentModalCarId !== null) await toggleCompare(state.currentModalCarId);
-  });
-
-  elements.modalFav?.addEventListener("click", async () => {
-    if (state.currentModalCarId !== null) await toggleFavorite(state.currentModalCarId);
-  });
-
-  elements.modalWishlist?.addEventListener("click", async () => {
-    if (state.currentModalCarId !== null) await toggleWishlist(state.currentModalCarId);
-  });
-
-  window.addEventListener("beforeunload", stopModalCarouselTimer);
 }
 
 async function init() {
-  await window.vgUserStore?.waitForReady?.();
-  await loadUserState();
-
-  renderComparePage();
-  initEvents();
-  elements.pageLoading?.classList.add("hidden");
-
-  window.vgUserStore?.bindThemeToggle?.();
-  window.vgUserStore?.subscribeUserState?.((remote) => {
-    syncFromRemote(remote);
+  await window.VGHelpers.bootstrapPage({
+    loadUserState,
+    render: renderComparePage,
+    initEvents,
+    pageLoading: elements.pageLoading,
+    syncFromRemote,
   });
 }
 

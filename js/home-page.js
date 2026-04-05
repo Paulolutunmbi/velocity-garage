@@ -1,8 +1,8 @@
 const MAX_COMPARE = window.VGFirebase?.MAX_COMPARE || 3;
 
 window.VGModal?.ensureCarModal({
-  showCancel: false,
-  zIndexClass: "z-50",
+  showCancel: true,
+  zIndexClass: "z-[60]",
 });
 
 const localState = window.vgUserStore?.getLocalState?.() || {
@@ -56,7 +56,9 @@ let modalController = null;
 const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
 const BUTTON_SECONDARY = BUTTON_PRIMARY;
 const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
-const MODAL_BUTTON_ACTIVE = "rounded-lg bg-slate-500 text-white font-semibold px-4 py-2 transition";
+const MODAL_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
+const MODAL_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
+const MODAL_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
 function medal(rank) {
   if (rank === 0) return "🥇";
@@ -313,9 +315,9 @@ modalController = window.VGModal.createCarModalController({
     isFavorite: state.favorites.has(id),
     isWishlist: state.wishlist.has(id),
   }),
-  modalPrimaryClass: BUTTON_PRIMARY,
-  modalSecondaryClass: BUTTON_SECONDARY,
-  modalActiveClass: MODAL_BUTTON_ACTIVE,
+  modalPrimaryClass: MODAL_PRIMARY,
+  modalSecondaryClass: MODAL_SECONDARY,
+  modalActiveClass: MODAL_ACTIVE,
   dotActiveClass: "bg-amber-500",
   dotIdleClass: "bg-white/70",
   imageFitClass: "object-contain",

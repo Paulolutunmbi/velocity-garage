@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.27",
+    "playwright": "^1.59.1",
     "postcss": "^8.5.8",
     "serve": "^14.2.4",
     "tailwindcss": "^4.2.2"

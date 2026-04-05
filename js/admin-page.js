@@ -44,7 +44,6 @@ const userManagementTotal = document.getElementById("um-total-users");
 const userManagementActive = document.getElementById("um-active-users");
 const userManagementVerified = document.getElementById("um-verified-users");
 const userManagementBanned = document.getElementById("um-banned-users");
-const navToggleInput = document.getElementById("admin-nav-toggle");
 const userSearchInput = document.getElementById("user-search-input");
 const userSearchClearBtn = document.getElementById("user-search-clear");
 const userSearchDropdown = document.getElementById("user-search-dropdown");
@@ -288,26 +287,22 @@ function bindInternalViewSwitching() {
   navAnalytics?.addEventListener("click", (event) => {
     event.preventDefault();
     setAdminView("dashboard");
-    if (navToggleInput) navToggleInput.checked = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   navUserManagement?.addEventListener("click", (event) => {
     event.preventDefault();
     setAdminView("users");
-    if (navToggleInput) navToggleInput.checked = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   openUserManagementBtn?.addEventListener("click", () => {
     setAdminView("users");
-    if (navToggleInput) navToggleInput.checked = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   backToDashboardBtn?.addEventListener("click", () => {
     setAdminView("dashboard");
-    if (navToggleInput) navToggleInput.checked = false;
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 

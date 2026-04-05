@@ -11,7 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script>
-    tailwind.config = {
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
@@ -53,17 +54,11 @@
         <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto" />
         <span class="title-font text-lg font-bold uppercase">Velocity</span>
       </a>
-      <label for="admin-nav-toggle" class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted">
-        <span class="material-symbols-outlined text-base">menu</span>
-        Menu
-      </label>
     </div>
   </header>
 
-  <input id="admin-nav-toggle" type="checkbox" class="peer hidden" />
-
   <!-- CHANGED: Replaced old header-first structure with Stitch-style fixed side nav. -->
-  <aside class="fixed left-0 top-[57px] z-40 flex h-[calc(100vh-57px)] w-72 -translate-x-full flex-col border-r border-vg-panel bg-vg-bg shadow-[20px_0_40px_rgba(0,0,0,0.3)] transition-transform duration-300 peer-checked:translate-x-0 lg:top-0 lg:h-screen lg:translate-x-0">
+  <aside class="fixed left-0 top-0 z-40 hidden h-screen w-72 flex-col border-r border-vg-panel bg-vg-bg shadow-[20px_0_40px_rgba(0,0,0,0.3)] lg:flex">
     <div class="border-b border-vg-panel px-7 py-6">
       <a href="index.html" class="block">
         <img id="site-logo-desktop" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-12 w-auto" />
@@ -83,31 +78,15 @@
     </nav>
   </aside>
 
-  <!-- CHANGED: Overlay for closing mobile drawer without custom JS. -->
-  <label for="admin-nav-toggle" class="fixed inset-x-0 bottom-0 top-[57px] z-30 hidden bg-black/60 peer-checked:block lg:hidden" aria-label="Close navigation"></label>
-
   <!-- CHANGED: Main app shell now mirrors Stitch layout while preserving functional hook containers. -->
   <div class="relative lg:ml-72">
     <header class="sticky top-0 z-30 border-b border-vg-panel bg-vg-bg/85 px-4 py-3 backdrop-blur sm:px-6 lg:px-8">
-      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div class="flex items-center gap-3 rounded-md border border-vg-panel-hi bg-vg-panel/70 px-3 py-2 text-sm text-vg-muted md:w-[44%]">
-          <span class="material-symbols-outlined text-base">search</span>
-          <input type="text" placeholder="Search parameters..." class="w-full border-none bg-transparent p-0 text-sm text-vg-copy placeholder:text-vg-muted/40 focus:ring-0" />
-        </div>
-
-        <div class="flex items-center justify-end gap-2">
+      <div class="flex flex-wrap items-center justify-end gap-2">
           <a href="home.html" class="rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted hover:text-white">Home</a>
           <a href="profile.html" class="rounded-md border border-vg-panel-hi bg-vg-panel px-3 py-2 text-xs font-semibold uppercase tracking-wider text-vg-muted hover:text-white">Profile</a>
-          <button type="button" class="rounded-md border border-vg-panel-hi bg-vg-panel p-2 text-vg-muted hover:text-white" aria-label="Notifications">
-            <span class="material-symbols-outlined text-base">notifications</span>
-          </button>
-          <button type="button" class="rounded-md border border-vg-panel-hi bg-vg-panel p-2 text-vg-muted hover:text-white" aria-label="Speed">
-            <span class="material-symbols-outlined text-base">speed</span>
-          </button>
 
           <!-- CHANGED: Kept this exact mount ID required by navbar-auth.js. -->
           <div class="flex items-center" id="auth-controls"></div>
-        </div>
       </div>
     </header>
 
@@ -328,3 +307,5 @@
   <script type="module" src="/js/admin-page.js"></script>
 </body>
 </html>
+
+

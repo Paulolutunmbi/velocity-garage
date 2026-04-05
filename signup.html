@@ -9,7 +9,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;600;700;800&amp;display=swap" rel="stylesheet"/>
 	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300&amp;display=swap" rel="stylesheet"/>
 	<script id="tailwind-config">
-		tailwind.config = {
+		window.tailwind = window.tailwind || {};
+		window.tailwind.config = {
 			darkMode: "class",
 			theme: {
 				extend: {
@@ -239,3 +240,5 @@
 	</script>
 </body>
 </html>
+
+

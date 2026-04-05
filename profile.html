@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <script>
-    tailwind.config = {
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
@@ -71,6 +72,53 @@
       box-shadow: 0 10px 24px rgba(255, 83, 93, 0.28);
     }
 
+    .theme-aware-save-btn {
+      background: #ff535d;
+      color: #09090b;
+      transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+    }
+
+    .theme-aware-save-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 24px rgba(255, 83, 93, 0.28);
+    }
+
+    .theme-aware-back-btn {
+      background: #111827;
+      border: 1px solid #64748b;
+      color: #f8fafc;
+      font-weight: 700;
+      transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .theme-aware-back-btn:hover {
+      background: #1f2937;
+      border-color: #cbd5e1;
+      color: #ffffff;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.34);
+    }
+
+    .modal-field-input {
+      color: #f8fafc !important;
+      caret-color: #ffb3b2;
+      background-color: #1a1a22;
+      border-color: #2a2b35;
+    }
+
+    .modal-field-input::placeholder {
+      color: #a7aab6;
+    }
+
+    .modal-field-input:-webkit-autofill,
+    .modal-field-input:-webkit-autofill:hover,
+    .modal-field-input:-webkit-autofill:focus,
+    .modal-field-input:-webkit-autofill:active {
+      -webkit-text-fill-color: #f8fafc;
+      box-shadow: 0 0 0 1000px #1a1a22 inset;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
     .account-settings-shell {
       background: #121217;
       border-color: rgba(255, 255, 255, 0.1);
@@ -119,6 +167,50 @@
     body.vg-light .theme-aware-primary-btn:hover {
       filter: brightness(1.12);
       box-shadow: 0 12px 26px rgba(15, 23, 42, 0.22);
+    }
+
+    body.vg-light .theme-aware-save-btn {
+      background: #0f172a;
+      color: #f8fafc;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
+    }
+
+    body.vg-light .theme-aware-save-btn:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.22);
+    }
+
+    body.vg-light .theme-aware-back-btn {
+      background: #ffffff;
+      border-color: #334155;
+      color: #0f172a;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    body.vg-light .theme-aware-back-btn:hover {
+      background: #f1f5f9;
+      border-color: #0f172a;
+      color: #020617;
+    }
+
+    body.vg-light .modal-field-input {
+      color: #0f172a !important;
+      caret-color: #0f172a;
+      background-color: #ffffff;
+      border-color: #cbd5e1;
+    }
+
+    body.vg-light .modal-field-input::placeholder {
+      color: #64748b;
+    }
+
+    body.vg-light .modal-field-input:-webkit-autofill,
+    body.vg-light .modal-field-input:-webkit-autofill:hover,
+    body.vg-light .modal-field-input:-webkit-autofill:focus,
+    body.vg-light .modal-field-input:-webkit-autofill:active {
+      -webkit-text-fill-color: #0f172a;
+      box-shadow: 0 0 0 1000px #ffffff inset;
+      transition: background-color 9999s ease-in-out 0s;
     }
 
     body.vg-light .account-settings-shell {
@@ -250,10 +342,6 @@
     <div id="account-settings-overlay" class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
 
     <div class="account-settings-shell absolute left-1/2 top-1/2 max-h-[92vh] w-[min(100%-1rem,46rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border p-5 shadow-2xl sm:w-[min(100%-2rem,46rem)] sm:p-6 md:p-7">
-      <button id="account-settings-close" type="button" class="absolute right-4 top-4 rounded-md border border-vgLine bg-vgSurfaceAlt px-2.5 py-1 text-sm font-semibold text-vgMuted transition hover:text-white" aria-label="Close account settings">
-        ×
-      </button>
-
       <div>
         <h2 id="account-settings-title" class="display-font text-3xl font-semibold uppercase tracking-tight text-white sm:text-4xl">Configuration Options</h2>
         <div class="mt-2 h-px w-24 bg-vgPrimary"></div>
@@ -283,7 +371,7 @@
             <h3 class="display-font text-2xl font-semibold uppercase tracking-[0.08em] text-white">Update Profile</h3>
             <p class="mt-1 text-sm text-vgMuted">Update your identity details.</p>
           </div>
-          <button id="profile-modal-back" type="button" class="rounded-md border border-vgLine bg-vgSurfaceAlt px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-vgMuted transition hover:text-white">Back</button>
+          <button id="profile-modal-back" type="button" class="theme-aware-back-btn rounded-md px-3 py-1.5 text-xs uppercase tracking-[0.16em]">Back</button>
         </div>
 
         <div id="profile-update-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/15 px-3 py-2 text-sm text-emerald-200"></div>
@@ -292,7 +380,7 @@
         <form id="profile-update-form" class="mt-4 space-y-4" novalidate>
           <div>
             <label for="update-name" class="text-sm font-medium text-slate-200">Name</label>
-            <input id="update-name" name="name" type="text" maxlength="80" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="update-name-error">
+            <input id="update-name" name="name" type="text" maxlength="80" class="modal-field-input mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="update-name-error">
             <p id="update-name-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
@@ -308,7 +396,7 @@
             </div>
           </div>
 
-          <button id="profile-update-submit" type="submit" class="w-full rounded-md bg-vgPrimary px-4 py-2 text-sm font-semibold uppercase tracking-[0.14em] text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">
+          <button id="profile-update-submit" type="submit" class="theme-aware-save-btn w-full rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-70">
             Save Changes
           </button>
 
@@ -327,7 +415,7 @@
             <h3 class="display-font text-2xl font-semibold uppercase tracking-[0.08em] text-white">Change Password</h3>
             <p class="mt-1 text-sm text-vgMuted">Confirm your current password to continue.</p>
           </div>
-          <button id="password-modal-back" type="button" class="rounded-md border border-vgLine bg-vgSurfaceAlt px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-vgMuted transition hover:text-white">Back</button>
+          <button id="password-modal-back" type="button" class="theme-aware-back-btn rounded-md px-3 py-1.5 text-xs uppercase tracking-[0.16em]">Back</button>
         </div>
 
         <div id="password-change-success" class="mt-4 hidden rounded-md border border-emerald-500/60 bg-emerald-500/15 px-3 py-2 text-sm text-emerald-200"></div>
@@ -336,23 +424,23 @@
         <form id="password-change-form" class="mt-4 space-y-4" novalidate>
           <div>
             <label for="current-password" class="text-sm font-medium text-slate-200">Current password</label>
-            <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="current-password-error">
+            <input id="current-password" name="currentPassword" type="password" autocomplete="current-password" class="modal-field-input mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="current-password-error">
             <p id="current-password-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
           <div>
             <label for="new-password" class="text-sm font-medium text-slate-200">New password</label>
-            <input id="new-password" name="newPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="new-password-error">
+            <input id="new-password" name="newPassword" type="password" autocomplete="new-password" class="modal-field-input mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="new-password-error">
             <p id="new-password-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
           <div>
             <label for="confirm-password" class="text-sm font-medium text-slate-200">Confirm new password</label>
-            <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" class="mt-1 w-full rounded-lg border border-vgLine bg-vgSurfaceAlt px-3 py-2 text-sm text-white focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="confirm-password-error">
+            <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" class="modal-field-input mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-vgPrimary focus:outline-none focus:ring-2 focus:ring-vgPrimary/30" aria-describedby="confirm-password-error">
             <p id="confirm-password-error" class="mt-1 hidden text-xs text-red-300"></p>
           </div>
 
-          <button id="password-change-submit" type="submit" class="w-full rounded-md bg-vgPrimary px-4 py-2 text-sm font-semibold uppercase tracking-[0.14em] text-black transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">
+          <button id="password-change-submit" type="submit" class="theme-aware-save-btn w-full rounded-md px-4 py-2 text-sm font-semibold uppercase tracking-[0.14em] disabled:cursor-not-allowed disabled:opacity-70">
             Save Changes
           </button>
 
@@ -401,3 +489,5 @@
   </script>
 </body>
 </html>
+
+

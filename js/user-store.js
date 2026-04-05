@@ -104,6 +104,32 @@ function injectThemeStyles() {
   document.head.appendChild(style);
 }
 
+function getThemeToggleIconMarkup(isDarkMode) {
+  if (isDarkMode) {
+    // Dark mode active -> show sun icon (switch to light mode).
+    return `
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77"/>
+      </svg>
+    `;
+  }
+
+  // Light mode active -> show moon icon (switch to dark mode).
+  return `
+    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+    </svg>
+  `;
+}
+
+function updateThemeToggleButton(toggle, isDarkMode) {
+  toggle.innerHTML = getThemeToggleIconMarkup(isDarkMode);
+  toggle.setAttribute("aria-label", isDarkMode ? "Switch to light mode" : "Switch to dark mode");
+  toggle.setAttribute("title", isDarkMode ? "Switch to light mode" : "Switch to dark mode");
+  toggle.setAttribute("aria-pressed", String(!isDarkMode));
+}
+
 function applyThemeToDom(isDarkMode) {
   injectThemeStyles();
   document.body.classList.toggle("vg-light", !isDarkMode);
@@ -115,8 +141,7 @@ function applyThemeToDom(isDarkMode) {
 
   const toggle = document.getElementById("theme-toggle");
   if (toggle) {
-    toggle.textContent = isDarkMode ? "Light Mode" : "Dark Mode";
-    toggle.setAttribute("aria-pressed", String(!isDarkMode));
+    updateThemeToggleButton(toggle, isDarkMode);
   }
 }
 

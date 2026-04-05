@@ -12,7 +12,8 @@
 	<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 	<!-- Stitch UI Integration: Added Tailwind theme tokens and typography to match the provided design language. -->
 	<script>
-		tailwind.config = {
+		window.tailwind = window.tailwind || {};
+		window.tailwind.config = {
 			darkMode: "class",
 			theme: {
 				extend: {
@@ -208,3 +209,5 @@
 	</script>
 </body>
 </html>
+
+

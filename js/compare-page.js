@@ -2,7 +2,7 @@ const MAX_COMPARE = window.VGFirebase?.MAX_COMPARE || 3;
 
 window.VGModal?.ensureCarModal({
   showCancel: true,
-  zIndexClass: "z-[70]",
+  zIndexClass: "z-[60]",
 });
 
 const localState = window.vgUserStore?.getLocalState?.() || {
@@ -34,7 +34,7 @@ const BUTTON_SECONDARY = "border border-white/15 bg-white/5 px-3 py-2 text-[10px
 const BUTTON_ACTIVE = "border border-[#ff535d] bg-[#2b151a] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ffb2b4] transition";
 const MODAL_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
 const MODAL_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
-const MODAL_ACTIVE = "rounded-lg border border-[#ff535d] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
+const MODAL_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
 const showNotification = window.VGHelpers.createNotifier(elements.notification, {
   duration: 1700,
@@ -75,12 +75,12 @@ modalController = window.VGModal.createCarModalController({
   modalPrimaryClass: MODAL_PRIMARY,
   modalSecondaryClass: MODAL_SECONDARY,
   modalActiveClass: MODAL_ACTIVE,
-  dotActiveClass: "bg-[#ff535d]",
-  dotIdleClass: "bg-white/50",
+  dotActiveClass: "bg-amber-500",
+  dotIdleClass: "bg-white/70",
   imageFitClass: "object-cover",
-  autoAdvanceMs: 3600,
-  clearCurrentOnClose: true,
-  enableSwipe: true,
+  autoAdvanceMs: 3800,
+  clearCurrentOnClose: false,
+  enableSwipe: false,
 });
 
 function parseFloatFromText(value = "") {

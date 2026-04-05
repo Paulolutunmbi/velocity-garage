@@ -10,7 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>
-tailwind.config = {
+window.tailwind = window.tailwind || {};
+window.tailwind.config = {
   theme: {
     extend: {
       colors: {
@@ -115,12 +116,6 @@ tailwind.config = {
       linear-gradient(180deg, #f4f7fb 0%, #e8eef7 100%) !important;
     color: #10131a;
   }
-
-  body.vg-light .vg-side {
-    background: rgba(246, 248, 252, 0.92) !important;
-    border-right-color: rgba(148, 163, 184, 0.6) !important;
-  }
-
   body.vg-light .vg-panel {
     background: rgba(255, 255, 255, 0.87) !important;
     border-color: rgba(148, 163, 184, 0.56) !important;
@@ -158,70 +153,34 @@ tailwind.config = {
   </div>
 </div>
 
-<aside class="vg-side fixed inset-y-0 left-0 z-50 flex w-14 flex-col border-r border-white/10 bg-[#17171a] md:w-20">
-  <div class="flex h-[64px] items-center justify-center border-b border-white/10 md:h-[72px]">
-    <div class="grid h-7 w-7 grid-cols-2 grid-rows-2 gap-1 md:h-8 md:w-8">
-      <span class="rounded-[2px] bg-[#ff525c]/95"></span>
-      <span class="rounded-[2px] border border-[#ff525c]/75"></span>
-      <span class="rounded-[2px] border border-[#ff525c]/75"></span>
-      <span class="rounded-[2px] bg-[#ff525c]/95"></span>
-    </div>
-  </div>
+<header class="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/55 backdrop-blur-xl">
+  <nav class="mx-auto grid w-full max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3 sm:px-6 md:px-8">
+    <a href="home.html" class="flex items-center">
+      <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
+    </a>
 
-  <nav class="mt-3 flex flex-col gap-1 px-2 md:px-3">
-    <a href="home.html" class="group flex h-10 items-center justify-center rounded-none bg-[#ff525c] text-white shadow-glow md:h-11" aria-label="Showroom Home">
-      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
-    </a>
-    <a href="favorites.html" class="group flex h-10 items-center justify-center text-slate-300 transition hover:bg-white/5 hover:text-white md:h-11" aria-label="Favorites">
-      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.7-4.35-9.14-8.13C.85 9.73 2.02 5.5 5.66 4.3c2.23-.74 4.38.14 5.62 1.77 1.24-1.63 3.4-2.51 5.63-1.77 3.63 1.2 4.8 5.43 2.8 8.57C18.7 16.65 12 21 12 21z"/></svg>
-    </a>
-    <a href="compare.html" class="group flex h-10 items-center justify-center text-slate-300 transition hover:bg-white/5 hover:text-white md:h-11" aria-label="Compare">
-      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
-    </a>
-    <a href="wishlist.html" class="group flex h-10 items-center justify-center text-slate-300 transition hover:bg-white/5 hover:text-white md:h-11" aria-label="Wishlist">
-      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14"/><path d="M5 4v16a1 1 0 0 0 1.62.78L12 16l5.38 4.78A1 1 0 0 0 19 20V4"/></svg>
-    </a>
+    <div class="hidden items-center justify-center gap-6 text-sm text-[#b0b4c2] md:flex">
+      <a href="home.html" class="border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
+      <a href="compare.html" class="transition hover:text-white">Compare</a>
+      <a href="favorites.html" class="transition hover:text-white">Favorites</a>
+      <a href="wishlist.html" class="transition hover:text-white">Wishlist</a>
+    </div>
+
+    <div class="flex items-center justify-end gap-3">
+      <div id="auth-controls" class="flex flex-wrap items-center justify-end gap-2"></div>
+    </div>
   </nav>
 
-  <div class="mt-auto mb-3 px-2 md:px-3">
-    <a href="profile.html" class="group flex h-10 items-center justify-center text-slate-300 transition hover:bg-white/5 hover:text-white md:h-11" aria-label="Profile">
-      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>
-    </a>
-  </div>
-</aside>
-
-<header class="fixed inset-x-0 top-0 z-40 pl-14 md:pl-20">
-  <div class="mx-auto border-b border-white/10 bg-black/60 px-4 py-3 backdrop-blur-xl md:px-8 md:py-4">
-    <nav class="mx-auto flex w-full max-w-[1260px] items-center justify-between gap-4">
-      <a href="home.html" class="flex items-center">
-        <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto md:h-9">
-      </a>
-
-      <div class="hidden items-center gap-7 text-sm text-[#c6c6c6] lg:flex tech-font">
-        <a href="home.html" class="border-b-2 border-[#ff525c] pb-1 text-[#ff525c]">Showroom</a>
-        <a href="#catalog-section" class="transition hover:text-white">Inventory</a>
-        <a href="#video-section" class="transition hover:text-white">Performance</a>
-        <a href="#recommendation-section" class="transition hover:text-white">Customizer</a>
-      </div>
-
-      <div class="flex items-center gap-2 md:gap-3">
-        <button id="scroll-catalog" class="hidden rounded-md border border-white/20 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.17em] text-slate-100 transition hover:border-[#ff525c] sm:inline-flex">Inventory</button>
-        <button id="scroll-recommendation" class="hidden rounded-md border border-white/20 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.17em] text-slate-100 transition hover:border-[#ff525c] sm:inline-flex">AI Match</button>
-        <div id="auth-controls" class="flex flex-wrap items-center justify-end gap-2"></div>
-      </div>
-    </nav>
-
-    <div class="mx-auto mt-2 flex w-full max-w-[1260px] items-center gap-5 overflow-x-auto pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#c6c6c6] lg:hidden tech-font">
-      <a href="home.html" class="whitespace-nowrap border-b border-[#ff525c] pb-1 text-[#ff525c]">Showroom</a>
-      <a href="#catalog-section" class="whitespace-nowrap transition hover:text-white">Inventory</a>
-      <a href="#video-section" class="whitespace-nowrap transition hover:text-white">Performance</a>
-      <a href="#recommendation-section" class="whitespace-nowrap transition hover:text-white">Customizer</a>
-    </div>
+  <div class="mx-auto flex w-full max-w-7xl items-center justify-center gap-5 overflow-x-auto px-4 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#b0b4c2] md:hidden sm:px-6">
+    <a href="home.html" class="whitespace-nowrap border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
+    <a href="compare.html" class="whitespace-nowrap transition hover:text-white">Compare</a>
+    <a href="favorites.html" class="whitespace-nowrap transition hover:text-white">Favorites</a>
+    <a href="wishlist.html" class="whitespace-nowrap transition hover:text-white">Wishlist</a>
   </div>
 </header>
 
-<main class="pl-14 pt-[70px] md:pl-20 md:pt-[80px]">
-  <section class="relative h-[calc(100svh-70px)] min-h-[520px] overflow-hidden border-b border-white/10 md:h-[calc(100svh-80px)]">
+<main class="pt-[76px] md:pt-[84px]">
+  <section class="relative h-[calc(100svh-76px)] min-h-[520px] overflow-hidden border-b border-white/10 md:h-[calc(100svh-84px)]">
     <div id="hero-carousel" class="absolute inset-0">
       <div id="carousel-track" class="flex h-full transition-transform duration-700 ease-out"></div>
       <div class="absolute inset-0 bg-gradient-to-r from-[#131313] via-[#131313]/78 to-transparent"></div>
@@ -411,3 +370,6 @@ checkAuth({ redirectTo: "index.html" })
 </script>
 </body>
 </html>
+
+
+

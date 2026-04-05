@@ -34,15 +34,15 @@
               <p class="mt-2 text-sm text-white/70">The purest expression of performance, engineering, and aerodynamic research.</p>
 
               <h3 class="mt-5 text-[0.62rem] font-black uppercase tracking-[0.3em] text-[#ff535d]">Technical Specifications</h3>
-              <div class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Brand</p><p id="modal-brand" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Maker</p><p id="modal-maker" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Country</p><p id="modal-country" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Horsepower</p><p id="modal-hp" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Top Speed</p><p id="modal-speed" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Weight</p><p id="modal-weight" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">0-100 MPH</p><p id="modal-zero-to-100-mph" class="text-lg font-semibold"></p></div>
-                <div class="bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Price</p><p id="modal-price" class="text-lg font-semibold text-[#f7b2b6]"></p></div>
+              <div class="mt-3 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:grid-cols-2">
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Brand</p><p id="modal-brand" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Maker</p><p id="modal-maker" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Country</p><p id="modal-country" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Horsepower</p><p id="modal-hp" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Top Speed</p><p id="modal-speed" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Weight</p><p id="modal-weight" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">0-100 MPH</p><p id="modal-zero-to-100-mph" class="break-words text-base font-semibold leading-tight sm:text-lg"></p></div>
+                <div class="min-w-0 bg-black/40 p-3"><p class="text-[0.6rem] font-bold uppercase tracking-widest text-white/60">Price</p><p id="modal-price" class="break-words text-base font-semibold leading-tight text-[#f7b2b6] sm:text-lg"></p></div>
               </div>
 
               <div class="mt-5">

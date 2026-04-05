@@ -41,23 +41,35 @@ function renderFleetPreview() {
   const previewCars = shuffledCars(cars).slice(0, PREVIEW_LIMIT);
 
   fleetContainer.innerHTML = previewCars
-    .map(
-      (car) => `
-      <article class="rounded-2xl border border-slate-700/80 bg-slate-800/85 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl">
-        <div class="relative overflow-hidden rounded-xl">
-          <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
-          <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">${car.brand}</span>
-        </div>
-        <h3 class="mt-4 text-xl font-bold text-white">${car.name}</h3>
-        <p class="mt-2 text-sm text-slate-300">${car.description}</p>
-        <div class="mt-4 flex items-center justify-between text-xs text-slate-200">
-          <span class="rounded-md bg-slate-900 px-2 py-1">${car.hp}</span>
-          <span class="rounded-md bg-slate-900 px-2 py-1">${car.speed}</span>
-          <span class="rounded-md bg-slate-900 px-2 py-1">${car.price}</span>
-        </div>
-      </article>
-    `
-    )
+    .map((car) => {
+      if (!window.VGCard?.renderCompareStyleCard) return "";
+
+      return window.VGCard.renderCompareStyleCard({
+        car,
+        imageUrl: carImage(car),
+        articleClassName: "shadow-lg transition hover:-translate-y-1 hover:shadow-2xl",
+        subtitle: `${car.country} | ${car.maker || car.brand}`,
+        topBadge: car.brand,
+        description: car.description,
+        specs: [
+          {
+            label: "HP",
+            value: car.hp,
+            valueClassName: "display-font text-2xl font-bold text-slate-100",
+          },
+          {
+            label: "Top Speed",
+            value: car.speed,
+            valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
+          },
+          {
+            label: "Price",
+            value: car.price,
+            valueClassName: "display-font text-xl font-bold text-slate-100",
+          },
+        ],
+      });
+    })
     .join("");
 }
 

@@ -144,41 +144,44 @@ async function clearCompare() {
 function compareCardTemplate(car) {
   const { isFavorite, isWishlist } = getButtonLabelState(car.id);
 
-  return `
-    <article class="deck-grid-card group overflow-hidden border border-white/10 bg-[#181a20]">
-      <div class="relative aspect-[16/10] overflow-hidden bg-black/30">
-        <img src="${carImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
-        <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#11131a] via-black/35 to-transparent"></div>
-        <button data-action="remove" data-id="${car.id}" class="absolute right-3 top-3 h-8 w-8 border border-white/20 bg-black/45 text-slate-200 transition hover:border-[#ff535d] hover:text-[#ff535d]" aria-label="Remove from compare">&times;</button>
-      </div>
-
-      <div class="space-y-4 p-4">
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <h3 class="display-font text-3xl font-bold uppercase leading-none tracking-tight text-white">${car.name}</h3>
-            <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">${car.country} | ${car.maker}</p>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div class="border border-white/10 bg-white/5 px-3 py-2 text-center">
-            <span class="block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400">HP</span>
-            <span class="display-font text-2xl font-bold text-slate-100">${car.hp}</span>
-          </div>
-          <div class="border border-white/10 bg-white/5 px-3 py-2 text-center">
-            <span class="block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400">0-60</span>
-            <span class="display-font text-2xl font-bold text-[#ffb2b4]">${deriveZeroToSixty(car.zeroTo100Mph)}</span>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-          <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
-          <button data-action="favorite" data-id="${car.id}" class="${isFavorite ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFavorite ? "Favorited" : "Favorite"}</button>
-          <button data-action="wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Wishlisted" : "Wishlist"}</button>
-        </div>
-      </div>
-    </article>
-  `;
+  return window.VGCard.renderCompareStyleCard({
+    car,
+    imageUrl: carImage(car),
+    subtitle: `${car.country} | ${car.maker}`,
+    topAction: {
+      action: "remove",
+      ariaLabel: "Remove from compare",
+      iconSvg: "&times;",
+      className: "absolute right-3 top-3 h-8 w-8 border border-white/20 bg-black/45 text-slate-200 transition hover:border-[#ff535d] hover:text-[#ff535d]",
+    },
+    specs: [
+      {
+        label: "HP",
+        value: car.hp,
+        valueClassName: "display-font text-2xl font-bold text-slate-100",
+      },
+      {
+        label: "0-60",
+        value: deriveZeroToSixty(car.zeroTo100Mph),
+        valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
+      },
+    ],
+    actions: [
+      { action: "details", id: car.id, label: "Details", className: BUTTON_PRIMARY },
+      {
+        action: "favorite",
+        id: car.id,
+        label: isFavorite ? "Favorited" : "Favorite",
+        className: isFavorite ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+      },
+      {
+        action: "wishlist",
+        id: car.id,
+        label: isWishlist ? "Wishlisted" : "Wishlist",
+        className: isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+      },
+    ],
+  });
 }
 
 function renderCompareCards(cars) {

@@ -53,9 +53,9 @@ const elements = {
 
 let modalController = null;
 
-const BUTTON_PRIMARY = "rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold text-sm md:text-base px-4 py-2 transition";
-const BUTTON_SECONDARY = BUTTON_PRIMARY;
-const BUTTON_ACTIVE = `${BUTTON_PRIMARY} ring-2 ring-yellow-300`;
+const BUTTON_PRIMARY = "bg-[#ff535d] px-3 py-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#25060a] transition hover:brightness-110";
+const BUTTON_SECONDARY = "border border-white/15 bg-white/5 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-200 transition hover:border-[#ff535d] hover:text-white";
+const BUTTON_ACTIVE = "border border-[#ff535d] bg-[#2b151a] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#ffb2b4] transition";
 const MODAL_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
 const MODAL_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
 const MODAL_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
@@ -207,6 +207,10 @@ function parseHp(car) {
   return typeof car.hpValue === "number" ? car.hpValue : Number(String(car.hp).replace(/[^0-9]/g, ""));
 }
 
+function cardImage(car) {
+  return window.VGHelpers.carImage(car, window.CAR_IMAGE_FALLBACK);
+}
+
 function getCompareCars() {
   return [...state.compare].map((id) => getCarById(id)).filter(Boolean);
 }
@@ -242,26 +246,52 @@ function carCardTemplate(car, delayMs) {
   const isWishlist = state.wishlist.has(car.id);
   const isCompare = state.compare.has(car.id);
 
-  return `
-    <article class="card-reveal rounded-2xl border border-slate-700/80 bg-slate-800/85 p-4 shadow-lg transition hover:-translate-y-1 hover:shadow-2xl" style="animation-delay:${delayMs}ms">
-      <div class="relative overflow-hidden rounded-xl">
-        <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full object-cover transition duration-500 hover:scale-105">
-        <span class="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-xs font-bold text-white">${car.brand}</span>
-      </div>
-      <h3 class="mt-4 text-xl font-bold text-white">${car.name}</h3>
-      <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-slate-100">
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.hp}</p>
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.speed}</p>
-        <p class="rounded-lg bg-slate-900 p-2 text-center">${car.price}</p>
-      </div>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button data-action="details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Details</button>
-        <button data-action="compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-        <button data-action="favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
-        <button data-action="wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
-      </div>
-    </article>
-  `;
+  return window.VGCard.renderCompareStyleCard({
+    car,
+    imageUrl: cardImage(car),
+    articleClassName: "card-reveal shadow-lg transition hover:-translate-y-1 hover:shadow-2xl",
+    articleStyle: `animation-delay:${delayMs}ms`,
+    subtitle: `${car.country} | ${car.maker}`,
+    topBadge: car.brand,
+    specs: [
+      {
+        label: "HP",
+        value: car.hp,
+        valueClassName: "display-font text-2xl font-bold text-slate-100",
+      },
+      {
+        label: "Top Speed",
+        value: car.speed,
+        valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
+      },
+      {
+        label: "Price",
+        value: car.price,
+        valueClassName: "display-font text-xl font-bold text-slate-100",
+      },
+    ],
+    actions: [
+      { action: "details", id: car.id, label: "Details", className: BUTTON_PRIMARY },
+      {
+        action: "compare",
+        id: car.id,
+        label: isCompare ? "Remove Compare" : "Add Compare",
+        className: isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+      },
+      {
+        action: "favorite",
+        id: car.id,
+        label: isFav ? "Unfavorite" : "Favorite",
+        className: isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+      },
+      {
+        action: "wishlist",
+        id: car.id,
+        label: isWishlist ? "Remove Wishlist" : "Wishlist",
+        className: isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+      },
+    ],
+  });
 }
 
 function renderCatalog() {
@@ -392,28 +422,59 @@ function recommendationCard(car) {
   const isCompare = state.compare.has(car.id);
 
   return `
-    <article class="rounded-2xl border border-slate-700/80 bg-slate-800/85 p-5 shadow-xl">
-      <p class="mb-2 text-xs font-bold uppercase tracking-wide text-orange-500">AI recommendation</p>
-      <h3 class="text-2xl font-bold text-white">${car.name}</h3>
-      <div class="mt-4 grid gap-4 md:grid-cols-[1fr_1.2fr]">
-        <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-56 w-full rounded-xl object-cover">
-        <div>
-          <p class="text-sm text-slate-200">${car.description}</p>
-          <div class="mt-4 grid grid-cols-2 gap-2 text-xs text-slate-100">
-            <p class="rounded-lg bg-slate-900 p-2">Brand: ${car.brand}</p>
-            <p class="rounded-lg bg-slate-900 p-2">Country: ${car.country}</p>
-            <p class="rounded-lg bg-slate-900 p-2">Power: ${car.hp}</p>
-            <p class="rounded-lg bg-slate-900 p-2">Top speed: ${car.speed}</p>
-          </div>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <button data-action="rec-compare" data-id="${car.id}" class="${isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isCompare ? "Remove Compare" : "Add Compare"}</button>
-            <button data-action="rec-favorite" data-id="${car.id}" class="${isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isFav ? "Unfavorite" : "Favorite"}</button>
-            <button data-action="rec-wishlist" data-id="${car.id}" class="${isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY}">${isWishlist ? "Remove Wishlist" : "Wishlist"}</button>
-            <button data-action="rec-details" data-id="${car.id}" class="${BUTTON_PRIMARY}">Open Details</button>
-          </div>
-        </div>
-      </div>
-    </article>
+    <div class="space-y-3">
+      <p class="text-[10px] font-bold uppercase tracking-[0.26em] text-[#ffb2b4]">AI recommendation</p>
+      ${window.VGCard.renderCompareStyleCard({
+        car,
+        imageUrl: cardImage(car),
+        subtitle: `${car.country} | ${car.maker}`,
+        topBadge: car.brand,
+        description: car.description,
+        specs: [
+          {
+            label: "HP",
+            value: car.hp,
+            valueClassName: "display-font text-2xl font-bold text-slate-100",
+          },
+          {
+            label: "Top Speed",
+            value: car.speed,
+            valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
+          },
+          {
+            label: "Price",
+            value: car.price,
+            valueClassName: "display-font text-xl font-bold text-slate-100",
+          },
+        ],
+        actions: [
+          {
+            action: "rec-compare",
+            id: car.id,
+            label: isCompare ? "Remove Compare" : "Add Compare",
+            className: isCompare ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+          },
+          {
+            action: "rec-favorite",
+            id: car.id,
+            label: isFav ? "Unfavorite" : "Favorite",
+            className: isFav ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+          },
+          {
+            action: "rec-wishlist",
+            id: car.id,
+            label: isWishlist ? "Remove Wishlist" : "Wishlist",
+            className: isWishlist ? BUTTON_ACTIVE : BUTTON_SECONDARY,
+          },
+          {
+            action: "rec-details",
+            id: car.id,
+            label: "Open Details",
+            className: BUTTON_PRIMARY,
+          },
+        ],
+      })}
+    </div>
   `;
 }
 
@@ -434,13 +495,13 @@ function initCarousel() {
   elements.carouselTrack.innerHTML = slides
     .map(
       (car) => `
-      <article class="relative min-w-full p-1">
-        <div class="overflow-hidden rounded-2xl">
-          <img src="${car.image}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-72 w-full object-cover md:h-80">
+      <article class="relative h-full min-w-full">
+        <div class="h-full overflow-hidden">
+          <img src="${cardImage(car)}" alt="${car.name}" onerror="this.onerror=null;this.src='${CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover object-center">
         </div>
-        <div class="absolute bottom-10 left-4 rounded-xl bg-black/70 px-3 py-2 text-white">
-          <p class="text-xs uppercase tracking-wide text-orange-300">${car.brand}</p>
-          <h3 class="text-lg font-bold">${car.name}</h3>
+        <div class="absolute bottom-20 left-4 right-4 max-w-sm rounded-xl bg-black/65 px-3 py-2 text-white backdrop-blur-sm sm:bottom-10 sm:left-8 sm:right-auto">
+          <p class="text-[11px] uppercase tracking-wide text-orange-300">${car.brand}</p>
+          <h3 class="text-base font-bold leading-tight sm:text-lg">${car.name}</h3>
         </div>
       </article>`
     )
@@ -482,6 +543,11 @@ function initCarousel() {
     const delta = event.changedTouches[0].clientX - touchStartX;
     if (delta > 35) prev();
     if (delta < -35) next();
+  });
+
+  // Keep the active slide aligned on viewport size changes.
+  window.addEventListener("resize", () => {
+    setSlide(state.carouselIndex);
   });
 
   state.carouselTimer = setInterval(next, 4500);

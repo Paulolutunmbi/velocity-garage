@@ -1,4 +1,125 @@
 (function () {
+  function renderCardButton(button, fallbackClassName = "") {
+    if (!button || !button.action) return "";
+
+    const className = button.className || fallbackClassName;
+    const label = button.label || "Action";
+    const id = Number.isFinite(Number(button.id)) ? Number(button.id) : "";
+
+    if (window.VGButton?.renderActionButton) {
+      return window.VGButton.renderActionButton({
+        action: button.action,
+        id,
+        label,
+        className,
+        ariaLabel: button.ariaLabel || "",
+      });
+    }
+
+    const aria = button.ariaLabel ? ` aria-label="${button.ariaLabel}"` : "";
+    return `<button type="button" data-action="${button.action}" data-id="${id}" class="${className}"${aria}>${label}</button>`;
+  }
+
+  function specGridClass(specCount) {
+    if (specCount <= 1) return "grid-cols-1";
+    if (specCount === 2) return "grid-cols-2";
+    if (specCount === 3) return "grid-cols-3";
+    return "grid-cols-2 md:grid-cols-3";
+  }
+
+  function renderCompareStyleCard({
+    car,
+    imageUrl,
+    articleAttributes = "",
+    articleClassName = "",
+    articleStyle = "",
+    imageFitClass = "object-cover",
+    title = "",
+    subtitle = "",
+    topBadge = "",
+    description = "",
+    topAction,
+    specs = [],
+    actions = [],
+  }) {
+    if (!car) return "";
+
+    const articleAttr = articleAttributes ? ` ${articleAttributes}` : "";
+    const styleAttr = articleStyle ? ` style="${articleStyle}"` : "";
+    const cardClassName = [
+      "deck-grid-card group overflow-hidden border border-white/10 bg-[#181a20]",
+      articleClassName,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const safeTitle = title || car.name;
+    const safeSubtitle = subtitle || `${car.country || ""} | ${car.maker || car.brand || ""}`;
+    const safeTopBadge = topBadge || "";
+
+    const renderedSpecs = (Array.isArray(specs) ? specs : [])
+      .filter((item) => item && item.label)
+      .map((item) => `
+        <div class="${item.itemClassName || "border border-white/10 bg-white/5 px-3 py-2 text-center"}">
+          <span class="${item.labelClassName || "block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400"}">${item.label}</span>
+          <span class="${item.valueClassName || "display-font text-2xl font-bold text-slate-100"}">${item.value || "-"}</span>
+        </div>
+      `)
+      .join("");
+
+    const renderedActions = (Array.isArray(actions) ? actions : [])
+      .map((action) => renderCardButton(action))
+      .join("");
+
+    let topActionMarkup = "";
+    if (topAction?.action) {
+      const icon = topAction.iconSvg || "&times;";
+      const label = topAction.label || "";
+      const aria = topAction.ariaLabel ? ` aria-label="${topAction.ariaLabel}"` : "";
+      const className =
+        topAction.className ||
+        "absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center border border-white/20 bg-black/45 text-slate-200 transition hover:border-[#ff535d] hover:text-[#ff535d]";
+      topActionMarkup = `<button type="button" data-action="${topAction.action}" data-id="${car.id}" class="${className}"${aria}>${icon || label}</button>`;
+    }
+
+    const specSection = renderedSpecs
+      ? `<div class="grid ${specGridClass(specs.length)} gap-2">${renderedSpecs}</div>`
+      : "";
+
+    const actionSection = renderedActions ? `<div class="flex flex-wrap gap-2">${renderedActions}</div>` : "";
+    const descriptionSection = description
+      ? `<p class="rounded-md border border-white/10 bg-[#13151c] px-3 py-3 text-sm leading-relaxed text-slate-200">${description}</p>`
+      : "";
+
+    const topBadgeMarkup = safeTopBadge
+      ? `<span class="absolute left-3 top-3 rounded-full border border-white/20 bg-black/55 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-100">${safeTopBadge}</span>`
+      : "";
+
+    return `
+      <article${articleAttr} class="${cardClassName}"${styleAttr}>
+        <div class="relative aspect-[16/10] overflow-hidden bg-black/30">
+          <img src="${imageUrl}" alt="${safeTitle}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full ${imageFitClass} transition duration-700 group-hover:scale-110">
+          <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#11131a] via-black/35 to-transparent"></div>
+          ${topBadgeMarkup}
+          ${topActionMarkup}
+        </div>
+
+        <div class="space-y-4 p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h3 class="display-font text-3xl font-bold uppercase leading-none tracking-tight text-white">${safeTitle}</h3>
+              <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">${safeSubtitle}</p>
+            </div>
+          </div>
+
+          ${descriptionSection}
+          ${specSection}
+          ${actionSection}
+        </div>
+      </article>
+    `;
+  }
+
   function renderCollectionCard({
     car,
     imageUrl,
@@ -7,66 +128,45 @@
     compareButton,
     detailsButton,
   }) {
-    const articleAttr = articleAttributes ? ` ${articleAttributes}` : "";
-    const compareClass = window.VGButton?.resolveStateClass(compareButton.isActive, compareButton.activeClass, compareButton.idleClass) || compareButton.idleClass;
+    const compareClass =
+      window.VGButton?.resolveStateClass(compareButton.isActive, compareButton.activeClass, compareButton.idleClass) ||
+      compareButton.idleClass;
     const compareLabel = compareButton.isActive ? compareButton.activeLabel : compareButton.idleLabel;
 
-    return `
-      <article${articleAttr} class="group flex h-full flex-col overflow-hidden border border-[#2a2b34] bg-[#121217] transition duration-300 hover:-translate-y-1 hover:border-[#ff5d67]/70">
-        <div class="relative aspect-[16/10] overflow-hidden bg-black/40">
-          <img src="${imageUrl}" alt="${car.name}" onerror="this.onerror=null;this.src='${window.CAR_IMAGE_FALLBACK}'" class="h-full w-full object-cover transition duration-700 group-hover:scale-105">
-          <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/85 to-transparent"></div>
-          <span class="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#ff5d67]">${car.brand}</span>
-          <button data-action="${topAction.action}" data-id="${car.id}" class="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white transition hover:border-[#ff5d67] hover:text-[#ff5d67]" aria-label="${topAction.ariaLabel}">
-            ${topAction.iconSvg}
-          </button>
-        </div>
-
-        <div class="flex h-full flex-col p-4">
-          <div class="mb-3 flex items-start justify-between gap-3">
-            <div class="min-h-[62px]">
-              <h3 class="display-font text-2xl font-bold uppercase leading-tight text-white">${car.name}</h3>
-              <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#aeb3c0]">${car.country}</p>
-            </div>
-            <span class="display-font text-lg font-medium text-[#f8fafc]">${car.price}</span>
-          </div>
-
-          <div class="mt-auto space-y-3">
-            <div class="grid grid-cols-2 gap-2">
-              <div class="border border-[#2a2b34] bg-[#0f1015] px-3 py-2">
-                <span class="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8f95a4]">Top Speed</span>
-                <span class="display-font text-lg font-bold text-white">${car.speed}</span>
-              </div>
-              <div class="border border-[#2a2b34] bg-[#0f1015] px-3 py-2">
-                <span class="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8f95a4]">Horsepower</span>
-                <span class="display-font text-lg font-bold text-white">${car.hp}</span>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-2">
-              ${window.VGButton?.renderActionButton({
-                action: compareButton.action,
-                id: car.id,
-                label: compareLabel,
-                className: compareClass,
-              })}
-              ${window.VGButton?.renderActionButton({
-                action: detailsButton.action,
-                id: car.id,
-                label: detailsButton.label,
-                className: detailsButton.className,
-              })}
-            </div>
-          </div>
-        </div>
-      </article>
-    `;
+    return renderCompareStyleCard({
+      car,
+      imageUrl,
+      articleAttributes,
+      subtitle: car.country,
+      topBadge: car.brand,
+      topAction,
+      specs: [
+        { label: "Top Speed", value: car.speed, valueClassName: "display-font text-lg font-bold text-white" },
+        { label: "Horsepower", value: car.hp, valueClassName: "display-font text-lg font-bold text-white" },
+        { label: "Price", value: car.price, valueClassName: "display-font text-lg font-bold text-white" },
+      ],
+      actions: [
+        {
+          action: compareButton.action,
+          id: car.id,
+          label: compareLabel,
+          className: compareClass,
+        },
+        {
+          action: detailsButton.action,
+          id: car.id,
+          label: detailsButton.label,
+          className: detailsButton.className,
+        },
+      ],
+    });
   }
 
   const HEART_ICON = '<svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.7-4.35-9.14-8.13C.85 9.73 2.02 5.5 5.66 4.3c2.23-.74 4.38.14 5.62 1.77 1.24-1.63 3.4-2.51 5.63-1.77 3.63 1.2 4.8 5.43 2.8 8.57C18.7 16.65 12 21 12 21z"/></svg>';
 
   window.VGCard = {
     HEART_ICON,
+    renderCompareStyleCard,
     renderCollectionCard,
   };
 })();

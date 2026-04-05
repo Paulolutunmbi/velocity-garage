@@ -109,9 +109,9 @@ const cars = [
     vehicleType: "Combustion",
     description: "A refined, naturally aspirated V10 supercar sharing its core DNA with the Lamborghini Huracán.",
     images: [
-      "https://www.netcarshow.com/Audi-R8_V10_plus-2013-Front_Three-Quarter.dda750a0.jpg",
-      "https://www.netcarshow.com/Audi-R8_Coupe_V10_plus_selection_24h-2016-Rear.cc3a1530.jpg",
-      "https://www.netcarshow.com/Audi-R8_V10_plus-2013-Side_Profile.dda750a0.jpg"
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Audi_R8_Coup%C3%A9_V10_%28II%29_%E2%80%93_f_06082021.jpg/1280px-Audi_R8_Coup%C3%A9_V10_%28II%29_%E2%80%93_f_06082021.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/2018_Audi_R8_Coupe_V10_plus_Front.jpg/1280px-2018_Audi_R8_Coupe_V10_plus_Front.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/2018_Audi_R8_Coupe_V10_plus_Rear.jpg/1280px-2018_Audi_R8_Coupe_V10_plus_Rear.jpg"
     ],
   },
   {
@@ -128,9 +128,9 @@ const cars = [
     vehicleType: "Combustion",
     description: "A track-focused monster featuring a flat-plane crank V8 and extreme aerodynamics derived from GT3 racing.",
     images: [
-      "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Front.395da237.jpg",
-      "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Rear_Three-Quarter.395da237.jpg",
-      "https://www.netcarshow.com/Mercedes-Benz-AMG_GT_Black_Series-2021-Side_Profile.395da237.jpg"
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Black_2021_Mercedes-AMG_GT_Black_Series_SCD_24.jpg/1280px-Black_2021_Mercedes-AMG_GT_Black_Series_SCD_24.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Mercedes-AMG_GT_Black_Series_IMG_0324.jpg/1280px-Mercedes-AMG_GT_Black_Series_IMG_0324.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Mercedes-AMG_GT_Black_Series_Classic-Gala_2025_DSC_0767.jpg/1280px-Mercedes-AMG_GT_Black_Series_Classic-Gala_2025_DSC_0767.jpg"
     ],
   },
   {
@@ -147,7 +147,7 @@ const cars = [
     vehicleType: "Combustion",
     description: "A heavily muscular grand tourer that crosses into supercar territory with its ferocious twin-turbo V8 and all-wheel drive.",
     images: [
-      "https://www.netcarshow.com/BMW-M8_Competition_Coupe-2020-Front.0616f34d.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/2021_BMW_M8_Competition_Auto.jpg/1280px-2021_BMW_M8_Competition_Auto.jpg",
       "https://mediacloud.carbuyer.co.uk/image/private/s--y-iJbnqW--/f_auto,t_content-image-full-mobile@1/v1579647100/carbuyer/2019/06/p90348780_highres.jpg",
       "https://mediapool.bmwgroup.com/cache/P9/201905/P90348774/P90348774-the-all-new-bmw-m8-competition-coupe-06-2019-600px.jpg"
     ],

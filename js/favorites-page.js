@@ -37,8 +37,7 @@ const elements = {
 
 const BUTTON_PRIMARY = "rounded-md bg-[#f7b2b6] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-black transition hover:brightness-110";
 const BUTTON_SECONDARY = "rounded-md border border-[#2a2b34] bg-[#1a1b22] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#d3d7e3] transition hover:border-[#ff5d67] hover:text-white";
-const BUTTON_ACTIVE = "rounded-md border border-[#ff5d67] bg-[#2a1216] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.17em] text-[#ffb6bb] transition";
-const MODAL_BUTTON_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
+const BUTTON_ACTIVE = "rounded-lg border border-[#ff5d67] bg-[#2a1216] px-4 py-2 font-semibold text-[#ffb6bb] transition";
 
 const showNotification = window.VGHelpers.createNotifier(elements.notification, { duration: 1700 });
 
@@ -66,7 +65,7 @@ modalController = window.VGModal.createCarModalController({
   }),
   modalPrimaryClass: BUTTON_PRIMARY,
   modalSecondaryClass: BUTTON_SECONDARY,
-  modalActiveClass: MODAL_BUTTON_ACTIVE,
+  modalActiveClass: BUTTON_ACTIVE,
   dotActiveClass: "bg-amber-500",
   dotIdleClass: "bg-white/70",
   imageFitClass: "object-cover",

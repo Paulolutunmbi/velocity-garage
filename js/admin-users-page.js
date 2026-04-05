@@ -1,6 +1,7 @@
 import { checkAdmin } from "./auth-guard.js";
 import { initAuthNavbar } from "./navbar-auth.js";
 import { watchUsers } from "./auth.js";
+import { formatLastActive, normalizeIds, toDate } from "./admin-utils.js";
 
 const loadingState = document.getElementById("users-loading");
 const errorState = document.getElementById("users-error");
@@ -10,38 +11,10 @@ const totalMetric = document.getElementById("users-total");
 const activeMetric = document.getElementById("users-active");
 const verifiedMetric = document.getElementById("users-verified");
 
-function normalizeIds(value) {
-  if (!Array.isArray(value)) return [];
-  return [...new Set(value.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0))];
-}
-
-function toDate(value) {
-  if (!value) return null;
-  if (typeof value.toDate === "function") {
-    const dateValue = value.toDate();
-    return Number.isNaN(dateValue.getTime()) ? null : dateValue;
-  }
-  const dateValue = new Date(value);
-  return Number.isNaN(dateValue.getTime()) ? null : dateValue;
-}
-
 function formatDate(value) {
   const dateValue = toDate(value);
   if (!dateValue) return "-";
   return dateValue.toLocaleDateString();
-}
-
-function formatLastActive(user = {}) {
-  const dateValue = toDate(user.updatedAt) || toDate(user.createdAt);
-  if (!dateValue) return "-";
-
-  const diffMs = Date.now() - dateValue.getTime();
-  const hour = 60 * 60 * 1000;
-  const day = 24 * hour;
-
-  if (diffMs < hour) return "Within 1 hour";
-  if (diffMs < day) return `${Math.floor(diffMs / hour)}h ago`;
-  return `${Math.floor(diffMs / day)}d ago`;
 }
 
 function renderUsers(users = []) {
@@ -95,7 +68,7 @@ function renderUsers(users = []) {
           <td class="px-4 py-3 text-slate-200">${favorites}</td>
           <td class="px-4 py-3 text-slate-200">${wishlist}</td>
           <td class="px-4 py-3 text-slate-300">${formatDate(user.createdAt)}</td>
-          <td class="px-4 py-3 text-slate-300">${formatLastActive(user)}</td>
+          <td class="px-4 py-3 text-slate-300">${formatLastActive(user.updatedAt || user.createdAt)}</td>
         </tr>
       `;
     })

@@ -83,16 +83,6 @@ modalController = window.VGModal.createCarModalController({
   enableSwipe: false,
 });
 
-function parseFloatFromText(value = "") {
-  return window.VGHelpers.parseNumericValue(value);
-}
-
-function deriveZeroToSixty(zeroTo100Text = "") {
-  const zeroTo100 = parseFloatFromText(zeroTo100Text);
-  if (!zeroTo100) return "--";
-  return `${(zeroTo100 * 0.6).toFixed(1)} s`;
-}
-
 function carImage(car) {
   return window.VGHelpers.carImage(car, window.CAR_IMAGE_FALLBACK);
 }
@@ -162,7 +152,10 @@ function compareCardTemplate(car) {
       },
       {
         label: "0-60",
-        value: deriveZeroToSixty(car.zeroTo100Mph),
+        value: window.VGHelpers.deriveZeroToSixtyFromZeroTo100(car.zeroTo100Mph, {
+          fallback: "--",
+          suffix: " s",
+        }),
         valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
       },
     ],

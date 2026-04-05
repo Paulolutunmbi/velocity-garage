@@ -109,6 +109,12 @@ window.tailwind.config = {
     height: 100%;
   }
 
+  #cars-container .display-font,
+  #ai-result .display-font {
+    font-family: "Space Grotesk", sans-serif;
+    letter-spacing: 0.01em;
+  }
+
   body.vg-light {
     background:
       radial-gradient(circle at 90% 20%, rgba(244, 63, 94, 0.19) 0%, rgba(244, 63, 94, 0) 35%),
@@ -337,10 +343,11 @@ window.tailwind.config = {
 
 <div id="modal-root"></div>
 
-<div id="notification" class="pointer-events-none fixed bottom-5 left-1/2 z-[80] hidden -translate-x-1/2 border border-[#ff525c]/45 bg-[#161619]/92 px-4 py-2 text-sm font-semibold text-white shadow-2xl"></div>
+<div id="notification" class="pointer-events-none fixed bottom-5 left-1/2 z-[80] hidden -translate-x-1/2 border border-[#ff525c]/60 bg-[#111216] px-4 py-2.5 text-sm font-semibold text-white shadow-2xl"></div>
 
-<button id="back-to-top" class="group fixed bottom-4 right-4 z-40 hidden h-12 w-12 items-center justify-center border border-[#ffb3b2]/45 bg-[#ff525c] text-white shadow-glow transition hover:scale-105 hover:brightness-110 md:bottom-6 md:right-6" aria-label="Back to top">
-  <svg class="h-5 w-5 transition group-hover:-translate-y-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+<button id="back-to-top" class="fixed bottom-4 right-4 z-40 inline-flex translate-y-3 items-center gap-2 border border-[#ffb3b2]/50 bg-[#111216] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-[#ffd7d6] opacity-0 shadow-[0_16px_34px_-18px_rgba(255,82,92,0.95)] transition-all duration-300 pointer-events-none hover:-translate-y-0.5 hover:border-[#ff525c] hover:bg-[#1a1b22] hover:text-white md:bottom-6 md:right-6" aria-label="Back to top">
+  <span>Top</span>
+  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
     <path d="M12 19V5"/>
     <path d="M6 11l6-6 6 6"/>
   </svg>

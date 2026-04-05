@@ -91,15 +91,10 @@ function normalizeTopUsers(usersMap = {}) {
     .slice(0, 10);
 }
 
-function normalizeIds(value) {
-  if (!Array.isArray(value)) return [];
-  return [...new Set(value.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0))];
-}
-
 function getTopCarsFromUsers(users = []) {
   const cars = {};
   users.forEach((user) => {
-    normalizeIds(user.favorites).forEach((carId) => {
+    window.VGHelpers.normalizeIds(user.favorites).forEach((carId) => {
       const key = String(carId);
       cars[key] = (cars[key] || 0) + 1;
     });
@@ -118,7 +113,7 @@ function getTopUsersFromUsers(users = []) {
       Number(
         user.favoritesCount ??
           user.favoriteCount ??
-          normalizeIds(user.favorites).length
+          window.VGHelpers.normalizeIds(user.favorites).length
       )
     );
 
@@ -251,23 +246,28 @@ function carCardTemplate(car, delayMs) {
     imageUrl: cardImage(car),
     articleClassName: "card-reveal shadow-lg transition hover:-translate-y-1 hover:shadow-2xl",
     articleStyle: `animation-delay:${delayMs}ms`,
-    subtitle: `${car.country} | ${car.maker}`,
+    subtitle: car.country,
     topBadge: car.brand,
+    topAction: {
+      action: "favorite",
+      ariaLabel: isFav ? "Remove from favorites" : "Add to favorites",
+      iconSvg: window.VGCard.HEART_ICON,
+    },
     specs: [
-      {
-        label: "HP",
-        value: car.hp,
-        valueClassName: "display-font text-2xl font-bold text-slate-100",
-      },
       {
         label: "Top Speed",
         value: car.speed,
-        valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
+        valueClassName: "display-font text-lg font-bold text-white",
+      },
+      {
+        label: "Horsepower",
+        value: car.hp,
+        valueClassName: "display-font text-lg font-bold text-white",
       },
       {
         label: "Price",
         value: car.price,
-        valueClassName: "display-font text-xl font-bold text-slate-100",
+        valueClassName: "display-font text-lg font-bold text-white",
       },
     ],
     actions: [
@@ -427,24 +427,29 @@ function recommendationCard(car) {
       ${window.VGCard.renderCompareStyleCard({
         car,
         imageUrl: cardImage(car),
-        subtitle: `${car.country} | ${car.maker}`,
+        subtitle: car.country,
         topBadge: car.brand,
+        topAction: {
+          action: "rec-favorite",
+          ariaLabel: isFav ? "Remove from favorites" : "Add to favorites",
+          iconSvg: window.VGCard.HEART_ICON,
+        },
         description: car.description,
         specs: [
           {
-            label: "HP",
-            value: car.hp,
-            valueClassName: "display-font text-2xl font-bold text-slate-100",
-          },
-          {
             label: "Top Speed",
             value: car.speed,
-            valueClassName: "display-font text-2xl font-bold text-[#ffb2b4]",
+            valueClassName: "display-font text-lg font-bold text-white",
+          },
+          {
+            label: "Horsepower",
+            value: car.hp,
+            valueClassName: "display-font text-lg font-bold text-white",
           },
           {
             label: "Price",
             value: car.price,
-            valueClassName: "display-font text-xl font-bold text-slate-100",
+            valueClassName: "display-font text-lg font-bold text-white",
           },
         ],
         actions: [
@@ -622,8 +627,12 @@ function initEvents() {
 
   if (elements.backToTop) {
     window.addEventListener("scroll", () => {
-      if (window.scrollY > 420) elements.backToTop.classList.remove("hidden");
-      else elements.backToTop.classList.add("hidden");
+      const shouldShow = window.scrollY > 420;
+      elements.backToTop.classList.toggle("opacity-0", !shouldShow);
+      elements.backToTop.classList.toggle("pointer-events-none", !shouldShow);
+      elements.backToTop.classList.toggle("translate-y-3", !shouldShow);
+      elements.backToTop.classList.toggle("opacity-100", shouldShow);
+      elements.backToTop.classList.toggle("translate-y-0", shouldShow);
     });
 
     elements.backToTop.addEventListener("click", () => {

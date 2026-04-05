@@ -75,13 +75,50 @@ function injectThemeStyles() {
       background-image: radial-gradient(circle at 15% 0%, rgba(251, 146, 60, 0.2) 0%, rgba(255,255,255,0) 42%), linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
       color: #0f172a !important;
     }
-    body.vg-light [class*="bg-slate-"],
-    body.vg-light [class*="bg-gray-"] {
-      background-color: rgba(255, 255, 255, 0.88) !important;
+
+    body.vg-light [class*="bg-vgBg"],
+    body.vg-light [class*="bg-vg-bg"] {
+      background-color: #eef2f7 !important;
     }
+
+    body.vg-light [class*="bg-vgSurface"],
+    body.vg-light [class*="bg-vg-panel"],
+    body.vg-light [class*="bg-vg-panel-hi"],
+    body.vg-light [class*="bg-slate-"],
+    body.vg-light [class*="bg-gray-"],
+    body.vg-light [class*="bg-black/"] {
+      background-color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    body.vg-light [class*="bg-black"] {
+      background-color: #f8fafc !important;
+    }
+
+    body.vg-light [class*="border-vgLine"],
+    body.vg-light [class*="border-vg-panel"],
+    body.vg-light [class*="border-vg-panel-hi"],
     body.vg-light [class*="border-slate-"] {
       border-color: #cbd5e1 !important;
     }
+
+    body.vg-light [class*="border-white/"] {
+      border-color: #cbd5e1 !important;
+    }
+
+    body.vg-light [class*="text-vgMuted"],
+    body.vg-light [class*="text-vg-muted"] {
+      color: #475569 !important;
+    }
+
+    body.vg-light [class*="text-vg-copy"] {
+      color: #0f172a !important;
+    }
+
+    body.vg-light [class*="text-vgPrimary"],
+    body.vg-light [class*="text-vg-accent"] {
+      color: #be123c !important;
+    }
+
     body.vg-light [class*="text-white"],
     body.vg-light [class*="text-slate-"],
     body.vg-light p,
@@ -95,9 +132,87 @@ function injectThemeStyles() {
     body.vg-light label {
       color: #0f172a !important;
     }
+
     body.vg-light .text-orange-500,
     body.vg-light .text-orange-300 {
       color: #9a3412 !important;
+    }
+
+    body.vg-light .glass-panel {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border-color: rgba(148, 163, 184, 0.64) !important;
+    }
+
+    body.vg-light .deck-grid-card {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    body.vg-light .deck-grid-card [class*="bg-black/"],
+    body.vg-light .deck-grid-card [class*="bg-white/5"] {
+      background-color: #f8fafc !important;
+    }
+
+    body.vg-light .deck-grid-card button {
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    body.vg-light .deck-grid-card button[data-action="details"],
+    body.vg-light .deck-grid-card button[data-action="rec-details"],
+    body.vg-light .deck-grid-card button[data-action="compare"],
+    body.vg-light .deck-grid-card button[data-action="rec-compare"] {
+      background: #0f172a !important;
+      border-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+
+    body.vg-light #compare-bar,
+    body.vg-light #notification {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    body.vg-light #back-to-top {
+      background: #0f172a !important;
+      border-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+
+    body.vg-light #modal > div,
+    body.vg-light #modal section {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    body.vg-light #modal #modal-carousel,
+    body.vg-light #modal #modal-carousel-dots {
+      background: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+
+    body.vg-light #modal #modal-compare {
+      background: #0f172a !important;
+      border-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+
+    body.vg-light #modal #modal-fav,
+    body.vg-light #modal #modal-wishlist,
+    body.vg-light #modal #modal-cancel {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+
+    body.vg-light #auth-controls [class*="bg-slate-"],
+    body.vg-light #auth-controls [class*="border-slate-"] {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
     }
   `;
 

@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 // In build environments (for example Vercel), FIREBASE_* values can be injected
-// via process.env. In the browser, values are provided by js/env.js as window.__ENV.
+// via process.env. In the browser, values are provided by /env.js as window.__ENV.
 const processEnv = typeof process !== "undefined" && process?.env ? process.env : {};
 const runtimeEnv = typeof window !== "undefined" ? window.__ENV || {} : {};
 

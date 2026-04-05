@@ -10,6 +10,7 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { auth, db } from "./firebase-config.js";
+import { formatLastActive, normalizeIds, toDate } from "./admin-utils.js";
 
 const loadingState = document.getElementById("admin-loading");
 const errorState = document.getElementById("admin-error");
@@ -250,21 +251,6 @@ function formatJoinDate(value) {
 
   const days = Math.floor(diffMs / day);
   return `Joined ${days} day${days > 1 ? "s" : ""} ago`;
-}
-
-function formatLastActive(value) {
-  if (!value) return "-";
-
-  const dateValue = toDate(value);
-  if (!dateValue) return "-";
-
-  const diffMs = Date.now() - dateValue.getTime();
-  const hour = 60 * 60 * 1000;
-  const day = 24 * hour;
-
-  if (diffMs < hour) return "Within 1 hour";
-  if (diffMs < day) return `${Math.floor(diffMs / hour)}h ago`;
-  return `${Math.floor(diffMs / day)}d ago`;
 }
 
 function setAdminView(view = "dashboard") {
@@ -550,23 +536,6 @@ function medal(index) {
   if (index === 1) return "🥈";
   if (index === 2) return "🥉";
   return `#${index + 1}`;
-}
-
-function normalizeIds(value) {
-  if (!Array.isArray(value)) return [];
-  return [...new Set(value.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0))];
-}
-
-function toDate(value) {
-  if (!value) return null;
-
-  if (typeof value.toDate === "function") {
-    const dateValue = value.toDate();
-    return Number.isNaN(dateValue.getTime()) ? null : dateValue;
-  }
-
-  const dateValue = new Date(value);
-  return Number.isNaN(dateValue.getTime()) ? null : dateValue;
 }
 
 function formatCompact(value = 0) {

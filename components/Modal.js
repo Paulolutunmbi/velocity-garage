@@ -30,7 +30,7 @@
 
             <section class="border-t border-white/10 bg-[#151515] px-4 py-5 sm:px-6 sm:py-6 md:col-span-5 md:border-l md:border-t-0 md:px-5 md:py-5">
               <span class="inline-flex items-center rounded-full border border-[#ff535d]/40 bg-[#ff535d]/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-[#ffb2b4]">Detail Prototype</span>
-              <h2 id="modal-name" class="mt-2 text-3xl font-black italic leading-tight sm:text-4xl"></h2>
+              <h2 id="modal-name" class="mt-2 text-3xl font-black italic leading-tight sm:text-4xl" style="font-family: 'Space Grotesk', sans-serif;"></h2>
               <p class="mt-2 text-sm text-white/70">The purest expression of performance, engineering, and aerodynamic research.</p>
 
               <h3 class="mt-5 text-[0.62rem] font-black uppercase tracking-[0.3em] text-[#ff535d]">Technical Specifications</h3>
@@ -51,10 +51,10 @@
               </div>
 
               <div class="mt-5 flex flex-wrap gap-2">
-                <button id="modal-compare"></button>
-                <button id="modal-fav"></button>
-                <button id="modal-wishlist"></button>
-                <button id="modal-cancel" class="${cancelClass}">Cancel</button>
+                <button id="modal-compare" style="font-family: 'Space Grotesk', sans-serif;"></button>
+                <button id="modal-fav" style="font-family: 'Space Grotesk', sans-serif;"></button>
+                <button id="modal-wishlist" style="font-family: 'Space Grotesk', sans-serif;"></button>
+                <button id="modal-cancel" class="${cancelClass}" style="font-family: 'Space Grotesk', sans-serif;">Cancel</button>
               </div>
             </section>
           </div>

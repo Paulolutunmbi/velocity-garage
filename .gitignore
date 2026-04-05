@@ -7,6 +7,4 @@ firebase-adminsdk.json
 dist
 build
 .DS_Store
-js/env.js
 env.js
-mn.txt

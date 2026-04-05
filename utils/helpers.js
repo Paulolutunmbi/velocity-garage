@@ -17,6 +17,19 @@
     return parseNumericValue(hpText);
   }
 
+  function deriveZeroToSixtyFromZeroTo100(
+    zeroTo100Text = "",
+    { fallback = "--", uppercaseFallback = false, suffix = " s" } = {}
+  ) {
+    const numeric = parseNumericValue(zeroTo100Text);
+    if (!Number.isFinite(numeric) || numeric <= 0) {
+      const textFallback = String(zeroTo100Text || fallback);
+      return uppercaseFallback ? textFallback.toUpperCase() : textFallback;
+    }
+
+    return `${(numeric * 0.6).toFixed(1)}${suffix}`;
+  }
+
   function carImage(car, fallback = "") {
     return car?.image || car?.images?.[0] || fallback;
   }
@@ -124,6 +137,7 @@
     parseNumericValue,
     parsePriceValue,
     parseHorsepowerValue,
+    deriveZeroToSixtyFromZeroTo100,
     carImage,
     deriveOptionList,
     populateSelectOptions,

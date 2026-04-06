@@ -20,6 +20,88 @@
     return `<button type="button" data-action="${button.action}" data-id="${id}" class="${className}"${aria}>${label}</button>`;
   }
 
+  function ensureResponsivePriceStyles() {
+    if (typeof document === "undefined") return;
+    if (document.getElementById("vg-card-price-styles")) return;
+
+    const style = document.createElement("style");
+    style.id = "vg-card-price-styles";
+    style.textContent = `
+      .vg-price-value {
+        display: inline-flex;
+        align-items: baseline;
+        max-width: 100%;
+        white-space: nowrap;
+      }
+
+      .vg-price-value[data-has-compact="true"] .vg-price-compact {
+        display: none;
+      }
+
+      @media (max-width: 420px) {
+        .vg-price-value[data-has-compact="true"] .vg-price-full {
+          display: none;
+        }
+
+        .vg-price-value[data-has-compact="true"] .vg-price-compact {
+          display: inline;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .deck-grid-card .vg-price-value {
+          font-size: 1rem !important;
+          line-height: 1.25rem !important;
+          letter-spacing: 0 !important;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function parseCurrencyValue(raw = "") {
+    const numeric = Number(String(raw).replace(/[^0-9.]/g, ""));
+    return Number.isFinite(numeric) ? numeric : 0;
+  }
+
+  function formatCompactPrice(rawValue = "") {
+    const numeric = parseCurrencyValue(rawValue);
+    if (!Number.isFinite(numeric) || numeric < 1_000_000) return "";
+
+    if (numeric >= 1_000_000_000) {
+      const billions = numeric / 1_000_000_000;
+      const formattedBillions = (billions >= 10 ? billions.toFixed(0) : billions.toFixed(1)).replace(/\.0$/, "");
+      return `$${formattedBillions}B`;
+    }
+
+    const millions = numeric / 1_000_000;
+    const formattedMillions = (millions >= 10 ? millions.toFixed(0) : millions.toFixed(1)).replace(/\.0$/, "");
+    return `$${formattedMillions}M`;
+  }
+
+  function isPriceSpec(spec = {}) {
+    return String(spec.label || "").toLowerCase().includes("price");
+  }
+
+  function renderSpecValue(spec = {}) {
+    const fallbackClassName = "display-font text-2xl font-bold text-slate-100";
+    const valueClassName = spec.valueClassName || fallbackClassName;
+    const rawValue = spec.value == null || spec.value === "" ? "-" : String(spec.value);
+
+    if (!isPriceSpec(spec)) {
+      return `<span class="${valueClassName}">${rawValue}</span>`;
+    }
+
+    const compactValue = formatCompactPrice(rawValue);
+
+    if (!compactValue) {
+      return `<span class="${valueClassName} vg-price-value" data-has-compact="false">${rawValue}</span>`;
+    }
+
+    return `<span class="${valueClassName} vg-price-value" data-has-compact="true"><span class="vg-price-full">${rawValue}</span><span class="vg-price-compact">${compactValue}</span></span>`;
+  }
+
   function specGridClass(specCount) {
     if (specCount <= 1) return "grid-cols-1";
     if (specCount === 2) return "grid-cols-2";
@@ -62,7 +144,7 @@
       .map((item) => `
         <div class="${item.itemClassName || "border border-white/10 bg-white/5 px-3 py-2 text-center"}">
           <span class="${item.labelClassName || "block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-400"}">${item.label}</span>
-          <span class="${item.valueClassName || "display-font text-2xl font-bold text-slate-100"}">${item.value || "-"}</span>
+          ${renderSpecValue(item)}
         </div>
       `)
       .join("");
@@ -163,6 +245,8 @@
   }
 
   const HEART_ICON = '<svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M12 21s-6.7-4.35-9.14-8.13C.85 9.73 2.02 5.5 5.66 4.3c2.23-.74 4.38.14 5.62 1.77 1.24-1.63 3.4-2.51 5.63-1.77 3.63 1.2 4.8 5.43 2.8 8.57C18.7 16.65 12 21 12 21z"/></svg>';
+
+  ensureResponsivePriceStyles();
 
   window.VGCard = {
     HEART_ICON,

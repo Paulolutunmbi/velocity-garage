@@ -165,11 +165,13 @@ window.tailwind.config = {
       <img id="site-logo" src="assets/images/default-monochrome-white.svg" alt="Velocity Garage logo" class="h-8 w-auto">
     </a>
 
-    <div class="hidden items-center justify-center gap-6 text-sm text-[#b0b4c2] md:flex">
+    <div class="hidden items-center justify-center gap-4 text-sm text-[#b0b4c2] md:flex lg:gap-5">
       <a href="home.html" class="border-b border-[#ff5d67] pb-1 text-[#ff5d67]">Home</a>
       <a href="compare.html" class="transition hover:text-white">Compare</a>
       <a href="favorites.html" class="transition hover:text-white">Favorites</a>
       <a href="wishlist.html" class="transition hover:text-white">Wishlist</a>
+      <a href="#recommendation-section" class="inline-flex items-center rounded-full border border-[#ff525c]/45 bg-[#ff525c]/12 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#ffd6d8] transition hover:border-[#ff525c] hover:bg-[#ff525c]/26 hover:text-white">AI Picks</a>
+      <a href="#leaderboard-section" class="inline-flex items-center rounded-full border border-[#6cd7d8]/50 bg-[#6cd7d8]/12 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#9eeef0] transition hover:border-[#6cd7d8] hover:bg-[#6cd7d8]/24 hover:text-white">Live Board</a>
     </div>
 
     <div class="flex items-center justify-end gap-3">
@@ -182,6 +184,8 @@ window.tailwind.config = {
     <a href="compare.html" class="whitespace-nowrap transition hover:text-white">Compare</a>
     <a href="favorites.html" class="whitespace-nowrap transition hover:text-white">Favorites</a>
     <a href="wishlist.html" class="whitespace-nowrap transition hover:text-white">Wishlist</a>
+    <a href="#recommendation-section" class="whitespace-nowrap rounded-full border border-[#ff525c]/45 bg-[#ff525c]/12 px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-[#ffd6d8] transition hover:border-[#ff525c] hover:bg-[#ff525c]/26 hover:text-white">AI Picks</a>
+    <a href="#leaderboard-section" class="whitespace-nowrap rounded-full border border-[#6cd7d8]/50 bg-[#6cd7d8]/12 px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-[#9eeef0] transition hover:border-[#6cd7d8] hover:bg-[#6cd7d8]/24 hover:text-white">Live Board</a>
   </div>
 </header>
 
@@ -279,7 +283,7 @@ window.tailwind.config = {
     <div id="cars-container" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"></div>
   </section>
 
-  <section id="recommendation-section" class="mx-auto w-full max-w-[1260px] px-4 py-14 sm:px-8 lg:px-10">
+  <section id="recommendation-section" style="scroll-margin-top: 6.5rem;" class="mx-auto w-full max-w-[1260px] px-4 py-14 sm:px-8 lg:px-10">
     <div class="vg-panel glass-panel border border-white/10 p-5 md:p-7">
       <div class="grid items-start gap-8 lg:grid-cols-[1.05fr_1fr]">
         <div>
@@ -317,7 +321,7 @@ window.tailwind.config = {
     </div>
   </section>
 
-  <section id="leaderboard-section" class="mx-auto w-full max-w-[1260px] px-4 pb-16 sm:px-8 lg:px-10">
+  <section id="leaderboard-section" style="scroll-margin-top: 6.5rem;" class="mx-auto w-full max-w-[1260px] px-4 pb-16 sm:px-8 lg:px-10">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
       <h2 class="display-font vg-headline text-5xl leading-none text-white md:text-6xl">LIVE LEADERBOARD</h2>
       <span class="tech-font rounded-full border border-[#6cd7d8]/40 bg-[#6cd7d8]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#9eeef0]">Real-time</span>

@@ -29,13 +29,15 @@ service cloud.firestore {
       // Admin can read every user; signed-in users can read only their own profile.
       allow get: if isAdmin() || (!isBanned() && isSelfByDocId(userId));
 
-      // Forgot-password flow performs a single-record email lookup.
-      // Keep this tightly constrained to limit=1 list queries only.
+      // Signed-in users can read a bounded users list for home leaderboard cards.
+      // Anonymous list reads stay constrained to limit=1 for forgot-password email lookup.
       allow list: if isAdmin() || (
-        (
-          request.auth == null ||
-          (isSignedIn() && !isBanned())
-        ) &&
+        isSignedIn() &&
+        !isBanned() &&
+        request.query.limit != null &&
+        request.query.limit <= 500
+      ) || (
+        request.auth == null &&
         request.query.limit != null &&
         request.query.limit <= 1
       );

@@ -2,7 +2,9 @@ import {
   collection,
   doc,
   getDoc,
+  limit,
   onSnapshot,
+  query,
   serverTimestamp,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -309,8 +311,11 @@ async function loadUserData(uid) {
 function subscribeUsers(listener) {
   if (typeof listener !== "function") return () => {};
 
+  // Keep leaderboard reads bounded to align with Firestore list-rule limits.
+  const usersQuery = query(collection(db, "users"), limit(500));
+
   return onSnapshot(
-    collection(db, "users"),
+    usersQuery,
     (snapshot) => {
       listener(
         snapshot.docs.map((item) => ({
